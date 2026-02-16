@@ -20,19 +20,19 @@ class Post {
 	Post({
 		required User user,
 		this.body       = "",
-    	int replyCount  = 0,
-    	int likeCount   = 0,
-    	int viewCount   = 0,
-    	bool isLike     = false,
-    	bool isBookmark = false,
-    	DateTime? postDate,
+		int replyCount  = 0,
+		int likeCount   = 0,
+		int viewCount   = 0,
+		bool isLike     = false,
+		bool isBookmark = false,
+		DateTime? postDate,
  	}) : _postDate  = postDate ?? DateTime.now(),
 		_user       = user,
-    	_replyCount = replyCount,
-    	_likeCount  = likeCount,
-    	_viewCount  = viewCount,
-    	_isLike     = isLike,
-    	_isBookmark = isBookmark;
+		_replyCount = replyCount,
+		_likeCount  = likeCount,
+		_viewCount  = viewCount,
+		_isLike     = isLike,
+		_isBookmark = isBookmark;
 
 	int get replyCount => _replyCount;
 	set replyCount(int value) {
@@ -89,7 +89,7 @@ class Post {
 		final difference = now.difference(postDate);
 
 		if (difference.inSeconds < 60) {
-    		_relativeTime = 'たった今';
+			_relativeTime = 'たった今';
   		} else if (difference.inMinutes < 60) {
   		  	_relativeTime = '${difference.inMinutes}分前';
   		} else if (difference.inHours < 24) {
