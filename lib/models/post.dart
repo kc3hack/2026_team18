@@ -1,4 +1,7 @@
+// Flutter imports:
 import 'package:flutter/foundation.dart';
+
+// Project imports:
 import 'package:mikata/models/user.dart';
 
 class Post {
