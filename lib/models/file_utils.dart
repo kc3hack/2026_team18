@@ -1,7 +1,12 @@
+// Dart imports:
 import 'dart:async';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+
+// Flutter imports:
 import 'package:flutter/foundation.dart';
+
+// Package imports:
+import 'package:path_provider/path_provider.dart';
 
 class FileIO {
 	Future<String> get _loacalPath async {
