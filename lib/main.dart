@@ -1,4 +1,8 @@
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Project imports:
+import 'package:mikata/theme/custom_color_schema.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +32,7 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: CustomColorSchema.schemeFor(1.0),
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -69,6 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -89,25 +95,37 @@ class _MyHomePageState extends State<MyHomePage> {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            _ColorSampleTile(
+              label: 'primary / onPrimary',
+              background: scheme.primary,
+              foreground: scheme.onPrimary,
+            ),
+            const SizedBox(height: 8),
+            _ColorSampleTile(
+              label: 'secondary / onSecondary',
+              background: scheme.secondary,
+              foreground: scheme.onSecondary,
+            ),
+            const SizedBox(height: 8),
+            _ColorSampleTile(
+              label: 'tertiary / onTertiary',
+              background: scheme.tertiary,
+              foreground: scheme.onTertiary,
+            ),
+            const SizedBox(height: 8),
+            _ColorSampleTile(
+              label: 'surface / onSurface',
+              background: scheme.surface,
+              foreground: scheme.onSurface,
+              border: scheme.outlineVariant,
+            ),
+            const SizedBox(height: 8),
+            _ColorSampleTile(
+              label: 'error / onError',
+              background: scheme.error,
+              foreground: scheme.onError,
             ),
           ],
         ),
@@ -116,6 +134,46 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class _ColorSampleTile extends StatelessWidget {
+  const _ColorSampleTile({
+    required this.label,
+    required this.background,
+    required this.foreground,
+    this.border,
+  });
+
+  final String label;
+  final Color background;
+  final Color foreground;
+  final Color? border;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 320,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(12),
+        border: border == null ? null : Border.all(color: border!),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: foreground),
+            ),
+          ),
+          Icon(Icons.circle, color: foreground, size: 18),
+        ],
       ),
     );
   }
