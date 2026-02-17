@@ -30,7 +30,7 @@ class PostDetailPage extends HookConsumerWidget {
               PostAccountHeader(),
               SizedBox(height: 12),
               PostContent(),
-              SizedBox(height: 12),
+              Divider(height: 24),
               PostInteractionButtons(),
             ],
           ),

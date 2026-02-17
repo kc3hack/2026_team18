@@ -10,8 +10,6 @@ class PostContent extends HookConsumerWidget {
         ? DateFormat('yyyy年M月d日 hh:mm').format(post.postDate)
         : "";
 
-    
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -26,7 +24,6 @@ class PostContent extends HookConsumerWidget {
             context,
           ).textTheme.titleMedium?.copyWith(color: Colors.grey),
         ),
-        const Divider(height: 32),
       ],
     );
   }
