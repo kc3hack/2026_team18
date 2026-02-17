@@ -1,7 +1,9 @@
+// Dart imports:
 import 'dart:convert';
 
-import 'package:mikata/models/post.dart';
+// Project imports:
 import 'package:mikata/models/file_utils.dart';
+import 'package:mikata/models/post.dart';
 
 class Timeline {
 // public member

@@ -37,7 +37,7 @@ class PostBox extends HookConsumerWidget {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text(
-                      post.user.userName,
+                      post.authorName,
                       style: textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: colorScheme.onSurface,
@@ -55,7 +55,7 @@ class PostBox extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  post.body,
+                  post.content,
                   style: textTheme.bodyLarge,
                   maxLines: null,
                   softWrap: true,
@@ -65,7 +65,7 @@ class PostBox extends HookConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconWithLabel(
-                      icon: Icons.comment_rounded,
+                      icon: Icons.chat_bubble_rounded,
                       label: post.replyCount.toString(),
                     ),
                     IconWithLabel(

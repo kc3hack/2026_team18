@@ -23,7 +23,7 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
 
   Future<List<Post>> _fetchPosts() async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
-
+    
     // 取得処理
     return _dummyPosts();
   }
@@ -68,8 +68,9 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
       final minutesAgo = (index + 1) * 7;
 
       return Post(
-        user: user,
-        body: bodies[index],
+        authorName: user.userName,
+        authorUuid: user.userUuid,
+        content: bodies[index],
         replyCount: index % 4,
         likeCount: (index * 3) % 50,
         viewCount: (index * 17) % 300,

@@ -1,34 +1,51 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 // Flutter imports:
 import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
-import 'package:mikata/main.dart';
+import 'package:mikata/models/post.dart';
+import 'package:mikata/pages/home_page/widgets/post_box.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  group('PostBox', () {
+    testWidgets('狭い幅でもはみ出さずに描画できる', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(320, 800));
+      addTearDown(() async {
+        await tester.binding.setSurfaceSize(null);
+      });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+      final post = Post(
+        postDate: DateTime.now().subtract(const Duration(days: 400)),
+        authorName: 'とてもとてもとても長いユーザー名_ABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789',
+        content:
+            '本文がとても長いケースを想定して、折り返しが発生しても例外が出ないことを確認します。'
+            'あいうえおかきくけこさしすせそたちつてと'
+            'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+            '本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文',
+        replyCount: 123,
+        likeCount: 4567,
+        viewCount: 89012,
+        isBookmark: true,
+      );
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(body: PostBox(post: post)),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // RenderFlex overflow などが起きると FlutterError が例外として拾える。
+      expect(tester.takeException(), isNull);
+      expect(find.textContaining('とてもとてもとても長いユーザー名'), findsOneWidget);
+      expect(find.textContaining('本文がとても長いケースを想定して'), findsOneWidget);
+    });
   });
 }
