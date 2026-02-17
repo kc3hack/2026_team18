@@ -10,6 +10,7 @@ import 'package:mikata/pages/account_page/account_page.dart';
 import 'package:mikata/pages/home_page/home_page.dart';
 import 'package:mikata/pages/massage_page/message_page.dart';
 import 'package:mikata/pages/new_post_page/new_post_page.dart';
+import 'package:mikata/pages/post_detail_page/post_detail_page.dart';
 import 'package:mikata/pages/root_page/root_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) => router);
@@ -77,6 +78,28 @@ final router = GoRouter(
         },
       ),
     ),
+    GoRoute(
+      path: RoutePath.postDetail.path,
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: PostDetailPage(),
+        transitionDuration: const Duration(milliseconds: 250),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curvedAnimation = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeInOut,
+          );
+
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1, 0),
+              end: Offset.zero,
+            ).animate(curvedAnimation),
+            child: child,
+          );
+        },
+      ),
+    ),
   ],
 );
 
@@ -85,7 +108,8 @@ enum RoutePath {
   message("/message"),
   account("/account"),
   settings("/settings"),
-  newPost("/new-post");
+  newPost("/new-post"),
+  postDetail("/post-detail");
 
   final String path;
   const RoutePath(this.path);

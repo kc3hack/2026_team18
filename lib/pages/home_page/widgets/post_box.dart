@@ -2,11 +2,14 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
 // Project imports:
 import 'package:mikata/models/post.dart';
+import 'package:mikata/providers/router_provider.dart';
+import 'package:mikata/providers/selected_post_provider.dart';
 
 part 'post_box_bottom_buttons.dart';
 
@@ -20,76 +23,82 @@ class PostBox extends HookConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: 4,
-                  runSpacing: 0,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text(
-                      post.authorName,
-                      style: textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onSurface,
+    return InkWell(
+      onTap: () {
+        ref.read(selectedPostProvider.notifier).select(post);
+        context.push(RoutePath.postDetail.path);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CircleAvatar(),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 0,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Text(
+                        post.authorName,
+                        style: textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onSurface,
+                        ),
+                        softWrap: true,
                       ),
-                      softWrap: true,
-                    ),
-                    Text(
-                      "@userID・${post.relativeTime}",
-                      style: textTheme.titleMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
+                      Text(
+                        "@userID・${post.relativeTime}",
+                        style: textTheme.titleMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        softWrap: true,
                       ),
-                      softWrap: true,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  post.content,
-                  style: textTheme.bodyLarge,
-                  maxLines: null,
-                  softWrap: true,
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconWithLabel(
-                      icon: Icons.chat_bubble_rounded,
-                      label: post.replyCount.toString(),
-                    ),
-                    IconWithLabel(
-                      icon: Icons.favorite_rounded,
-                      label: post.likeCount.toString(),
-                    ),
-                    IconWithLabel(
-                      icon: Icons.bar_chart_rounded,
-                      label: post.viewCount.toString(),
-                    ),
-                    Icon(
-                      (post.isBookmark)
-                          ? Icons.bookmark_rounded
-                          : Icons.bookmark_border_rounded,
-                      color: (post.isBookmark)
-                          ? colorScheme.primary
-                          : colorScheme.onSurfaceVariant,
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    post.content,
+                    style: textTheme.bodyLarge,
+                    maxLines: null,
+                    softWrap: true,
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconWithLabel(
+                        icon: Icons.chat_bubble_rounded,
+                        label: post.replyCount.toString(),
+                      ),
+                      IconWithLabel(
+                        icon: Icons.favorite_rounded,
+                        label: post.likeCount.toString(),
+                      ),
+                      IconWithLabel(
+                        icon: Icons.bar_chart_rounded,
+                        label: post.viewCount.toString(),
+                      ),
+                      Icon(
+                        (post.isBookmark)
+                            ? Icons.bookmark_rounded
+                            : Icons.bookmark_border_rounded,
+                        color: (post.isBookmark)
+                            ? colorScheme.primary
+                            : colorScheme.onSurfaceVariant,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
