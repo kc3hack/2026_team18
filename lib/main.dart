@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
 import 'package:mikata/providers/router_provider.dart';
+import 'package:mikata/providers/theme_provider.dart';
 
 void main() {
   final scope = ProviderScope(child: MitakaApp());
@@ -18,14 +19,12 @@ class MitakaApp extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final goRouter = ref.watch(routerProvider);
+    final theme = ref.watch(themeDataProvider);
 
     return MaterialApp.router(
       title: 'MIKATA',
       themeMode: ThemeMode.light,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-      ),
+      theme: theme,
       routerConfig: goRouter,
     );
   }
