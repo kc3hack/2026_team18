@@ -56,7 +56,7 @@ final router = GoRouter(
       pageBuilder: (context, state) => NoTransitionPage(child: Container()),
     ),
     GoRoute(
-      path: RoutePath.newPostPage.path,
+      path: RoutePath.newPost.path,
       pageBuilder: (context, state) => CustomTransitionPage<void>(
         key: state.pageKey,
         child: NewPostPage(),
@@ -85,7 +85,7 @@ enum RoutePath {
   message("/message"),
   account("/account"),
   settings("/settings"),
-  newPostPage("/new-post");
+  newPost("/new-post");
 
   final String path;
   const RoutePath(this.path);

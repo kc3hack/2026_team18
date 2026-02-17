@@ -20,7 +20,7 @@ class RootPage extends HookConsumerWidget {
     return Scaffold(
       body: navigationShell,
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push(RoutePath.newPostPage.path),
+        onPressed: () => context.push(RoutePath.newPost.path),
         child: const Icon(Icons.add),
       ),
       bottomNavigationBar: NavigationBar(
