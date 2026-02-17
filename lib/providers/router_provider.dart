@@ -6,8 +6,11 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
+import 'package:mikata/pages/account_page/account_page.dart';
 import 'package:mikata/pages/home_page/home_page.dart';
+import 'package:mikata/pages/massage_page/message_page.dart';
 import 'package:mikata/pages/new_post_page/new_post_page.dart';
+import 'package:mikata/pages/root_page/root_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) => router);
 
@@ -15,9 +18,38 @@ final router = GoRouter(
   initialLocation: RoutePath.home.path,
 
   routes: [
-    GoRoute(
-      path: RoutePath.home.path,
-      pageBuilder: (context, state) => NoTransitionPage(child: HomePage()),
+    StatefulShellRoute.indexedStack(
+      pageBuilder: (context, state, navigationShell) {
+        return NoTransitionPage(
+          child: RootPage(navigationShell: navigationShell),
+        );
+      },
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: RoutePath.home.path,
+              builder: (context, state) => HomePage(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: RoutePath.message.path,
+              builder: (context, state) => MessagePage(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: RoutePath.account.path,
+              builder: (context, state) => AccountPage(),
+            ),
+          ],
+        ),
+      ],
     ),
     GoRoute(
       path: RoutePath.settings.path,
@@ -50,6 +82,8 @@ final router = GoRouter(
 
 enum RoutePath {
   home("/"),
+  message("/message"),
+  account("/account"),
   settings("/settings"),
   newPostPage("/new-post");
 
