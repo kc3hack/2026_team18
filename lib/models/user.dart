@@ -3,7 +3,7 @@ import 'package:uuid/uuid.dart';
 class User {
   // public member
     String userName;
-    String _userUuid;
+    final String _userUuid;
   // private member
 
     //public method
