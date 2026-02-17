@@ -8,7 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 // Project imports:
 import 'package:mikata/pages/account_page/account_page.dart';
 import 'package:mikata/pages/home_page/home_page.dart';
-import 'package:mikata/pages/massage_page/message_page.dart';
+import 'package:mikata/pages/message_page/message_page.dart';
 import 'package:mikata/pages/new_post_page/new_post_page.dart';
 import 'package:mikata/pages/root_page/root_page.dart';
 
