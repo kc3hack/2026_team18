@@ -28,7 +28,6 @@ final class CustomColorSchema {
   }
 
   ColorScheme toColorScheme({Brightness brightness = Brightness.light}) {
-    print("seedColor: ${seedColor.toARGB32().toRadixString(16)}");
     if (seedColor == Color(0xFF9E9E9E)) {
       return grayColorScheme(brightness: brightness);
     }
