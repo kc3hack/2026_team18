@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 
 // Project imports:
 import 'package:mikata/models/post.dart';
@@ -39,6 +40,7 @@ class PostBox extends HookConsumerWidget {
                       post.user.userName,
                       style: textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
                       ),
                       softWrap: true,
                     ),
@@ -59,7 +61,31 @@ class PostBox extends HookConsumerWidget {
                   softWrap: true,
                 ),
                 const SizedBox(height: 16),
-                PostBoxBottomButtons(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconWithLabel(
+                      icon: Icons.comment_rounded,
+                      label: post.replyCount.toString(),
+                    ),
+                    IconWithLabel(
+                      icon: Icons.favorite_rounded,
+                      label: post.likeCount.toString(),
+                    ),
+                    IconWithLabel(
+                      icon: Icons.bar_chart_rounded,
+                      label: post.viewCount.toString(),
+                    ),
+                    Icon(
+                      (post.isBookmark)
+                          ? Icons.bookmark_rounded
+                          : Icons.bookmark_border_rounded,
+                      color: (post.isBookmark)
+                          ? colorScheme.primary
+                          : colorScheme.onSurfaceVariant,
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

@@ -11,7 +11,7 @@ class ThemeNotifier extends Notifier<ThemeData> {
   @override
   ThemeData build() {
     // カラースキーマの元になる値（-1.0〜1.0）
-    final value = 0.0;
+    final value = 1.0;
     final scheme = CustomColorSchema(
       value,
     ).toColorScheme(brightness: Brightness.light);
