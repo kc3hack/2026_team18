@@ -11,6 +11,8 @@ class Timeline {
 // public member
     Timeline();
 
+    List<Post> get timeline => _timeline;
+
     List<Post> getLikePost() {
         final List<Post> result = _timeline.where((i) => i.isLike).toList();
         return result;
