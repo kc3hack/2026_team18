@@ -1,12 +1,12 @@
 import 'package:uuid/uuid.dart';
 
 class User {
-  // public member
+// public member
     String userName;
     final String _userUuid;
-  // private member
+// private member
 
-    //public method
+//public method
     User({
         required this.userName,
         String? userUuid
@@ -14,7 +14,13 @@ class User {
 
     String get userUuid => _userUuid;
 
+    User.fromJson(Map<String, dynamic> json) : 
+        userName = json["userName"],
+        _userUuid = json["useruuid"];
 
-
-  // private method
+    Map<String, dynamic> toJson() => {
+        "userName" : userName,
+        "userUuid" : userUuid
+    };
+// private method
 }
