@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
 import 'package:mikata/models/post.dart';
-import 'package:mikata/models/user.dart';
+import 'package:mikata/models/account.dart';
 
 class PostNotifier extends AsyncNotifier<List<Post>> {
   @override
@@ -29,13 +29,13 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
   }
 
   List<Post> _dummyPosts() {
-    final users = <User>[
-      User(userName: 'Alice'),
-      User(userName: 'Bob'),
-      User(userName: 'Carol'),
-      User(userName: 'Dave'),
-      User(userName: 'Eve'),
-      User(userName: 'Frank'),
+    final users = <BotAccount>[
+      BotAccount(userName: 'Alice'),
+      BotAccount(userName: 'Bob'),
+      BotAccount(userName: 'Carol'),
+      BotAccount(userName: 'Dave'),
+      BotAccount(userName: 'Eve'),
+      BotAccount(userName: 'Frank'),
     ];
 
     final now = DateTime.now();
@@ -69,7 +69,7 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
 
       return Post(
         authorName: user.userName,
-        authorUuid: user.userUuid,
+        authorUuid: user.userUUID,
         content: bodies[index],
         replyCount: index % 4,
         likeCount: (index * 3) % 50,

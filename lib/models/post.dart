@@ -4,9 +4,6 @@ import 'package:flutter/foundation.dart';
 // Package imports:
 import 'package:uuid/uuid.dart';
 
-// Project imports:
-import 'package:mikata/models/user.dart';
-
 class Post {
 // punlic member
 
@@ -158,8 +155,4 @@ class Post {
   		 	_relativeTime = '${(difference.inDays / 365).floor()}年前';
   		}
 	}
-}
-
-Post makePost(User user, String content) {
-    return Post(authorName: user.userName, authorUuid: user.userUuid, content: content);
 }
