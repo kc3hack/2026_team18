@@ -26,7 +26,6 @@ class HomePage extends HookConsumerWidget {
             itemCount: posts.length,
             itemBuilder: (context, index) {
               final post = posts[index];
-              post.formatRelativeTime();
 
               return PostBox(post: post);
             },
