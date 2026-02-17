@@ -1,40 +1,20 @@
-import 'package:mikata/models/post.dart';
+import 'package:uuid/uuid.dart';
 
 class User {
   // public member
     String userName;
-
+    String _userUuid;
   // private member
-    final List<Post> _userPosts = [];
-    final List<Post> _bookmarkPost = [];
-    final List<Post> _likePost = [];
 
     //public method
-    User({required this.userName});
+    User({
+        required this.userName,
+        String? userUuid
+    }) : _userUuid = userUuid ?? Uuid().v4();
 
-    void addUserPost(Post post) {
-        _userPosts.add(post);
-    }
+    String get userUuid => _userUuid;
 
-    void removeUserPost(Post post) {
-        _userPosts.remove(post);
-    }
 
-    void addBookmark(Post post) {
-        _bookmarkPost.add(post);
-    }
-
-    void remove(Post post) {
-        _bookmarkPost.remove(post);
-    }
-
-    void addLikePost(Post post) {
-        _likePost.add(post);
-    }
-
-    void removeLikePost(Post post) {
-        _likePost.remove(post);
-    }
 
   // private method
 }

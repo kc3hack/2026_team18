@@ -1,38 +1,92 @@
 import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
 import 'package:mikata/models/user.dart';
 
 class Post {
-// public member
-	String body;
+// punlic member
 
 // private member
-	final User _user;
-	final DateTime _postDate;
-	int _replyCount;
-	int _likeCount;
-	int _viewCount;
-	bool _isLike;
-	bool _isBookmark;
-	String _relativeTime = "";
-	final List<Post> _replyPost = [];
+    final DateTime _postDate;
+    final String _authorName;
+    final String _authorUuid;
+    final String _content;
+    final String _parentPostUuid;
 
-// public member
-	Post({
-		required User user,
-		this.body       = "",
-		int replyCount  = 0,
-		int likeCount   = 0,
-		int viewCount   = 0,
-		bool isLike     = false,
-		bool isBookmark = false,
-		DateTime? postDate,
- 	}) : _postDate  = postDate ?? DateTime.now(),
-		_user       = user,
-		_replyCount = replyCount,
-		_likeCount  = likeCount,
-		_viewCount  = viewCount,
-		_isLike     = isLike,
-		_isBookmark = isBookmark;
+    int _replyCount;
+    int _likeCount;
+    int _viewCount;
+
+    bool _isLike;
+    bool _isBookmark;
+    String _relativeTime;
+
+// public method
+    Post ({
+        DateTime? postDate,
+        String authorName = "",
+        String? authorUuid,
+        String content = "",
+        String parentPostUuid = "",
+        int replyCount = 0,
+        int likeCount = 0,
+        int viewCount = 0,
+        bool isLike = false,
+        bool isBookmark = false,
+        String relativeTime = ""
+    }) : _postDate    = postDate ?? DateTime.now(),
+        _authorName   = authorName,
+        _authorUuid   = authorUuid ?? Uuid().v4(),
+        _content      = content,
+        _parentPostUuid   = parentPostUuid,
+        _replyCount   = replyCount,
+        _likeCount    = likeCount,
+        _viewCount    = viewCount,
+        _isLike       = isLike,
+        _isBookmark   = isBookmark,
+        _relativeTime = relativeTime 
+    {
+        _formatRelativeTime();
+    }
+
+    Post.fromJson(Map<String, dynamic> json) : 
+        _postDate       = DateTime.parse(json["postDate"]),
+        _authorName     = json["authorName"],
+        _authorUuid     = json["authorUuid"],
+        _content        = json["content"],
+        _parentPostUuid = json["parentPostUuid"],
+        _replyCount     = json["replyCount"],
+        _likeCount      = json["likeCount"],
+        _viewCount      = json["viewCount"],
+        _isLike         = json["isLike"],
+        _isBookmark     = json["isBookmark"],
+        _relativeTime   = json["relativeTime"]
+    {
+        _formatRelativeTime();
+    }
+
+    Map<String, dynamic> toJson() => {
+        "postDate"       : postDate,
+        "authorName"     : authorName,
+        "authorUuid"     : authorUuid,
+        "content"        : content,
+        "parentPostUuid" : parentPostUuid,
+        "replyCount"     : replyCount,
+        "likeCount"      : likeCount,
+        "viewCount"      : viewCount,
+        "isLike"         : isLike,
+        "isBookmark"     : isBookmark,
+        "relativeTime"   : relativeTime,
+    };
+
+    DateTime get postDate => _postDate;
+
+    String get content => _content;
+
+    String get relativeTime => _relativeTime;
+
+    String get authorName => _authorName;
+
+    String get authorUuid => _authorUuid;
 
 	int get replyCount => _replyCount;
 	set replyCount(int value) {
@@ -61,6 +115,13 @@ class Post {
 		_viewCount = value;
 	}
 
+    String get parentPostUuid => _parentPostUuid;
+    set parentPostUuid(String uuid) {
+        if (parentPostUuid == "") {
+            parentPostUuid = uuid;
+        }
+    } 
+
 	bool get isLike => _isLike;
 	void toggleLike() {
 		_isLike = !_isLike;
@@ -71,20 +132,8 @@ class Post {
 		_isBookmark = !_isBookmark;
 	}
 
-	List<Post> get replyPost => _replyPost;
-	void appendReply(Post reply) {
-		_replyPost.add(reply);
-		replyCount = _replyPost.length;
-	}
-
-	DateTime get postDate => _postDate;
-
-	String get relativeTime => _relativeTime;
-
-	User get user => _user;
-
-// private member
-	void formatRelativeTime() {
+// private method
+	void _formatRelativeTime() {
 		final now = DateTime.now();
 		final difference = now.difference(postDate);
 
@@ -104,4 +153,8 @@ class Post {
   		 	_relativeTime = '${(difference.inDays / 365).floor()}年前';
   		}
 	}
+}
+
+Post makePost(User user, String content) {
+    return Post(authorName: user.userName, authorUuid: user.userUuid, content: content);
 }
