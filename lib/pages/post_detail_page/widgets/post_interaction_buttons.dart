@@ -15,11 +15,12 @@ class PostInteractionButtons extends HookConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.thumb_up_alt_outlined),
-              iconSize: 24,
-            ),
+            // IconButton(
+            //   onPressed: () {},
+            //   icon: Icon(Icons.thumb_up_alt_outlined),
+            //   iconSize: 24,
+            // ),
+            InkWell(child: Icon(Icons.thumb_up_alt_outlined)),
           ],
         ),
         Divider(height: 24),
