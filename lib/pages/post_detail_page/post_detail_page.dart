@@ -24,6 +24,8 @@ class PostDetailPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final replyListCount = post.replyCount;
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: CustomAppbar(title: const Text("投稿の詳細")),
       body: ListView.separated(
@@ -61,6 +63,25 @@ class PostDetailPage extends HookConsumerWidget {
             ),
           );
         },
+      ),
+      bottomSheet: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: Colors.grey.shade300)),
+          color: colorScheme.surface,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                decoration: InputDecoration(hintText: "返信を入力"),
+                maxLines: 1,
+              ),
+            ),
+
+            OutlinedButton(onPressed: () {}, child: Text("返信")),
+          ],
+        ),
       ),
     );
   }
