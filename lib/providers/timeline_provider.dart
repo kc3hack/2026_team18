@@ -16,19 +16,21 @@ class TimelineNotifier extends AsyncNotifier<Timeline> {
     return timeline;
   }
 
-  void fetchTimeline() async {
+  Future<void> fetchTimeline() async {
     state = const AsyncValue.loading();
-    final timeline = Timeline();
-    timeline.loadPost();
-    state = AsyncValue.data(timeline);
+    state = await AsyncValue.guard(() async {
+      final timeline = Timeline();
+      timeline.loadPost();
+      return timeline;
+    });
   }
 
-  void addPost(Post post) {
+  Future<void> addPost(Post post) async {
     final timeline = state.value;
     if (timeline == null) return;
     timeline.addPost(post);
-    // timeline.savePost();
     state = AsyncValue.data(timeline);
+    timeline.savePost();
   }
 }
 

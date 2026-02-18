@@ -20,7 +20,7 @@ class HomePage extends HookConsumerWidget {
       appBar: CustomAppbar(title: const Text("Home")),
       body: RefreshIndicator(
         onRefresh: () async {
-          ref.read(timelineProvider.notifier).fetchTimeline();
+          await ref.read(timelineProvider.notifier).fetchTimeline();
         },
         child: timelineAsync.when(
           data: (timeline) => ListView.separated(
