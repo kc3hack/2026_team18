@@ -6,9 +6,12 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
+import 'package:mikata/models/account.dart'; // Account型を渡すためにimport
 import 'package:mikata/pages/account_page/account_page.dart';
+import 'package:mikata/pages/account_page/settings_page.dart'; // 新規作成
 import 'package:mikata/pages/home_page/home_page.dart';
 import 'package:mikata/pages/message_page/message_page.dart';
+import 'package:mikata/pages/message_page/chat_page.dart'; // 新規作成
 import 'package:mikata/pages/new_post_page/new_post_page.dart';
 import 'package:mikata/pages/root_page/root_page.dart';
 
@@ -37,7 +40,20 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: RoutePath.message.path,
-              builder: (context, state) => MessagePage(),
+              builder: (context, state) => const MessagePage(),
+              routes: [
+                // メッセージ一覧からの詳細チャット画面
+                GoRoute(
+                  path: 'chat', // /message/chat
+                  pageBuilder: (context, state) {
+                    // 一覧から渡された相手のアカウント情報を受け取る
+                    final account = state.extra as BotAccount?;
+                    return MaterialPage(
+                      child: ChatPage(targetAccount: account),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
@@ -53,7 +69,7 @@ final router = GoRouter(
     ),
     GoRoute(
       path: RoutePath.settings.path,
-      pageBuilder: (context, state) => NoTransitionPage(child: Container()),
+      builder: (context, state) => SettingsPage(),
     ),
     GoRoute(
       path: RoutePath.newPostPage.path,
@@ -83,6 +99,7 @@ final router = GoRouter(
 enum RoutePath {
   home("/"),
   message("/message"),
+  chat("chat"),
   account("/account"),
   settings("/settings"),
   newPostPage("/new-post");

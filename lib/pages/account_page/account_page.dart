@@ -2,148 +2,113 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
-import 'package:mikata/models/account.dart';
-import 'package:mikata/providers/ai_settings_provider.dart';
-import 'package:mikata/providers/theme_provider.dart';
+import 'package:mikata/providers/router_provider.dart';
+// import 'package:mikata/models/account.dart'; // createUserIDを使うならimport
 
 class AccountPage extends HookConsumerWidget {
   const AccountPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final aiSettingsAsync = ref.watch(aiSettingsProvider);
-    final themeNotifier = ref.read(themeDataProvider.notifier);
+    // 修正: 要件「8桁(大小文字込み記号なし)」に準拠したダミーID
+    // 本来は UserAccount クラスの createUserID() で生成されたものを保持します
+    final userId = "UserX9yz"; 
     
-    // 仮のユーザーデータ (本来はAuthProviderなどから取得)
-    final user = UserAccount(userName: "MyUser", userID: "my_id_001");
+    final userNameController = TextEditingController(text: "MyUser");
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Account Settings")),
-      body: aiSettingsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
-        data: (settings) {
-          return ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              // ユーザー情報カード
-              Card(
-                child: ListTile(
-                  leading: CircleAvatar(child: Text(user.userName[0])),
-                  title: Text(user.userName),
-                  subtitle: Text("@${user.userID}\n${user.userUUID}", style: const TextStyle(fontSize: 10)),
-                  isThreeLine: true,
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () { /* 編集処理 */ },
+      appBar: AppBar(
+        title: const Text("Account"),
+        actions: [
+          // 設定画面への遷移
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => context.push(RoutePath.settings.path),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            // アイコン変更エリア
+            GestureDetector(
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("画像変更機能は未実装です")),
+                );
+              },
+              child: Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  const CircleAvatar(
+                    radius: 60,
+                    backgroundImage: NetworkImage("https://placehold.jp/150x150.png"),
                   ),
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.camera_alt, size: 20, color: Colors.black87),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            
+            // 名前変更フィールド
+            TextField(
+              controller: userNameController,
+              decoration: const InputDecoration(
+                labelText: "表示名",
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person),
+              ),
+            ),
+            const SizedBox(height: 16),
+            
+            // ID表示（変更不可・コピー可能などを想定）
+            TextField(
+              // 修正: 記号なし8桁のIDを表示
+              controller: TextEditingController(text: userId),
+              readOnly: true,
+              decoration: const InputDecoration(
+                labelText: "ユーザーID",
+                hintText: "8桁の英数字",
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.badge), // アイコンもIDっぽいものに変更
+                filled: true,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, left: 12.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "※IDは自動生成された8桁の英数字です",
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
                 ),
               ),
-              const SizedBox(height: 32),
-              
-              Text("AI Environment Tuning", style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 8),
-              const Text("AIの性格パラメータを設定します。これによって返信や投稿の雰囲気が変化します。", style: TextStyle(fontSize: 12, color: Colors.grey)),
-              const Divider(height: 30),
-
-              // 褒め (Praise)
-              _ParameterSlider(
-                label: "褒め (Praise)",
-                description: "肯定的な言葉の多さ",
-                value: settings.praise,
-                color: Colors.pink,
-                icon: Icons.thumb_up_alt_rounded,
-                onChanged: (val) {
-                  ref.read(aiSettingsProvider.notifier).updatePraise(val);
-                  _updateThemeMood(val, settings.criticism, themeNotifier);
-                },
-              ),
-
-              // 共感 (Empathy)
-              _ParameterSlider(
-                label: "共感 (Empathy)",
-                description: "寄り添う言葉の多さ",
-                value: settings.empathy,
-                color: Colors.orange,
-                icon: Icons.favorite_rounded,
-                onChanged: (val) {
-                  ref.read(aiSettingsProvider.notifier).updateEmpathy(val);
-                },
-              ),
-
-              // 批判 (Criticism)
-              _ParameterSlider(
-                label: "批判 (Criticism)",
-                description: "厳しい指摘の多さ",
-                value: settings.criticism,
-                color: Colors.blueGrey,
-                icon: Icons.gavel_rounded,
-                onChanged: (val) {
-                  ref.read(aiSettingsProvider.notifier).updateCriticism(val);
-                  _updateThemeMood(settings.praise, val, themeNotifier);
-                },
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  // テーマカラーをパラメータに合わせて動的に変える
-  void _updateThemeMood(double praise, double criticism, ThemeNotifier notifier) {
-    // 褒めが多い(=1.0に近い), 批判が多い(=-1.0に近い)
-    // 範囲: -1.0 ~ 1.0
-    final double moodScore = ((praise - criticism) / 100).clamp(-1.0, 1.0);
-    notifier.updateColorSchemaValue(moodScore);
-  }
-}
-
-class _ParameterSlider extends StatelessWidget {
-  final String label;
-  final String description;
-  final double value;
-  final Color color;
-  final IconData icon;
-  final ValueChanged<double> onChanged;
-
-  const _ParameterSlider({
-    required this.label,
-    required this.description,
-    required this.value,
-    required this.color,
-    required this.icon,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Icon(icon, color: color, size: 20),
-            const SizedBox(width: 8),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-            const Spacer(),
-            Text("${value.toInt()}%", style: TextStyle(fontWeight: FontWeight.bold, color: color)),
+            ),
+            
+            const SizedBox(height: 32),
+            FilledButton.icon(
+              onPressed: () {
+                // 保存処理
+              },
+              icon: const Icon(Icons.save),
+              label: const Text("プロフィールを保存"),
+            ),
           ],
         ),
-        Text(description, style: Theme.of(context).textTheme.bodySmall),
-        Slider(
-          value: value,
-          min: 0,
-          max: 100,
-          divisions: 100,
-          activeColor: color,
-          onChanged: onChanged,
-        ),
-      ],
+      ),
     );
   }
 }
