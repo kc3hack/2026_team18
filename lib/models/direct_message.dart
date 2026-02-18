@@ -1,50 +1,50 @@
 class DirectMessage {
 // private member
-    String _userName;
-    String _userID;
-    final String _userUUID;
+    String _accountName;
+    String _accountID;
+    final String _accountUUID;
     final DateTime _dateTime;
     final String _content;
 
 // public method
     DirectMessage({
-        required String userName,
-        required String userID,
-        required String userUUID,
+        required String accountName,
+        required String accountID,
+        required String accountUUID,
         DateTime? dateTime,
         required String content
-    }) : _userName = userName,
-        _userID    = userID,
-        _userUUID  = userUUID,
+    }) : _accountName = accountName,
+        _accountID    = accountID,
+        _accountUUID  = accountUUID,
         _dateTime  = dateTime ?? DateTime.now(),
         _content   = content;
 
     DirectMessage.fromJson(Map<String, dynamic> json) :
-        _userName = json["userName"],
-        _userID   = json["userID"],
-        _userUUID = json["userUUID"],
+        _accountName = json["accountName"],
+        _accountID   = json["accountID"],
+        _accountUUID = json["accountUUID"],
         _dateTime = json["dateTime"],
         _content  = json["content"];
 
     Map<String, dynamic> toJson() => {
-        "userName" : userName,
-        "userID"   : userID,
-        "userUUID" : userUUID,
+        "accountName" : accountName,
+        "accountID"   : accountID,
+        "accountUUID" : accountUUID,
         "dateTime" : dateTime,
         "content"  : content,
     };
 
-    String get userName => _userName;
-    set userName(String name) {
-        if (name.isNotEmpty) _userName = name;
+    String get accountName => _accountName;
+    set accountName(String name) {
+        if (name.isNotEmpty) _accountName = name;
     }
 
-    String get userID => _userID;
-    set userID(String id) {
-        if (id.isNotEmpty) _userID = id;   
+    String get accountID => _accountID;
+    set accountID(String id) {
+        if (id.isNotEmpty) _accountID = id;   
     }
 
-    String get userUUID => _userUUID;
+    String get accountUUID => _accountUUID;
 
     DateTime get dateTime => _dateTime;
 
