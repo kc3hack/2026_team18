@@ -25,7 +25,12 @@ class PostInteractionButtons extends HookConsumerWidget {
               icon: Icon(Icons.chat_bubble_outline_rounded),
               onPressed: () {},
             ),
-            MiniIconButton(icon: Icon(Icons.favorite_border), onPressed: () {}),
+            MiniIconButton(
+              icon: Icon(Icons.favorite_border),
+              onPressed: () {
+                post.toggleLike();
+              },
+            ),
             MiniIconButton(
               icon: Icon(Icons.bookmark_outline_rounded),
               onPressed: () {},
