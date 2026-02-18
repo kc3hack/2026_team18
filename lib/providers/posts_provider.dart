@@ -5,8 +5,8 @@ import 'dart:async';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
-import 'package:mikata/models/post.dart';
 import 'package:mikata/models/account.dart';
+import 'package:mikata/models/post.dart';
 
 class PostNotifier extends AsyncNotifier<List<Post>> {
   @override

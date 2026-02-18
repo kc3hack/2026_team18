@@ -1,6 +1,11 @@
-import 'package:mikata/models/direct_message.dart';
-import 'package:uuid/uuid.dart';
+// Dart imports:
 import 'dart:math';
+
+// Package imports:
+import 'package:uuid/uuid.dart';
+
+// Project imports:
+import 'package:mikata/models/direct_message.dart';
 
 String createUserID({int length = 8}) {
     const String charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
