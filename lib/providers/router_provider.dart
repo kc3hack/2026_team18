@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
+import 'package:mikata/models/post.dart';
 import 'package:mikata/pages/account_page/account_page.dart';
 import 'package:mikata/pages/home_page/home_page.dart';
 import 'package:mikata/pages/message_page/message_page.dart';
@@ -100,7 +101,7 @@ final router = GoRouter(
       path: RoutePath.postDetail.path,
       pageBuilder: (context, state) => CustomTransitionPage<void>(
         key: state.pageKey,
-        child: PostDetailPage(),
+        child: PostDetailPage(post: state.extra as Post),
         transitionDuration: const Duration(milliseconds: 250),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           final curvedAnimation = CurvedAnimation(

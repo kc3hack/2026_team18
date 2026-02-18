@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 // Project imports:
 import 'package:mikata/models/post.dart';
 import 'package:mikata/providers/router_provider.dart';
-import 'package:mikata/providers/selected_post_provider.dart';
 
 part 'post_box_bottom_buttons.dart';
 
@@ -25,8 +24,7 @@ class PostBox extends HookConsumerWidget {
 
     return InkWell(
       onTap: () {
-        ref.read(selectedPostProvider.notifier).select(post);
-        context.push(RoutePath.postDetail.path);
+        context.push(RoutePath.postDetail.path, extra: post);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -50,6 +48,8 @@ class PostBox extends HookConsumerWidget {
                           fontWeight: FontWeight.bold,
                           color: colorScheme.onSurface,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         softWrap: true,
                       ),
                       Text(
@@ -57,6 +57,8 @@ class PostBox extends HookConsumerWidget {
                         style: textTheme.titleMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         softWrap: true,
                       ),
                     ],

@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:mikata/models/post.dart';
 import 'package:mikata/pages/home_page/widgets/post_box.dart';
 import 'package:mikata/pages/post_detail_page/widgets/mini_icon_button.dart';
-import 'package:mikata/providers/selected_post_provider.dart';
 import 'package:mikata/widgets/custom_appbar.dart';
 
 part 'widgets/post_account_header.dart';
@@ -17,11 +16,12 @@ part 'widgets/post_content.dart';
 part 'widgets/post_interaction_buttons.dart';
 
 class PostDetailPage extends HookConsumerWidget {
-  const PostDetailPage({super.key});
+  const PostDetailPage({super.key, required this.post});
+
+  final Post post;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final post = ref.watch(selectedPostProvider);
-    final replyListCount = post?.replyCount ?? 0;
+    final replyListCount = post.replyCount;
 
     return Scaffold(
       appBar: CustomAppbar(title: const Text("投稿の詳細")),
@@ -32,17 +32,17 @@ class PostDetailPage extends HookConsumerWidget {
         },
         itemBuilder: (context, index) {
           if (index == 0) {
-            return const Padding(
+            return Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 8),
-                  PostAccountHeader(),
+                  PostAccountHeader(post: post),
                   SizedBox(height: 12),
-                  PostContent(),
+                  PostContent(post: post),
                   Divider(height: 24),
-                  PostInteractionButtons(),
+                  PostInteractionButtons(post: post),
                 ],
               ),
             );

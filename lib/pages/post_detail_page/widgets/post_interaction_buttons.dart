@@ -1,19 +1,19 @@
 part of '../post_detail_page.dart';
 
 class PostInteractionButtons extends HookConsumerWidget {
-  const PostInteractionButtons({super.key});
+  const PostInteractionButtons({super.key, required this.post});
+
+  final Post post;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final post = ref.watch(selectedPostProvider);
-
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           spacing: 8,
           children: [
-            Text("${post?.replyCount} コメント"),
-            Text("${post?.likeCount} いいね"),
+            Text("${post.replyCount} コメント"),
+            Text("${post.likeCount} いいね"),
             // Text("${post?.isBookmark}"),
           ],
         ),
