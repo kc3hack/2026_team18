@@ -19,6 +19,7 @@ class PostDetailPage extends HookConsumerWidget {
   const PostDetailPage({super.key, required this.post});
 
   final Post post;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final replyListCount = post.replyCount;
