@@ -6,15 +6,18 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
-import 'package:mikata/models/account.dart'; // Account型を渡すためにimport
+import 'package:mikata/models/post.dart';
 import 'package:mikata/pages/account_page/account_page.dart';
-import 'package:mikata/pages/account_page/settings_page.dart'; // 新規作成
 import 'package:mikata/pages/home_page/home_page.dart';
 import 'package:mikata/pages/message_page/message_page.dart';
-import 'package:mikata/pages/message_page/chat_page.dart'; // 新規作成
 import 'package:mikata/pages/new_post_page/new_post_page.dart';
 import 'package:mikata/pages/post_detail_page/post_detail_page.dart';
 import 'package:mikata/pages/root_page/root_page.dart';
+
+// Project imports:
+import 'package:mikata/models/account.dart'; // Account型を渡すためにimport
+import 'package:mikata/pages/account_page/settings_page.dart'; // 新規作成
+import 'package:mikata/pages/message_page/chat_page.dart'; // 新規作成
 
 final routerProvider = Provider<GoRouter>((ref) => router);
 
@@ -98,7 +101,7 @@ final router = GoRouter(
       path: RoutePath.postDetail.path,
       pageBuilder: (context, state) => CustomTransitionPage<void>(
         key: state.pageKey,
-        child: PostDetailPage(),
+        child: PostDetailPage(post: state.extra as Post),
         transitionDuration: const Duration(milliseconds: 250),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           final curvedAnimation = CurvedAnimation(

@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+// Project imports:
+import 'package:mikata/models/post.dart';
+import 'package:mikata/providers/timeline_provider.dart';
 
 class NewPostPage extends HookConsumerWidget {
   const NewPostPage({super.key});
@@ -24,14 +29,25 @@ class NewPostPage extends HookConsumerWidget {
       }
 
       inputController.addListener(listener);
-
       return () => inputController.removeListener(listener);
     }, [inputController]);
 
     return Scaffold(
       appBar: AppBar(
         actions: [
-          FilledButton(onPressed: () {}, child: Text("投稿する")),
+          FilledButton(
+            onPressed: () async {
+              final newPost = Post(
+                authorName: "ユーザー名",
+                authorUuid: "ユーザーUUID",
+                content: inputController.text,
+                postDate: DateTime.now(),
+              );
+              await ref.read(timelineProvider.notifier).addPost(newPost);
+              context.pop();
+            },
+            child: Text("投稿する"),
+          ),
           SizedBox(width: 8),
         ],
       ),

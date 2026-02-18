@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 // Project imports:
 import 'package:mikata/pages/home_page/widgets/post_box.dart';
 import 'package:mikata/providers/posts_provider.dart';
+import 'package:mikata/providers/timeline_provider.dart';
 import 'package:mikata/widgets/custom_appbar.dart';
 
 class HomePage extends HookConsumerWidget {
@@ -14,20 +15,25 @@ class HomePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final postsAsync = ref.watch(postsProvider);
+    // final timelineAsync = ref.watch(timelineProvider);
+    final timelineAsync = ref.watch(postsProvider);
 
     return Scaffold(
       appBar: CustomAppbar(title: const Text("Home")),
       body: RefreshIndicator(
-        onRefresh: () {
-          return ref.read(postsProvider.notifier).fetchPosts();
+        onRefresh: () async {
+          await ref.read(timelineProvider.notifier).fetchTimeline();
         },
-        child: postsAsync.when(
-          data: (posts) => ListView.separated(
-            itemCount: posts.length,
+        child: timelineAsync.when(
+          data: (timeline) => ListView.separated(
+            // itemCount: timeline.timeline.length,
+            // itemBuilder: (context, index) {
+            //   final post = timeline.timeline[index];
+            //   return PostBox(post: post);
+            // },
+            itemCount: timeline.length,
             itemBuilder: (context, index) {
-              final post = posts[index];
-
+              final post = timeline[index];
               return PostBox(post: post);
             },
             separatorBuilder: (context, index) {

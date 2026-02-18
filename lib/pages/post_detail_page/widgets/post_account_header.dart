@@ -1,16 +1,13 @@
 part of '../post_detail_page.dart';
 
 class PostAccountHeader extends HookConsumerWidget {
-  const PostAccountHeader({super.key});
+  const PostAccountHeader({super.key, required this.post});
+
+  final Post post;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final post = ref.watch(selectedPostProvider);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-
-    if (post == null) {
-      return const SizedBox.shrink();
-    }
 
     return Row(
       children: [

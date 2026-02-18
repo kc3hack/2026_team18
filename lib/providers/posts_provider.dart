@@ -5,8 +5,8 @@ import 'dart:async';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
-import 'package:mikata/models/post.dart';
 import 'package:mikata/models/account.dart';
+import 'package:mikata/models/post.dart';
 
 class PostNotifier extends AsyncNotifier<List<Post>> {
   @override
@@ -23,7 +23,7 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
 
   Future<List<Post>> _fetchPosts() async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
-    
+
     // 取得処理
     return _dummyPosts();
   }
@@ -71,7 +71,7 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
         authorName: user.userName,
         authorUuid: user.userUUID,
         content: bodies[index],
-        replyCount: index % 4,
+        replyCount: 20 + index % 4,
         likeCount: (index * 3) % 50,
         viewCount: (index * 17) % 300,
         isLike: index % 5 == 0,
