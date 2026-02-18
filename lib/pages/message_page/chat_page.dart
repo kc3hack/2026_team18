@@ -17,21 +17,21 @@ class ChatPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 相手の名前を表示（nullならUnknown）
-    final title = targetAccount?.userName ?? "Unknown";
+    final title = targetAccount?.accountName ?? "Unknown";
 
     // ダミーメッセージデータ
     final List<DirectMessage> dummyMessages = [
       DirectMessage(
-        userName: title,
-        userID: targetAccount?.userID ?? "bot",
-        userUUID: "uuid_bot",
+        accountName: title,
+        accountID: targetAccount?.accountID ?? "bot",
+        accountUUID: "uuid_bot",
         content: "こんにちは、$title です。今日はどんな気分ですか？",
         dateTime: DateTime.now().subtract(const Duration(minutes: 30)),
       ),
       DirectMessage(
-        userName: "Me",
-        userID: "my_id",
-        userUUID: "my_uuid",
+        accountName: "Me",
+        accountID: "my_id",
+        accountUUID: "my_uuid",
         content: "少し話を聞いてほしいです。",
         dateTime: DateTime.now().subtract(const Duration(minutes: 5)),
       ),
@@ -50,7 +50,7 @@ class ChatPage extends HookConsumerWidget {
               itemCount: reversedMessages.length,
               itemBuilder: (context, index) {
                 final message = reversedMessages[index];
-                final isMe = message.userID == "my_id";
+                final isMe = message.accountID == "my_id";
                 return _MessageBubble(message: message, isMe: isMe);
               },
             ),
@@ -79,7 +79,7 @@ class _MessageBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isMe) ...[
-            CircleAvatar(radius: 16, child: Text(message.userName[0])),
+            CircleAvatar(radius: 16, child: Text(message.accountName[0])),
             const SizedBox(width: 8),
           ],
           Flexible(

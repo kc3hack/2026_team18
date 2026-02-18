@@ -9,7 +9,7 @@ class Post {
 
 // private member
     final DateTime _postDate;
-    final String _authorName;
+    String _authorName;
     final String _authorUuid;
     final String _content;
     final String _parentPostUuid;
@@ -86,9 +86,12 @@ class Post {
 
     String get relativeTime => _relativeTime;
 
-    String get authorName => _authorName;
-
     String get authorUuid => _authorUuid;
+
+    String get authorName => _authorName;
+    set authorName(String name) {
+        if (name.isNotEmpty) _authorName = name;
+    }
 
 	int get replyCount => _replyCount;
 	set replyCount(int value) {

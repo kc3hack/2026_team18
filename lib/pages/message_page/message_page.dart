@@ -16,9 +16,9 @@ class MessagePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // 修正: IDを8桁英数(記号なし)に変更
     final List<BotAccount> dmThreads = [
-      BotAccount(userName: "Bot Alice", userID: "BotAlice"), // 8文字
-      BotAccount(userName: "Counselor", userID: "CnslrBob"), // 8文字
-      BotAccount(userName: "Tech Mentor", userID: "TechMntr"), // 8文字
+      BotAccount(accountName: "Bot Alice", accountID: "BotAlice"), // 8文字
+      BotAccount(accountName: "Counselor", accountID: "CnslrBob"), // 8文字
+      BotAccount(accountName: "Tech Mentor", accountID: "TechMntr"), // 8文字
     ];
 
     return Scaffold(
@@ -30,11 +30,11 @@ class MessagePage extends HookConsumerWidget {
           final bot = dmThreads[index];
           return ListTile(
             leading: CircleAvatar(
-              child: Text(bot.userName[0]),
+              child: Text(bot.accountName[0]),
             ),
-            title: Text(bot.userName),
+            title: Text(bot.accountName),
             // ID表示も修正
-            subtitle: Text("@${bot.userID}・最新のメッセージ..."),
+            subtitle: Text("@${bot.accountID}・最新のメッセージ..."),
             onTap: () {
               context.go(
                 '${RoutePath.message.path}/${RoutePath.chat.path}',

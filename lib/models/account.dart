@@ -1,13 +1,10 @@
-// Dart imports:
 import 'dart:math';
-
-// Package imports:
 import 'package:uuid/uuid.dart';
-
-// Project imports:
 import 'package:mikata/models/direct_message.dart';
+import 'package:mikata/models/timeline.dart';
 
-String createUserID({int length = 8}) {
+
+String createAccountID({int length = 8}) {
     const String charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     final Random random = Random.secure();
     final String randomStr =  List.generate(length, (_) => charset[random.nextInt(charset.length)]).join();
@@ -16,42 +13,45 @@ String createUserID({int length = 8}) {
 
 class Account {
 // protected member
-    String _userName;
-    String _userID;
-    final String _userUUID;
+    String _accountName;
+    String _accountID;
+    final String _accountUUID;
 
 // public method
     Account({
-        required String userName,
-        String? userID,
-        String? userUUID
-    }) : _userName = userName,
-        _userID    = userID ?? createUserID(),
-        _userUUID  = userUUID ?? Uuid().v4();
+        required String accountName,
+        String? accountID,
+        String? accountUUID
+    }) : _accountName = accountName,
+        _accountID    = accountID ?? createAccountID(),
+        _accountUUID  = accountUUID ?? Uuid().v4();
 
-    String get userName => _userName;
-    set userName(String name) {
-        if (name.isNotEmpty) _userName = name;
+    String get accountName => _accountName;
+
+    void changeAccountName(String newName, Timeline timeline) {
+        if (newName.isEmpty) return;
+        _accountName = newName;
+        timeline.updateAuthorName(accountUUID, newName); 
     }
 
-    String get userID => _userID;
-    set userID(String id) {
-        if (id.isNotEmpty) _userID = id;
+    String get accountID => _accountID;
+    set accountID(String id) {
+        if (id.isNotEmpty) _accountID = id;
     }
 
-    String get userUUID => _userUUID;
+    String get accountUUID => _accountUUID;
 }
 
 class UserAccount extends Account {
 // public member
-    final Set<String> follow = {}; // userUUID
-    final Set<String> follower = {}; // userUUID
+    final Set<String> follow = {}; // accountUUID
+    final Set<String> follower = {}; // accountUUID
 
 // public method
     UserAccount({
-        required super.userName,
-        super.userID,
-        super.userUUID
+        required super.accountName,
+        super.accountID,
+        super.accountUUID
     });
 }
 
@@ -61,9 +61,9 @@ class BotAccount extends Account {
 
 // public method
     BotAccount({
-        required super.userName,
-        super.userID,
-        super.userUUID
+        required super.accountName,
+        super.accountID,
+        super.accountUUID
     });
 
     void addDM(DirectMessage dm) {
