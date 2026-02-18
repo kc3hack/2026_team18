@@ -4,26 +4,34 @@ class PostInteractionButtons extends HookConsumerWidget {
   const PostInteractionButtons({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final post = ref.watch(selectedPostProvider);
+
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           spacing: 8,
-          children: [Text("いいね 123"), Text("コメント 45"), Text("シェア 67")],
+          children: [
+            Text("${post?.replyCount} コメント"),
+            Text("${post?.likeCount} いいね"),
+            // Text("${post?.isBookmark}"),
+          ],
         ),
         Divider(height: 32),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            // IconButton(
-            //   onPressed: () {},
-            //   icon: Icon(Icons.thumb_up_alt_outlined),
-            //   iconSize: 24,
-            // ),
-            InkWell(child: Icon(Icons.thumb_up_alt_outlined)),
+            MiniIconButton(
+              icon: Icon(Icons.chat_bubble_outline_rounded),
+              onPressed: () {},
+            ),
+            MiniIconButton(icon: Icon(Icons.favorite_border), onPressed: () {}),
+            MiniIconButton(
+              icon: Icon(Icons.bookmark_outline_rounded),
+              onPressed: () {},
+            ),
           ],
         ),
-        Divider(height: 24),
       ],
     );
   }
