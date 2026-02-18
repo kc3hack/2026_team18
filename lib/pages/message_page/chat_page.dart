@@ -17,13 +17,13 @@ class ChatPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 相手の名前を表示（nullならUnknown）
-    final title = targetAccount?.userName ?? "Unknown";
+    final title = targetAccount?.accountName ?? "Unknown";
 
     // ダミーメッセージデータ
     final List<DirectMessage> dummyMessages = [
       DirectMessage(
         userName: title,
-        userID: targetAccount?.userID ?? "bot",
+        userID: targetAccount?.accountID ?? "bot",
         userUUID: "uuid_bot",
         content: "こんにちは、$title です。今日はどんな気分ですか？",
         dateTime: DateTime.now().subtract(const Duration(minutes: 30)),

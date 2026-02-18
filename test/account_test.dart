@@ -6,7 +6,7 @@ import 'package:mikata/models/account.dart';
 
 void main() {
     test("UserIDを生成する", () {
-        final String id = createUserID();
+        final String id = createAccountID();
         print(id);
         expect(id.length, 8);
     });

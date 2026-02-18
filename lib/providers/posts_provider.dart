@@ -30,12 +30,12 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
 
   List<Post> _dummyPosts() {
     final users = <BotAccount>[
-      BotAccount(userName: 'Alice'),
-      BotAccount(userName: 'Bob'),
-      BotAccount(userName: 'Carol'),
-      BotAccount(userName: 'Dave'),
-      BotAccount(userName: 'Eve'),
-      BotAccount(userName: 'Frank'),
+      BotAccount(accountName: 'Alice'),
+      BotAccount(accountName: 'Bob'),
+      BotAccount(accountName: 'Carol'),
+      BotAccount(accountName: 'Dave'),
+      BotAccount(accountName: 'Eve'),
+      BotAccount(accountName: 'Frank'),
     ];
 
     final now = DateTime.now();
@@ -68,8 +68,8 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
       final minutesAgo = (index + 1) * 7;
 
       return Post(
-        authorName: user.userName,
-        authorUuid: user.userUUID,
+        authorName: user.accountName,
+        authorUuid: user.accountUUID,
         content: bodies[index],
         replyCount: 20 + index % 4,
         likeCount: (index * 3) % 50,
