@@ -30,7 +30,6 @@ class TimelineNotifier extends AsyncNotifier<Timeline> {
     if (timeline == null) return;
     timeline.addPost(post);
     state = AsyncValue.data(timeline);
-    timeline.savePost();
   }
 }
 

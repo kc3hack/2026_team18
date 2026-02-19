@@ -40,6 +40,31 @@ class Account {
     }
 
     String get accountUUID => _accountUUID;
+
+    Map<String, dynamic> toMap() {
+        return {
+            'account_uuid': accountUUID,
+            'account_name': accountName,
+            'account_id': accountID,
+            'account_type': this is UserAccount ? 0 : 1,
+        };
+    }
+
+    factory Account.fromMap(Map<String, dynamic> map) {
+        if (map['account_type'] == 0) {
+            return UserAccount(
+                accountName: map['account_name'],
+                accountID: map['account_id'],
+                accountUUID: map['account_uuid'],
+            );
+        } else {
+            return BotAccount(
+                accountName: map['account_name'],
+                accountID: map['account_id'],
+                accountUUID: map['account_uuid'],
+            );
+        }
+    }
 }
 
 class UserAccount extends Account {

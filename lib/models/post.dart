@@ -9,10 +9,11 @@ class Post {
 
 // private member
     final DateTime _postDate;
+    final String _postUUID;
     String _authorName;
-    final String _authorUuid;
+    final String _authorUUID;
     final String _content;
-    final String _parentPostUuid;
+    final String _parentPostUUID;
 
     int _replyCount;
     int _likeCount;
@@ -25,10 +26,11 @@ class Post {
 // public method
     Post ({
         DateTime? postDate,
+        String? postUUID,
         String authorName = "",
-        String? authorUuid,
+        String? authorUUID,
         String content = "",
-        String parentPostUuid = "",
+        String parentPostUUID = "",
         int replyCount = 0,
         int likeCount = 0,
         int viewCount = 0,
@@ -36,10 +38,11 @@ class Post {
         bool isBookmark = false,
         String relativeTime = ""
     }) : _postDate    = postDate ?? DateTime.now(),
+        _postUUID     = postUUID ?? Uuid().v4(),
         _authorName   = authorName,
-        _authorUuid   = authorUuid ?? Uuid().v4(),
+        _authorUUID   = authorUUID ?? Uuid().v4(),
         _content      = content,
-        _parentPostUuid   = parentPostUuid,
+        _parentPostUUID   = parentPostUUID,
         _replyCount   = replyCount,
         _likeCount    = likeCount,
         _viewCount    = viewCount,
@@ -50,43 +53,43 @@ class Post {
         _formatRelativeTime();
     }
 
-    Post.fromJson(Map<String, dynamic> json) : 
-        _postDate       = DateTime.parse(json["postDate"]),
-        _authorName     = json["authorName"],
-        _authorUuid     = json["authorUuid"],
-        _content        = json["content"],
-        _parentPostUuid = json["parentPostUuid"],
-        _replyCount     = json["replyCount"],
-        _likeCount      = json["likeCount"],
-        _viewCount      = json["viewCount"],
-        _isLike         = json["isLike"],
-        _isBookmark     = json["isBookmark"],
-        _relativeTime   = json["relativeTime"]
-    {
-        _formatRelativeTime();
-    }
-
-    Map<String, dynamic> toJson() => {
-        "postDate"       : postDate,
-        "authorName"     : authorName,
-        "authorUuid"     : authorUuid,
-        "content"        : content,
-        "parentPostUuid" : parentPostUuid,
-        "replyCount"     : replyCount,
-        "likeCount"      : likeCount,
-        "viewCount"      : viewCount,
-        "isLike"         : isLike,
-        "isBookmark"     : isBookmark,
-        "relativeTime"   : relativeTime,
+    Map<String, dynamic> toMap() => {
+        "post_uuid"       : postUUID,
+        "author_uuid"     : authorUUID,
+        "post_date"       : postDate.millisecondsSinceEpoch,
+        "content"         : content,
+        "parent_post_uuid": parentPostUUID,
+        "reply_count"     : replyCount,
+        "like_count"      : likeCount,
+        "view_count"      : viewCount,
+        "is_like"         : isLike ? 1 : 0,
+        "is_bookmark"     : isBookmark ? 1 : 0,
     };
 
+    factory Post.fromMap(Map<String, dynamic> map) {
+        return Post(
+            postUUID       : map["post_uuid"],
+            postDate       : DateTime.fromMillisecondsSinceEpoch(map["post_date"]),
+            authorUUID     : map["author_uuid"],
+            content        : map["content"],
+            parentPostUUID : map["parent_post_uuid"],
+            replyCount     : map["reply_count"],
+            likeCount      : map["like_count"],
+            viewCount      : map["view_count"],
+            isLike         : map["is_like"] == 1,
+            isBookmark     : map["is_bookmark"] == 1,
+        );
+    }
+
     DateTime get postDate => _postDate;
+
+    String get postUUID => _postUUID;
 
     String get content => _content;
 
     String get relativeTime => _relativeTime;
 
-    String get authorUuid => _authorUuid;
+    String get authorUUID => _authorUUID;
 
     String get authorName => _authorName;
     set authorName(String name) {
@@ -120,10 +123,10 @@ class Post {
 		_viewCount = value;
 	}
 
-    String get parentPostUuid => _parentPostUuid;
-    set parentPostUuid(String uuid) {
-        if (parentPostUuid == "") {
-            parentPostUuid = uuid;
+    String get parentPostUUID => _parentPostUUID;
+    set parentPostUUID(String uuid) {
+        if (parentPostUUID == "") {
+            parentPostUUID = uuid;
         }
     } 
 
