@@ -16,7 +16,8 @@ class NewPostPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    final user = ref.watch(userAccountProvider).valueOrNull;
+    final userAsync = ref.watch(userAccountProvider);
+    final user = userAsync.value;
 
     final inputController = useTextEditingController();
     final characterRate = useState(0.0);
