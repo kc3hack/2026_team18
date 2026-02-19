@@ -159,33 +159,14 @@ class DatabaseHelper {
         );
     }
 
-    Future<Account?> getAccount(String uuid) async {
+    Future<List<Account>> getAllAccount() async {
         final db = await database;
         final List<Map<String, dynamic>> maps = await db.query(
             'accounts',
-            where: 'account_uuid = ?',
-            whereArgs: [uuid],
         );
+        
+        if (maps.isEmpty) return [];
 
-        if (maps.isEmpty) return null;
-
-        return Account.fromMap(maps.first);
+        return maps.map((m) => Account.fromMap(m)).toList();
     }
-
-    // Future<void> followUser(String followerUuid, String followeeUuid) async {
-    //     final db = await database;
-    //     await db.insert('follows', {
-    //         'follower_uuid': followerUuid,
-    //         'followee_uuid': followeeUuid,
-    //     });
-    // }
-
-    // Future<void> unfollowUser(String followerUuid, String followeeUuid) async {
-    //     final db = await database;
-    //     await db.delete(
-    //         'follows',
-    //         where: 'follower_uuid = ? AND followee_uuid = ?',
-    //         whereArgs: [followerUuid, followeeUuid],
-    //     );
-    // }    
 }

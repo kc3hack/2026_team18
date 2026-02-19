@@ -62,11 +62,11 @@ class Timeline {
     await _dbHelper.updateAuthorName(uuid, newName);
   }
 
-  Future<void> loadPost({int limit = 100, int offset = 0}) async {
-    final List<Post> dbPosts = await _dbHelper.getTimeline(
-      limit: limit,
-      offset: offset,
-    );
+    Future<void> loadPost({int limit = 40, int offset = 0}) async {
+        final List<Post> dbPosts = await _dbHelper.getTimeline(
+            limit: limit,
+            offset: offset,
+        );
 
     if (offset == 0) {
       _timeline.clear();
