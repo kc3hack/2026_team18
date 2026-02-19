@@ -69,7 +69,7 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
 
       return Post(
         authorName: user.accountName,
-        authorUuid: user.accountUUID,
+        authorUUID: user.accountUUID,
         content: bodies[index],
         replyCount: 20 + index % 4,
         likeCount: (index * 3) % 50,
