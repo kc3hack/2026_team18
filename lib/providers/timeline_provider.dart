@@ -11,18 +11,20 @@ import 'package:mikata/models/timeline.dart';
 class TimelineNotifier extends AsyncNotifier<Timeline> {
   @override
   FutureOr<Timeline> build() async {
-    final timeline = Timeline();
-    timeline.loadPost();
-    return timeline;
+    return refreshTimeline();
   }
 
   Future<void> fetchTimeline() async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final timeline = Timeline();
-      timeline.loadPost();
-      return timeline;
-    });
+    state = await AsyncValue.guard(() async => refreshTimeline());
+  }
+
+  Future<Timeline> refreshTimeline() async {
+    print(state);
+    final timeline = state.value ?? Timeline();
+    timeline.loadPost();
+    state = AsyncValue.data(timeline);
+    return timeline;
   }
 
   Future<void> addPost(Post post) async {
