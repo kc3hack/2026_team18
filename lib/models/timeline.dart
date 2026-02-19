@@ -1,76 +1,75 @@
-// Dart imports:
-import 'dart:convert';
-
-// Project imports:
-import 'package:mikata/models/file_utils.dart';
 import 'package:mikata/models/post.dart';
 import 'package:mikata/models/account.dart';
+import 'package:mikata/models/database_helper.dart';
 
 class Timeline {
-// public member
-
 // private member
     final List<Post> _timeline = [];
+    final DatabaseHelper _dbHelper = DatabaseHelper();
+    
+    static final Timeline _instance = Timeline._internal();
+    Timeline._internal();
+
 // public member
-    Timeline();
+    factory Timeline() => _instance;
 
     List<Post> get timeline => _timeline;
 
-    List<Post> getLikePost() {
-        return _timeline.where((i) => i.isLike).toList();
+    Future<List<Post>> getLikePost() async {
+        return await _dbHelper.getLikedPosts();
     }
 
-    List<Post> getBookmarkPost() {
-        return _timeline.where((i) => i.isBookmark).toList();
+    Future<List<Post>> getBookmarkPost() async {
+        return await _dbHelper.getBookmarkedPosts();
     }
 
-    List<Post> getPostByAccountUUID(String uuid) {
-        return _timeline.where((i) => i.authorUuid == uuid).toList();
+    Future<List<Post>> getPostByAccountUUID(String uuid) async {
+        return await _dbHelper.getPostsByAuthor(uuid);
     }
 
-    List<Post> getPostByAccount(Account account) {
-        return getPostByAccountUUID(account.accountUUID);
+    Future<List<Post>> getPostByAccount(Account account) async {
+        return await getPostByAccountUUID(account.accountUUID);
     }
 
-    List<Post> getReplyPostByParentPostUUID(String uuid) {
-        return _timeline.where((i) => i.parentPostUuid == uuid).toList();
+    Future<List<Post>> getReplyPostByParentPostUUID(String uuid) async {
+        return await _dbHelper.getReplies(uuid);
     }
 
-    List<Post> getReplyPostByParentPost(Post post) {
-        return getReplyPostByParentPostUUID(post.parentPostUuid);
+    Future<List<Post>> getReplyPostByParentPost(Post post) async {
+        return await getReplyPostByParentPostUUID(post.postUUID);
     }
 
-    void addPost(Post post) {
-        _timeline.add(post);
+    Future<void> addPost(Post post) async {
+        _timeline.insert(0, post);
+        await _dbHelper.insertPost(post);
     }
 
-    void removePost(Post post) {
-        _timeline.remove(post);
+    Future<void> removePost(Post post) async {
+        _timeline.removeWhere((p) => p.postUUID == post.postUUID);
+        await _dbHelper.deletePost(post.postUUID);
     }
 
-    void replyPost(Post reply, String parentUUID) {
-        reply.parentPostUuid = parentUUID;
-        addPost(reply);
+    Future<void> replyPost(Post reply, String parentUUID) async {
+        reply.parentPostUUID = parentUUID;
+        await addPost(reply);
     }
 
-    void updateAuthorName(String uuid, String newName) {
-        for (Post i in getPostByAccountUUID(uuid)) {
-            i.authorName = newName;
+    Future<void> updateAuthorName(String uuid, String newName) async {
+        for (var post in _timeline.where((p) => p.authorUUID == uuid)) {
+            post.authorName = newName;
         }
+        await _dbHelper.updateAuthorName(uuid, newName);
     }
-// private member
-    void loadPost() async {
-        String? json = await FileIO().loadTextFile("post.json");
-        if (json == null) return;
-        List<dynamic> decodedList = jsonDecode(json);
-        for (var i in decodedList.map((item) => Post.fromJson(item)).toList()) {
-            _timeline.add(i);
+
+    Future<void> loadPost({int limit = 100, int offset = 0}) async {
+        final List<Post> dbPosts = await _dbHelper.getTimeline(
+            limit: limit,
+            offset: offset,
+        );
+
+        if (offset == 0) {
+            _timeline.clear();
         }
-
-    }
-
-    void savePost() async {
-        final String content = jsonEncode([for(Post i in _timeline) i.toJson()]);
-        await FileIO().saveFileAsString("post.json", content);
+        _timeline.addAll(dbPosts);
     }
 }
