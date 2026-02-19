@@ -22,15 +22,15 @@ class ChatPage extends HookConsumerWidget {
     // ダミーメッセージデータ
     final List<DirectMessage> dummyMessages = [
       DirectMessage(
+        botUUID: targetAccount?.accountUUID ?? "test",
         accountName: title,
-        accountID: targetAccount?.accountID ?? "bot",
         accountUUID: "uuid_bot",
         content: "こんにちは、$title です。今日はどんな気分ですか？",
         dateTime: DateTime.now().subtract(const Duration(minutes: 30)),
       ),
       DirectMessage(
+        botUUID: targetAccount?.accountUUID ?? "test",
         accountName: "Me",
-        accountID: "my_id",
         accountUUID: "my_uuid",
         content: "少し話を聞いてほしいです。",
         dateTime: DateTime.now().subtract(const Duration(minutes: 5)),
@@ -50,7 +50,7 @@ class ChatPage extends HookConsumerWidget {
               itemCount: reversedMessages.length,
               itemBuilder: (context, index) {
                 final message = reversedMessages[index];
-                final isMe = message.accountID == "my_id";
+                final isMe = message.accountUUID == "my_uuid";
                 return _MessageBubble(message: message, isMe: isMe);
               },
             ),
