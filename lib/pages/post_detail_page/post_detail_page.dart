@@ -58,7 +58,7 @@ class PostDetailPage extends HookConsumerWidget {
           final replyIndex = index - 1;
           return PostBox(
             post: Post(
-              authorUuid: "post_$replyIndex",
+              authorUUID: "post_$replyIndex",
               authorName: "ユーザー$replyIndex",
               content: "これは投稿の内容です。投稿番号: $replyIndex",
               likeCount: replyIndex * 5,
