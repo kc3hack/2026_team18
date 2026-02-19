@@ -2,9 +2,9 @@
 import 'dart:convert';
 
 // Project imports:
+import 'package:mikata/models/account.dart';
 import 'package:mikata/models/file_utils.dart';
 import 'package:mikata/models/post.dart';
-import 'package:mikata/models/account.dart';
 
 class Timeline {
 // public member
