@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -9,11 +10,14 @@ import 'package:intl/intl.dart';
 import 'package:mikata/models/post.dart';
 import 'package:mikata/pages/home_page/widgets/post_box.dart';
 import 'package:mikata/pages/post_detail_page/widgets/mini_icon_button.dart';
+import 'package:mikata/providers/timeline_provider.dart';
+import 'package:mikata/providers/user_account_provider.dart';
 import 'package:mikata/widgets/custom_appbar.dart';
 
 part 'widgets/post_account_header.dart';
 part 'widgets/post_content.dart';
 part 'widgets/post_interaction_buttons.dart';
+part 'widgets/reply_sheet.dart';
 
 class PostDetailPage extends HookConsumerWidget {
   const PostDetailPage({super.key, required this.post});
@@ -64,25 +68,7 @@ class PostDetailPage extends HookConsumerWidget {
           );
         },
       ),
-      bottomSheet: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: Colors.grey.shade300)),
-          color: colorScheme.surface,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(hintText: "返信を入力"),
-                maxLines: 1,
-              ),
-            ),
-
-            OutlinedButton(onPressed: () {}, child: Text("返信")),
-          ],
-        ),
-      ),
+      bottomSheet: ReplySheet(parentPostUUID: post.postUUID),
     );
   }
 }
