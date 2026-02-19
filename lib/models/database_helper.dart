@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 // Project imports:
 import 'package:mikata/models/account.dart';
 import 'package:mikata/models/post.dart';
+import 'package:mikata/models/file_utils.dart';
 
 class DatabaseHelper {
     static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -21,7 +22,7 @@ class DatabaseHelper {
     }
 
     Future<Database> _initDatabase() async {
-        String path = join(await getDatabasesPath(), 'database.db');
+        String path = join(await FileIO().loacalPath, 'database.db');
     
         return await openDatabase(
             path,

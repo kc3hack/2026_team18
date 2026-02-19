@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mikata/models/timeline.dart';
 
 // Project imports:
 import 'package:mikata/providers/router_provider.dart';
@@ -11,8 +10,17 @@ import 'package:mikata/providers/theme_provider.dart';
 
 import 'package:mikata/models/database_helper.dart';
 import 'package:mikata/models/account_manager.dart';
+import 'package:mikata/models/timeline.dart';
+
+import 'dart:io';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 Future<void> init() async {
+  databaseFactory = databaseFactoryFfi;
+  if (Platform.isWindows || Platform.isLinux) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+  }
   DatabaseHelper dbHelper = DatabaseHelper();
   await dbHelper.database;
 
