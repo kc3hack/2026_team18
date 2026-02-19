@@ -28,8 +28,6 @@ class PostDetailPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final replyListCount = post.replyCount;
 
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
       appBar: CustomAppbar(title: const Text("投稿の詳細")),
       body: ListView.separated(
