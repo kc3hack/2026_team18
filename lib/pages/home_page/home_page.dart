@@ -15,8 +15,8 @@ class HomePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final timelineAsync = ref.watch(timelineProvider);
-    final timelineAsync = ref.watch(postsProvider);
+    final timelineAsync = ref.watch(timelineProvider);
+    // final timelineAsync = ref.watch(postsProvider);
 
     return Scaffold(
       appBar: CustomAppbar(title: const Text("Home")),
@@ -26,16 +26,16 @@ class HomePage extends HookConsumerWidget {
         },
         child: timelineAsync.when(
           data: (timeline) => ListView.separated(
-            // itemCount: timeline.timeline.length,
-            // itemBuilder: (context, index) {
-            //   final post = timeline.timeline[index];
-            //   return PostBox(post: post);
-            // },
-            itemCount: timeline.length,
+            itemCount: timeline.timeline.length,
             itemBuilder: (context, index) {
-              final post = timeline[index];
+              final post = timeline.timeline[index];
               return PostBox(post: post);
             },
+            // itemCount: timeline.length,
+            // itemBuilder: (context, index) {
+            //   final post = timeline[index];
+            //   return PostBox(post: post);
+            // },
             separatorBuilder: (context, index) {
               return const Divider(height: 1);
             },
