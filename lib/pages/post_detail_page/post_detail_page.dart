@@ -68,7 +68,7 @@ class PostDetailPage extends HookConsumerWidget {
           );
         },
       ),
-      bottomSheet: ReplySheet(parentPostId: ""), // TODO: 親投稿のIDを渡す
+      bottomSheet: ReplySheet(parentPostUuid: "test"), // TODO: 親投稿のIDを渡す
     );
   }
 }

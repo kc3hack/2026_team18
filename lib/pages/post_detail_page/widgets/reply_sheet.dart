@@ -1,9 +1,9 @@
 part of '../post_detail_page.dart';
 
 class ReplySheet extends HookConsumerWidget {
-  const ReplySheet({super.key, required this.parentPostId});
+  const ReplySheet({super.key, required this.parentPostUuid});
 
-  final String parentPostId;
+  final String parentPostUuid;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -11,6 +11,7 @@ class ReplySheet extends HookConsumerWidget {
     final user = ref.watch(userAccountProvider);
 
     final inputController = useTextEditingController();
+    final focusNode = useFocusNode();
 
     return Container(
       padding: const EdgeInsets.all(8),
@@ -23,6 +24,7 @@ class ReplySheet extends HookConsumerWidget {
           Expanded(
             child: TextField(
               controller: inputController,
+              focusNode: focusNode,
               decoration: InputDecoration(hintText: "返信を入力"),
               maxLines: 1,
             ),
@@ -39,9 +41,12 @@ class ReplySheet extends HookConsumerWidget {
                           authorUuid: user.value!.accountID,
                           content: inputController.text,
                           postDate: DateTime.now(),
+                          parentPostUuid: parentPostUuid
                         ),
                       )
                       ..fetchTimeline();
+                    inputController.clear();
+                    focusNode.unfocus();
                   },
             child: Text("返信"),
           ),
