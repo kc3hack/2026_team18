@@ -37,10 +37,9 @@ class PostBox extends HookConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Wrap(
+                  Row(
                     spacing: 4,
-                    runSpacing: 0,
-                    crossAxisAlignment: WrapCrossAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         post.authorName,

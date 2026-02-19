@@ -13,7 +13,7 @@ class Timeline {
 // public member
     factory Timeline() => _instance;
 
-    List<Post> get timeline => _timeline;
+  List<Post> get timeline => _timeline;
 
     Future<List<Post>> getLikePost() async {
         return await _dbHelper.getLikedPosts();

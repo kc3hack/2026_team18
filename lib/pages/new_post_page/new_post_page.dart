@@ -9,12 +9,15 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 // Project imports:
 import 'package:mikata/models/post.dart';
 import 'package:mikata/providers/timeline_provider.dart';
+import 'package:mikata/providers/user_account_provider.dart';
 
 class NewPostPage extends HookConsumerWidget {
   const NewPostPage({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final userAsync = ref.watch(userAccountProvider);
+    final user = userAsync.value;
 
     final inputController = useTextEditingController();
     final characterRate = useState(0.0);
@@ -36,16 +39,20 @@ class NewPostPage extends HookConsumerWidget {
       appBar: AppBar(
         actions: [
           FilledButton(
-            onPressed: () async {
-              final newPost = Post(
-                authorName: "ユーザー名",
-                authorUUID: "ユーザーUUID",
-                content: inputController.text,
-                postDate: DateTime.now(),
-              );
-              await ref.read(timelineProvider.notifier).addPost(newPost);
-              context.pop();
-            },
+            onPressed: (user == null)
+                ? null
+                : () async {
+                    final newPost = Post(
+                      authorName: user.accountName,
+                      authorUuid: user.accountUUID,
+                      content: inputController.text,
+                      postDate: DateTime.now(),
+                    );
+                    await ref.read(timelineProvider.notifier).addPost(newPost);
+                    if (context.mounted) {
+                      context.pop();
+                    }
+                  },
             child: Text("投稿する"),
           ),
           SizedBox(width: 8),
@@ -84,6 +91,13 @@ class NewPostPage extends HookConsumerWidget {
           children: [
             IconButton(onPressed: () {}, icon: Icon(Icons.image)),
             Spacer(),
+            if (user == null) ...[
+              Text(
+                '投稿するにはログインしてください',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(width: 8),
+            ],
             SizedBox.square(
               dimension: 28,
               child: CircularProgressIndicator(

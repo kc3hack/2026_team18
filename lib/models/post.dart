@@ -95,6 +95,8 @@ class Post {
     set authorName(String name) {
         if (name.isNotEmpty) _authorName = name;
     }
+    _viewCount = value;
+  }
 
 	int get replyCount => _replyCount;
 	set replyCount(int value) {
