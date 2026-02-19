@@ -22,7 +22,7 @@ class DatabaseHelper {
     }
 
     Future<Database> _initDatabase() async {
-        String path = join(await FileIO().loacalPath, 'database.db');
+        String path = join(await FileIO().localPath, 'database.db');
     
         return await openDatabase(
             path,
