@@ -34,10 +34,18 @@ class Account {
 
     String get accountName => _accountName;
 
-    void changeAccountName(String newName, Timeline timeline) {
+    void changeAccountName(String newName) {
+        final Timeline timeline = Timeline();
         if (newName.isEmpty) return;
         _accountName = newName;
         timeline.updateAuthorName(accountUUID, newName); 
+    }
+
+    void changeAccountID(String newID) {
+        if (newID.length == 8) {
+            _accountID = newID;
+        }
+        _dbHelper.updateAccountID(accountUUID, _accountID);
     }
 
     String get accountID => _accountID;

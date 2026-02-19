@@ -132,6 +132,16 @@ class DatabaseHelper {
         );
     }
 
+    Future<void> updateAccountID(String uuid, String newID) async {
+        final db = await database;
+        await db.update(
+            'accounts',
+            {'account_id': newID},
+            where: 'account_uuid = ?',
+            whereArgs: [uuid],
+        );
+    }
+
     Future<List<Post>> getTimeline({int limit = 40, int offset = 0}) async {
         final db = await database;
 
