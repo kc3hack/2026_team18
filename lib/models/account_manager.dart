@@ -6,52 +6,56 @@ class AccountManager {
 // public member
 // private member
     static final AccountManager _instance = AccountManager._internal();
-    final List<Account> _userList = [];
+    final List<Account> _accountList = [];
     final DatabaseHelper _dbHelper = DatabaseHelper();
 
 // public method
     factory AccountManager() => _instance;
 
-    List<Account> get userList => _userList;
+    List<Account> get userList => _accountList;
 
     void addAccount(Account account) {
-        _userList.add(account);
+        _accountList.add(account);
     }
 
     void removeAccount(Account account) {
-        _userList.remove(account);
+        _accountList.remove(account);
     }
 
     List<Account> getAllAccount() {
-        return _userList;
+        return _accountList;
     }
 
     UserAccount? getUserAccount() {
         try {
-            return _userList.whereType<UserAccount>().first;
+            return _accountList.whereType<UserAccount>().first;
         } catch (e) {
             return null;
         }
     }
 
     List<BotAccount> getBotAccount() {
-        return _userList.whereType<BotAccount>().toList();
+        return _accountList.whereType<BotAccount>().toList();
     }
 
     List<Account> getAccountByAccountName(String name) {
-        return _userList.where((i) => i.accountName == name).toList();
+        return _accountList.where((i) => i.accountName == name).toList();
     }
 
     List<Account> getAccountByAccountID(String id) {
-        return _userList.where((i) => i.accountID == id).toList();
+        return _accountList.where((i) => i.accountID == id).toList();
     }
 
-    List<Account> getAccountByAccountUUID(String uuid) {
-        return _userList.where((i) => i.accountUUID == uuid).toList();
+    Account? getAccountByAccountUUID(String uuid) {
+        for (Account i in _accountList) {
+            if (i.accountUUID == uuid) return i;
+        }
+
+        return null;
     }
 
     Account? getAuthorAccountByPost(Post post) {
-        final results = _userList.where((i) => i.accountUUID == post.authorUUID);
+        final results = _accountList.where((i) => i.accountUUID == post.authorUUID);
         return results.isNotEmpty ? results.first : null;
     }
     
@@ -61,7 +65,7 @@ class AccountManager {
     Future<void> loadAccounts() async {
         List<Account> accounts = await _dbHelper.getAllAccount();
         for (Account i in accounts) {
-            _userList.add(i);
+            _accountList.add(i);
         }
     }
 }
