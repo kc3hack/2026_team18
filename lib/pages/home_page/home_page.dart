@@ -55,11 +55,14 @@ class HomePage extends HookConsumerWidget {
                 }
 
                 final myPosts = snapshot.data ?? const <Post>[];
+                final noParentPosts = myPosts
+                    .where((post) => post.parentPostUUID.isEmpty)
+                    .toList();
 
                 return ListView.separated(
-                  itemCount: myPosts.length,
+                  itemCount: noParentPosts.length,
                   itemBuilder: (context, index) {
-                    final post = myPosts[index];
+                    final post = noParentPosts[index];
                     return PostBox(post: post);
                   },
                   separatorBuilder: (context, index) {

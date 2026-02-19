@@ -26,7 +26,7 @@ class PostDetailPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final replyListCount = post.replyCount;
+    // final replyListCount = post.replyCount;
     final timelineAsync = ref.watch(timelineProvider);
     final List<Post> replyList = timelineAsync.maybeWhen(
       data: (timeline) => timeline.timeline
@@ -38,7 +38,7 @@ class PostDetailPage extends HookConsumerWidget {
     return Scaffold(
       appBar: CustomAppbar(title: const Text("投稿の詳細")),
       body: ListView.separated(
-        itemCount: 1 + replyListCount,
+        itemCount: 1 + replyList.length,
         separatorBuilder: (context, index) {
           return const Divider(height: 24);
         },

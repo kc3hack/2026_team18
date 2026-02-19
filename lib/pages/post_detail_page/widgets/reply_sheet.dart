@@ -38,7 +38,7 @@ class ReplySheet extends HookConsumerWidget {
                       ..addPost(
                         Post(
                           authorName: user.value!.accountName,
-                          authorUUID: user.value!.accountID,
+                          authorUUID: user.value!.accountUUID,
                           content: inputController.text,
                           postDate: DateTime.now(),
                           parentPostUUID: parentPostUUID,

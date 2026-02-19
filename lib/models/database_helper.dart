@@ -7,31 +7,27 @@ import 'package:mikata/models/account.dart';
 import 'package:mikata/models/post.dart';
 
 class DatabaseHelper {
-    static final DatabaseHelper _instance = DatabaseHelper._internal();
-    static Database? _database;
+  static final DatabaseHelper _instance = DatabaseHelper._internal();
+  static Database? _database;
 
-    DatabaseHelper._internal();
+  DatabaseHelper._internal();
 
-    factory DatabaseHelper() => _instance;
+  factory DatabaseHelper() => _instance;
 
-    Future<Database> get database async {
-        if (_database != null) return _database!;
-        _database = await _initDatabase();
-        return _database!;
-    }
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
+    return _database!;
+  }
 
-    Future<Database> _initDatabase() async {
-        String path = join(await getDatabasesPath(), 'database.db');
-    
-        return await openDatabase(
-            path,
-            version: 1,
-            onCreate: _onCreate,
-        );
-    }
+  Future<Database> _initDatabase() async {
+    String path = join(await getDatabasesPath(), 'database.db');
 
-    Future<void> _onCreate(Database db, int version) async {
-        await db.execute('''
+    return await openDatabase(path, version: 1, onCreate: _onCreate);
+  }
+
+  Future<void> _onCreate(Database db, int version) async {
+    await db.execute('''
             CREATE TABLE accounts (
                 account_uuid TEXT PRIMARY KEY,
                 account_name TEXT,
@@ -40,7 +36,7 @@ class DatabaseHelper {
             )
         ''');
 
-        await db.execute('''
+    await db.execute('''
             CREATE TABLE posts (
                 post_uuid TEXT PRIMARY KEY,
                 author_uuid TEXT,
@@ -56,7 +52,7 @@ class DatabaseHelper {
             )
         ''');
 
-        await db.execute('''
+    await db.execute('''
             CREATE TABLE follows (
                 follower_uuid TEXT,
                 followee_uuid TEXT,
@@ -66,7 +62,7 @@ class DatabaseHelper {
           )
         ''');
 
-        await db.execute('''
+    await db.execute('''
             CREATE TABLE direct_messages (
                 dm_uuid TEXT PRIMARY KEY,
                 from_account_uuid TEXT,
@@ -78,62 +74,72 @@ class DatabaseHelper {
             )
         ''');
 
-        await db.execute('CREATE INDEX idx_post_date ON posts (post_date DESC)');
-    }
+    await db.execute('CREATE INDEX idx_post_date ON posts (post_date DESC)');
+  }
 
-    Future<void> insertPost(Post post) async {
-        final db = await database;
-        await db.insert(
-            'posts',
-            post.toMap(),
-            conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-    }
+  Future<void> insertPost(Post post) async {
+    final db = await database;
+    await db.insert(
+      'posts',
+      post.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
 
-    Future<void> deletePost(String postUuid) async {
-        final db = await database;
-        await db.delete(
-            'posts',
-            where: 'post_uuid = ?',
-            whereArgs: [postUuid],
-        );
-    }
+  Future<void> deletePost(String postUuid) async {
+    final db = await database;
+    await db.delete('posts', where: 'post_uuid = ?', whereArgs: [postUuid]);
+  }
 
-    Future<List<Post>> _getPostsFiltered(String whereClause, List<dynamic> whereArgs) async {
-        final db = await database;
-        final List<Map<String, dynamic>> maps = await db.query(
-            'posts',
-            where: whereClause,
-            whereArgs: whereArgs,
-            orderBy: 'post_date DESC',
-        );
-        return maps.map((m) => Post.fromMap(m)).toList();
-    }
+  Future<List<Post>> _getPostsFiltered(
+    String whereClause,
+    List<dynamic> whereArgs,
+  ) async {
+    final db = await database;
 
-    Future<List<Post>> getLikedPosts() => _getPostsFiltered('is_like = ?', [1]);
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+            SELECT
+                p.*,
+                a.account_name AS author_name
+            FROM posts p
+            LEFT JOIN accounts a ON p.author_uuid = a.account_uuid
+            WHERE $whereClause
+            ORDER BY p.post_date DESC
+        ''', whereArgs);
 
-    Future<List<Post>> getBookmarkedPosts() => _getPostsFiltered('is_bookmark = ?', [1]);
+    return maps.map((m) {
+      final post = Post.fromMap(m);
+      post.authorName = m['author_name'] ?? 'Unknown';
+      return post;
+    }).toList();
+  }
 
-    Future<List<Post>> getPostsByAuthor(String authorUUID) => 
-    _getPostsFiltered('author_uuid = ?', [authorUUID]);
+  Future<List<Post>> getLikedPosts() => _getPostsFiltered('p.is_like = ?', [1]);
 
-    Future<List<Post>> getReplies(String parentPostUUID) => 
-        _getPostsFiltered('parent_post_uuid = ?', [parentPostUUID]);
+  Future<List<Post>> getBookmarkedPosts() =>
+      _getPostsFiltered('p.is_bookmark = ?', [1]);
 
-    Future<void> updateAuthorName(String accountUuid, String newName) async {
-        final db = await database;
-        await db.update(
-            'accounts',
-            {'account_name': newName},
-            where: 'account_uuid = ?',
-            whereArgs: [accountUuid],
-        );
-    }
+  Future<List<Post>> getPostsByAuthor(String authorUUID) =>
+      _getPostsFiltered('p.author_uuid = ?', [authorUUID]);
 
-    Future<List<Post>> getTimeline({int limit = 40, int offset = 0}) async {
-        final db = await database;
+  Future<List<Post>> getReplies(String parentPostUUID) =>
+      _getPostsFiltered('p.parent_post_uuid = ?', [parentPostUUID]);
 
-        final List<Map<String, dynamic>> maps = await db.rawQuery('''
+  Future<void> updateAuthorName(String accountUuid, String newName) async {
+    final db = await database;
+    await db.update(
+      'accounts',
+      {'account_name': newName},
+      where: 'account_uuid = ?',
+      whereArgs: [accountUuid],
+    );
+  }
+
+  Future<List<Post>> getTimeline({int limit = 40, int offset = 0}) async {
+    final db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      '''
             SELECT 
                 p.*, 
                 a.account_name AS author_name 
@@ -141,51 +147,53 @@ class DatabaseHelper {
             LEFT JOIN accounts a ON p.author_uuid = a.account_uuid
             ORDER BY p.post_date DESC
             LIMIT ? OFFSET ?
-        ''', [limit, offset]);
+        ''',
+      [limit, offset],
+    );
 
-        return maps.map((m) {
-            var post = Post.fromMap(m);
-            post.authorName = m['author_name'] ?? 'Unknown';
-            return post;
-        }).toList();
-    }
+    return maps.map((m) {
+      var post = Post.fromMap(m);
+      post.authorName = m['author_name'] ?? 'Unknown';
+      return post;
+    }).toList();
+  }
 
-    Future<void> insertAccount(Account account) async {
-        final db = await database;
-        await db.insert(
-            'accounts',
-            account.toMap(),
-            conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-    }
+  Future<void> insertAccount(Account account) async {
+    final db = await database;
+    await db.insert(
+      'accounts',
+      account.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
 
-    Future<Account?> getAccount(String uuid) async {
-        final db = await database;
-        final List<Map<String, dynamic>> maps = await db.query(
-            'accounts',
-            where: 'account_uuid = ?',
-            whereArgs: [uuid],
-        );
+  Future<Account?> getAccount(String uuid) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'accounts',
+      where: 'account_uuid = ?',
+      whereArgs: [uuid],
+    );
 
-        if (maps.isEmpty) return null;
+    if (maps.isEmpty) return null;
 
-        return Account.fromMap(maps.first);
-    }
+    return Account.fromMap(maps.first);
+  }
 
-    // Future<void> followUser(String followerUuid, String followeeUuid) async {
-    //     final db = await database;
-    //     await db.insert('follows', {
-    //         'follower_uuid': followerUuid,
-    //         'followee_uuid': followeeUuid,
-    //     });
-    // }
+  // Future<void> followUser(String followerUuid, String followeeUuid) async {
+  //     final db = await database;
+  //     await db.insert('follows', {
+  //         'follower_uuid': followerUuid,
+  //         'followee_uuid': followeeUuid,
+  //     });
+  // }
 
-    // Future<void> unfollowUser(String followerUuid, String followeeUuid) async {
-    //     final db = await database;
-    //     await db.delete(
-    //         'follows',
-    //         where: 'follower_uuid = ? AND followee_uuid = ?',
-    //         whereArgs: [followerUuid, followeeUuid],
-    //     );
-    // }    
+  // Future<void> unfollowUser(String followerUuid, String followeeUuid) async {
+  //     final db = await database;
+  //     await db.delete(
+  //         'follows',
+  //         where: 'follower_uuid = ? AND followee_uuid = ?',
+  //         whereArgs: [followerUuid, followeeUuid],
+  //     );
+  // }
 }
