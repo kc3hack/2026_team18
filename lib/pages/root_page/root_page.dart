@@ -19,10 +19,12 @@ class RootPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: navigationShell,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push(RoutePath.newPost.path),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: (navigationShell.currentIndex == 0)
+          ? FloatingActionButton(
+              onPressed: () => context.push(RoutePath.newPost.path),
+              child: const Icon(Icons.add),
+            )
+          : null,
       bottomNavigationBar: NavigationBar(
         destinations: [
           NavigationDestination(icon: const Icon(Icons.home), label: "Home"),
