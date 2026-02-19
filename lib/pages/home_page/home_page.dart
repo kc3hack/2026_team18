@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
-import 'package:mikata/models/account.dart';
 import 'package:mikata/models/post.dart';
 import 'package:mikata/pages/home_page/widgets/post_box.dart';
 import 'package:mikata/providers/router_provider.dart';
