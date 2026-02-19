@@ -6,6 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:mikata/models/account.dart';
 import 'package:mikata/models/post.dart';
 import 'package:mikata/models/file_utils.dart';
+import 'package:mikata/models/direct_message.dart';
 
 class DatabaseHelper {
     static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -70,12 +71,12 @@ class DatabaseHelper {
         await db.execute('''
             CREATE TABLE direct_messages (
                 dm_uuid TEXT PRIMARY KEY,
+                bot_uuid TEXT, -- 追加：DM相手のBot UUID
                 from_account_uuid TEXT,
-                to_account_uuid TEXT,
                 content TEXT,
                 date_time INTEGER,
+                FOREIGN KEY (bot_uuid) REFERENCES accounts (account_uuid) ON DELETE CASCADE,
                 FOREIGN KEY (from_account_uuid) REFERENCES accounts (account_uuid) ON DELETE CASCADE,
-                FOREIGN KEY (to_account_uuid) REFERENCES accounts (account_uuid) ON DELETE CASCADE
             )
         ''');
 
@@ -169,5 +170,39 @@ class DatabaseHelper {
         if (maps.isEmpty) return [];
 
         return maps.map((m) => Account.fromMap(m)).toList();
+    }
+
+    Future<void> insertDirectMessage(DirectMessage dm) async {
+        final db = await database;
+        await db.insert(
+            'direct_messages',
+            dm.toMap(),
+            conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+    }
+
+    Future<void> deleteDirectMessage(String dmUuid) async {
+        final db = await database;
+        await db.delete(
+            'direct_messages',
+            where: 'dm_uuid = ?',
+            whereArgs: [dmUuid],
+        );
+    }
+
+    Future<List<DirectMessage>> getDirectMessagesByBotUUID(String botUuid) async {
+        final db = await database;
+        final List<Map<String, dynamic>> maps = await db.rawQuery('''
+            SELECT 
+                dm.*, 
+                a.account_name, 
+                a.account_id 
+            FROM direct_messages dm
+            LEFT JOIN accounts a ON dm.from_account_uuid = a.account_uuid
+            WHERE dm.bot_uuid = ?
+            ORDER BY dm.date_time ASC -- 古い順（チャット形式）
+        ''', [botUuid]);
+
+        return maps.map((m) => DirectMessage.fromMap(m)).toList();
     }
 }
