@@ -39,7 +39,7 @@ class NewPostPage extends HookConsumerWidget {
             onPressed: () async {
               final newPost = Post(
                 authorName: "ユーザー名",
-                authorUuid: "ユーザーUUID",
+                authorUUID: "ユーザーUUID",
                 content: inputController.text,
                 postDate: DateTime.now(),
               );
