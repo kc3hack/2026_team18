@@ -27,6 +27,13 @@ class PostDetailPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final replyListCount = post.replyCount;
+    final timelineAsync = ref.watch(timelineProvider);
+    final List<Post> replyList = timelineAsync.maybeWhen(
+      data: (timeline) => timeline.timeline
+          .where((p) => p.parentPostUUID == post.postUUID)
+          .toList(),
+      orElse: () => [],
+    );
 
     return Scaffold(
       appBar: CustomAppbar(title: const Text("投稿の詳細")),
@@ -54,16 +61,7 @@ class PostDetailPage extends HookConsumerWidget {
           }
 
           final replyIndex = index - 1;
-          return PostBox(
-            post: Post(
-              authorUUID: "post_$replyIndex",
-              authorName: "ユーザー$replyIndex",
-              content: "これは投稿の内容です。投稿番号: $replyIndex",
-              likeCount: replyIndex * 5,
-              replyCount: replyIndex * 2,
-              isBookmark: replyIndex % 2 == 0,
-            ),
-          );
+          return PostBox(post: replyList[replyIndex]);
         },
       ),
       bottomSheet: ReplySheet(parentPostUUID: post.postUUID),
