@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
 import 'package:mikata/pages/home_page/widgets/post_box.dart';
-import 'package:mikata/providers/posts_provider.dart';
 import 'package:mikata/providers/timeline_provider.dart';
 import 'package:mikata/widgets/custom_appbar.dart';
 
