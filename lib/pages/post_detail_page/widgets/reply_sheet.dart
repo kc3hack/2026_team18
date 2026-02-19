@@ -1,9 +1,9 @@
 part of '../post_detail_page.dart';
 
 class ReplySheet extends HookConsumerWidget {
-  const ReplySheet({super.key, required this.parentPostUuid});
+  const ReplySheet({super.key, required this.parentPostUUID});
 
-  final String parentPostUuid;
+  final String parentPostUUID;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,10 +38,10 @@ class ReplySheet extends HookConsumerWidget {
                       ..addPost(
                         Post(
                           authorName: user.value!.accountName,
-                          authorUuid: user.value!.accountID,
+                          authorUUID: user.value!.accountID,
                           content: inputController.text,
                           postDate: DateTime.now(),
-                          parentPostUuid: parentPostUuid
+                          parentPostUUID: parentPostUUID,
                         ),
                       )
                       ..fetchTimeline();

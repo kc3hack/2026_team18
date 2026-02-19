@@ -1,5 +1,8 @@
-import 'package:sqflite/sqflite.dart';
+// Package imports:
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+
+// Project imports:
 import 'package:mikata/models/account.dart';
 import 'package:mikata/models/post.dart';
 
