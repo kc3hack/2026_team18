@@ -137,7 +137,7 @@ class BotAccount extends Account {
     Future<void> addDM(DirectMessage dm) async{
         _appendDM(dm);
         final prompt_ = '''
-            ロール: DMに対しての返事を返す
+            ロール: SNSのDMに対しての返事を返す
             $_prompt
             投稿 : ${dm.content}
             ''';

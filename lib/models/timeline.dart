@@ -51,7 +51,7 @@ class Timeline {
     List<BotAccount> replyBots = AccountManager().getReplyBotAccounts();
     for (BotAccount i in replyBots) {
         final prompt = '''
-            ロール: 投稿に対してTwitterのようなリプライを返す
+            ロール: SNS投稿に対してリプライを100字以内に返す
             ${i.prompt}
             投稿 : ${post.content}
             ''';
