@@ -33,6 +33,11 @@ Future<void> init({required String apiKey, required String model}) async {
 
   AccountManager accountManager = AccountManager();
   await accountManager.loadAccounts();
+
+  final list =  accountManager.getBotAccounts();
+  if (list.isEmpty) {
+    
+  }
 }
 
 void main() async {
