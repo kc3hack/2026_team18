@@ -36,15 +36,15 @@ class RootPage extends HookConsumerWidget {
             backgroundColor: Colors.transparent,
             destinations: [
               NavigationDestination(
-                icon: const Icon(Icons.home),
+                icon: const Icon(Icons.home_rounded),
                 label: "Home",
               ),
               NavigationDestination(
-                icon: const Icon(Icons.message),
+                icon: const Icon(Icons.message_rounded),
                 label: "Message",
               ),
               NavigationDestination(
-                icon: const Icon(Icons.account_circle),
+                icon: const Icon(Icons.account_circle_rounded),
                 label: "Account",
               ),
             ],
