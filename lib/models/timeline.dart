@@ -10,7 +10,7 @@ class Timeline {
   final List<Post> _timeline = [];
   final DatabaseHelper _dbHelper = DatabaseHelper();
 //   List<Post> Function()? apiCallback;
-  late final GeminiApi geminiApi;
+  late GeminiApi _geminiApi;
 
   static final Timeline _instance = Timeline._internal();
   Timeline._internal();
@@ -19,6 +19,8 @@ class Timeline {
   factory Timeline() => _instance;
 
   List<Post> get timeline => _timeline;
+
+  GeminiApi get geminiApi => _geminiApi;
 
   Future<List<Post>> getLikePost() async {
     return await _dbHelper.getLikedPosts();
@@ -77,20 +79,32 @@ class Timeline {
   }
 
   Future<void> loadPost({int limit = 40, int offset = 0}) async {
-        final List<Post> dbPosts = await _dbHelper.getTimeline(
-            limit: limit,
-            offset: offset,
-        );
+    final List<Post> dbPosts = await _dbHelper.getTimeline(
+        limit: limit,
+        offset: offset,
+    );
 
     if (offset == 0) {
-      _timeline.clear();
-    }
-    _timeline.addAll(dbPosts);
-  }
+        _timeline.clear();
+        _timeline.addAll(dbPosts);
+    } else {
+        final existingIds = _timeline.map((p) => p.postUUID).toSet();
 
-  void setGeminiAPI(GeminiApi geminiApi) {
+        final newPosts = dbPosts.where((p) => !existingIds.contains(p.postUUID)).toList();
+
+        _timeline.addAll(newPosts);
+    }
+
+    const int maxPostCount = 160;
+
+    if (timeline.length > maxPostCount) {
+        timeline.removeRange(0, timeline.length - maxPostCount);
+    }
+}
+
+void setGeminiAPI(GeminiApi geminiApi) {
     geminiApi = geminiApi;
-  }
+}
 
 //private method
   Future<void> _insertPost({required Post post, int insertPos = 0}) async {
