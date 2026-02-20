@@ -14,6 +14,7 @@ import 'package:mikata/models/database_helper.dart';
 import 'package:mikata/models/timeline.dart';
 import 'package:mikata/providers/router_provider.dart';
 import 'package:mikata/providers/theme_provider.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 Future<void> init({required String apiKey, required String model}) async {
   databaseFactory = databaseFactoryFfi;

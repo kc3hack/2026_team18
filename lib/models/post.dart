@@ -70,7 +70,7 @@ class Post {
     return Post(
       postUUID: map["post_uuid"],
       postDate: DateTime.fromMillisecondsSinceEpoch(map["post_date"]),
-      authorName: AccountManager().getAccountByAccountUUID(map["author_uuid"])!.accountName,
+      authorName: AccountManager().getAccountByAccountUUID(map["author_uuid"])?.accountName ?? "Unknown",
       authorUUID: map["author_uuid"],
       content: map["content"],
       parentPostUUID: map["parent_post_uuid"],
