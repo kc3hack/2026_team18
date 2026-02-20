@@ -15,8 +15,24 @@ import 'package:mikata/providers/database_provider.dart';
 import 'package:mikata/providers/gemini_provider.dart';
 
 class TimelineNotifier extends AsyncNotifier<Timeline> {
+  late final StreamController<Timeline> _timelineUpdates =
+      StreamController<Timeline>.broadcast(
+        onListen: () {
+          final timeline = state.value;
+          if (timeline != null && !_timelineUpdates.isClosed) {
+            _timelineUpdates.add(timeline);
+          }
+        },
+      );
+
+  Stream<Timeline> get timelineUpdates => _timelineUpdates.stream;
+
   @override
   FutureOr<Timeline> build() async {
+    ref.onDispose(() {
+      _timelineUpdates.close();
+    });
+
     await ref.watch(databaseReadyProvider.future);
     await ref.watch(accountManagerProvider.future);
 
@@ -28,6 +44,9 @@ class TimelineNotifier extends AsyncNotifier<Timeline> {
     }
 
     await timeline.loadPost();
+    if (!_timelineUpdates.isClosed) {
+      _timelineUpdates.add(timeline);
+    }
     return timeline;
   }
 
@@ -40,6 +59,9 @@ class TimelineNotifier extends AsyncNotifier<Timeline> {
     final timeline = state.value ?? Timeline();
     await timeline.loadPost();
     state = AsyncValue.data(timeline);
+    if (!_timelineUpdates.isClosed) {
+      _timelineUpdates.add(timeline);
+    }
     return timeline;
   }
 
@@ -48,6 +70,9 @@ class TimelineNotifier extends AsyncNotifier<Timeline> {
     try {
       await timeline.addPost(post);
       state = AsyncValue.data(timeline);
+      if (!_timelineUpdates.isClosed) {
+        _timelineUpdates.add(timeline);
+      }
     } catch (e) {
       debugPrint('Failed to add post: $e');
       rethrow;
@@ -59,6 +84,9 @@ class TimelineNotifier extends AsyncNotifier<Timeline> {
     try {
       await timeline.removePost(post);
       state = AsyncValue.data(timeline);
+      if (!_timelineUpdates.isClosed) {
+        _timelineUpdates.add(timeline);
+      }
     } catch (e) {
       debugPrint('Failed to remove post: $e');
       rethrow;
@@ -69,3 +97,9 @@ class TimelineNotifier extends AsyncNotifier<Timeline> {
 final timelineProvider = AsyncNotifierProvider<TimelineNotifier, Timeline>(
   TimelineNotifier.new,
 );
+
+/// Stream版: Timelineの最新状態が流れてくる（追加/削除/リフレッシュでemit）
+final timelineStreamProvider = StreamProvider<Timeline>((ref) {
+  final notifier = ref.watch(timelineProvider.notifier);
+  return notifier.timelineUpdates;
+});
