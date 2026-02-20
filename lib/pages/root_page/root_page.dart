@@ -4,7 +4,6 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:cuberto_bottom_bar/internal/internal.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

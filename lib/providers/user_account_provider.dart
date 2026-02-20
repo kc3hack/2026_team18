@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // Project imports:
 import 'package:mikata/models/account.dart';
-import 'package:mikata/models/account_manager.dart';
 import 'package:mikata/models/database_helper.dart';
 import 'package:mikata/providers/account_manager_provider.dart';
 import 'package:mikata/providers/database_provider.dart';
