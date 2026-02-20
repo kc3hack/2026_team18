@@ -1,4 +1,6 @@
 // Package imports:
+
+// Package imports:
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -42,7 +44,7 @@ class DatabaseHelper {
             )
         ''');
 
-        await db.execute('''
+    await db.execute('''
             CREATE TABLE posts (
                 post_uuid TEXT PRIMARY KEY,
                 author_uuid TEXT,
@@ -58,7 +60,7 @@ class DatabaseHelper {
             )
         ''');
 
-        await db.execute('''
+    await db.execute('''
             CREATE TABLE follows (
                 follower_uuid TEXT,
                 followee_uuid TEXT,
@@ -68,7 +70,7 @@ class DatabaseHelper {
           )
         ''');
 
-        await db.execute('''
+    await db.execute('''
             CREATE TABLE direct_messages (
                 dm_uuid TEXT PRIMARY KEY,
                 bot_uuid TEXT, -- 追加：DM相手のBot UUID

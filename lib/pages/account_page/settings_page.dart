@@ -14,7 +14,6 @@ class SettingsPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final aiSettingsAsync = ref.watch(aiSettingsProvider);
-    final themeNotifier = ref.read(themeDataProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(title: const Text("Settings")),
@@ -25,7 +24,10 @@ class SettingsPage extends HookConsumerWidget {
           return ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
-              Text("AI Environment Tuning", style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                "AI Environment Tuning",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 8),
               const Text(
                 "AIの性格パラメータを設定します。\n設定を変更するとアプリの雰囲気（テーマカラー）も変化します。",
@@ -42,7 +44,6 @@ class SettingsPage extends HookConsumerWidget {
                 icon: Icons.thumb_up_alt_rounded,
                 onChanged: (val) {
                   ref.read(aiSettingsProvider.notifier).updatePraise(val);
-                  _updateThemeMood(val, settings.criticism, themeNotifier);
                 },
               ),
 
@@ -67,7 +68,6 @@ class SettingsPage extends HookConsumerWidget {
                 icon: Icons.gavel_rounded,
                 onChanged: (val) {
                   ref.read(aiSettingsProvider.notifier).updateCriticism(val);
-                  _updateThemeMood(settings.praise, val, themeNotifier);
                 },
               ),
             ],
@@ -77,7 +77,11 @@ class SettingsPage extends HookConsumerWidget {
     );
   }
 
-  void _updateThemeMood(double praise, double criticism, ThemeNotifier notifier) {
+  void _updateThemeMood(
+    double praise,
+    double criticism,
+    ThemeNotifier notifier,
+  ) {
     final double moodScore = ((praise - criticism) / 100).clamp(-1.0, 1.0);
     notifier.updateColorSchemaValue(moodScore);
   }
@@ -112,7 +116,10 @@ class _ParameterSlider extends StatelessWidget {
             const SizedBox(width: 8),
             Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
             const Spacer(),
-            Text("${value.toInt()}%", style: TextStyle(fontWeight: FontWeight.bold, color: color)),
+            Text(
+              "${value.toInt()}%",
+              style: TextStyle(fontWeight: FontWeight.bold, color: color),
+            ),
           ],
         ),
         Text(description, style: Theme.of(context).textTheme.bodySmall),
