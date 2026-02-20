@@ -38,7 +38,6 @@ class PostBox extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    spacing: 4,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
@@ -49,8 +48,9 @@ class PostBox extends HookConsumerWidget {
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        softWrap: true,
+                        softWrap: false,
                       ),
+                      const SizedBox(width: 4),
                       Text(
                         "@userID・${post.relativeTime}",
                         style: textTheme.titleMedium?.copyWith(
@@ -58,7 +58,7 @@ class PostBox extends HookConsumerWidget {
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        softWrap: true,
+                        softWrap: false,
                       ),
                     ],
                   ),

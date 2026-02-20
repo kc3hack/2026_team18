@@ -9,7 +9,7 @@ class Timeline {
   // private member
   final List<Post> _timeline = [];
   final DatabaseHelper _dbHelper = DatabaseHelper();
-//   List<Post> Function()? apiCallback;
+  //   List<Post> Function()? apiCallback;
   late GeminiApi _geminiApi;
 
   static final Timeline _instance = Timeline._internal();
@@ -51,21 +51,22 @@ class Timeline {
     List<BotAccount> replyBots = AccountManager().getReplyBotAccounts();
     final List<Post> replyPosts = [];
     for (BotAccount i in replyBots) {
-        final prompt = '''
+      final prompt =
+          '''
             ロール: SNS投稿に対してリプライを100字以内に返す
             ${i.prompt}
             投稿 : ${post.content}
             ''';
-        final replyContent = "test";//await geminiApi.generateResponse(prompt);
-        if (replyContent == null) continue;
-        final replyPost = Post(
-            authorName: i.accountName,
-            authorUUID: i.accountUUID,
-            content: replyContent,
-        );
+      final replyContent = "test"; //await geminiApi.generateResponse(prompt);
+      if (replyContent == null) continue;
+      final replyPost = Post(
+        authorName: i.accountName,
+        authorUUID: i.accountUUID,
+        content: replyContent,
+      );
 
-        await this.replyPost(replyPost, post.authorUUID);
-        replyPosts.add(replyPost);
+      await this.replyPost(replyPost, post.authorUUID);
+      replyPosts.add(replyPost);
     }
 
     return replyPosts;
@@ -90,31 +91,33 @@ class Timeline {
 
   Future<void> loadPost({int limit = 40, int offset = 0}) async {
     final List<Post> dbPosts = await _dbHelper.getTimeline(
-        limit: limit,
-        offset: offset,
+      limit: limit,
+      offset: offset,
     );
 
     if (offset == 0) {
-        _timeline.clear();
-        _timeline.addAll(dbPosts);
+      _timeline.clear();
+      _timeline.addAll(dbPosts);
     } else {
-        final existingIds = _timeline.map((p) => p.postUUID).toSet();
+      final existingIds = _timeline.map((p) => p.postUUID).toSet();
 
-        final newPosts = dbPosts.where((p) => !existingIds.contains(p.postUUID)).toList();
+      final newPosts = dbPosts
+          .where((p) => !existingIds.contains(p.postUUID))
+          .toList();
 
-        _timeline.addAll(newPosts);
+      _timeline.addAll(newPosts);
     }
   }
 
-    void unloadPost({int limit = 40, int offset = 0}) {
-        timeline.removeRange(offset, offset + limit);
-    }
+  void unloadPost({int limit = 40, int offset = 0}) {
+    timeline.removeRange(offset, offset + limit);
+  }
 
-    void setGeminiAPI(GeminiApi geminiApi) {
-        geminiApi = geminiApi;
-    }
+  void setGeminiAPI(GeminiApi geminiApi) {
+    _geminiApi = geminiApi;
+  }
 
-//private method
+  //private method
   Future<void> _insertPost({required Post post, int insertPos = 0}) async {
     _timeline.insert(insertPos, post);
     await _dbHelper.insertPost(post);
