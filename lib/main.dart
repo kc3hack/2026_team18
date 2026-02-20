@@ -6,15 +6,15 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mikata/models/gemini_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 // Project imports:
 import 'package:mikata/models/account_manager.dart';
 import 'package:mikata/models/database_helper.dart';
+import 'package:mikata/models/gemini_api.dart';
 import 'package:mikata/models/timeline.dart';
 import 'package:mikata/providers/router_provider.dart';
 import 'package:mikata/providers/theme_provider.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 Future<void> init({required String apiKey, required String model}) async {
   databaseFactory = databaseFactoryFfi;
@@ -36,10 +36,11 @@ Future<void> init({required String apiKey, required String model}) async {
 }
 
 void main() async {
-  final scope = ProviderScope(child: MitakaApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
   await init(apiKey: "apiKey", model: "model");
 
-  runApp(scope);
+  runApp(ProviderScope(child: MitakaApp()));
 }
 
 class MitakaApp extends HookConsumerWidget {

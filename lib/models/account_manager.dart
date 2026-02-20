@@ -1,9 +1,11 @@
+// Dart imports:
+import 'dart:math';
+
 // Project imports:
 import 'package:mikata/models/account.dart';
 import 'package:mikata/models/database_helper.dart';
 import 'package:mikata/models/personality_parameters.dart';
 import 'package:mikata/models/post.dart';
-import 'dart:math';
 
 const int maxReplies = 15;
 
