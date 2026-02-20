@@ -70,6 +70,16 @@ class SettingsPage extends HookConsumerWidget {
                   ref.read(aiSettingsProvider.notifier).updateCriticism(val);
                 },
               ),
+              const Divider(height: 32),
+
+              ListTile(
+                title: const Text("ライセンス"),
+                leading: const Icon(Icons.info_outline_rounded),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LicensePage()),
+                ),
+              ),
             ],
           );
         },

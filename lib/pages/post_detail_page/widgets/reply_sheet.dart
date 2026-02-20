@@ -25,12 +25,15 @@ class ReplySheet extends HookConsumerWidget {
             child: TextField(
               controller: inputController,
               focusNode: focusNode,
-              decoration: InputDecoration(hintText: "返信を入力"),
+              decoration: InputDecoration(
+                hintText: "返信を入力",
+                border: InputBorder.none,
+              ),
               maxLines: 1,
             ),
           ),
 
-          OutlinedButton(
+          FilledButton(
             onPressed: (user.value == null)
                 ? null
                 : () {
