@@ -46,9 +46,10 @@ class Timeline {
     return await getReplyPostByParentPostUUID(post.postUUID);
   }
 
-  Future<void> addPost(Post post) async {
+  Future<List<Post>> addPost(Post post) async {
     _insertPost(post: post);
     List<BotAccount> replyBots = AccountManager().getReplyBotAccounts();
+    final List<Post> replyPosts = [];
     for (BotAccount i in replyBots) {
         final prompt = '''
             ロール: SNS投稿に対してリプライを100字以内に返す
@@ -63,8 +64,11 @@ class Timeline {
             content: replyContent,
         );
 
-        this.replyPost(replyPost, post.authorUUID);
+        await this.replyPost(replyPost, post.authorUUID);
+        replyPosts.add(replyPost);
     }
+
+    return replyPosts;
   }
 
   Future<void> removePost(Post post) async {
