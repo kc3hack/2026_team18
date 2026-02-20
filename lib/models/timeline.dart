@@ -7,6 +7,7 @@ class Timeline {
   // private member
   final List<Post> _timeline = [];
   final DatabaseHelper _dbHelper = DatabaseHelper();
+  List<Post> Function()? apiCallback;
 
   static final Timeline _instance = Timeline._internal();
   Timeline._internal();
@@ -41,8 +42,11 @@ class Timeline {
   }
 
   Future<void> addPost(Post post) async {
-    _timeline.insert(0, post);
-    await _dbHelper.insertPost(post);
+    _insertPost(post);
+    List<Post> replies = apiCallback?.call() ?? [];
+    for (Post i in replies) {
+        await replyPost(i, i.authorUUID);
+    }
   }
 
   Future<void> removePost(Post post) async {
@@ -52,7 +56,7 @@ class Timeline {
 
   Future<void> replyPost(Post reply, String parentUUID) async {
     reply.parentPostUUID = parentUUID;
-    await addPost(reply);
+    await _insertPost(reply);
   }
 
   Future<void> updateAuthorName(String uuid, String newName) async {
@@ -62,15 +66,21 @@ class Timeline {
     await _dbHelper.updateAuthorName(uuid, newName);
   }
 
-  Future<void> loadPost({int limit = 100, int offset = 0}) async {
-    final List<Post> dbPosts = await _dbHelper.getTimeline(
-      limit: limit,
-      offset: offset,
-    );
+  Future<void> loadPost({int limit = 40, int offset = 0}) async {
+        final List<Post> dbPosts = await _dbHelper.getTimeline(
+            limit: limit,
+            offset: offset,
+        );
 
     if (offset == 0) {
       _timeline.clear();
     }
     _timeline.addAll(dbPosts);
+  }
+
+//private method
+  Future<void> _insertPost(Post post) async {
+    _timeline.insert(0, post);
+    await _dbHelper.insertPost(post);
   }
 }

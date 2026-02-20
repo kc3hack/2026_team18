@@ -1,10 +1,11 @@
 // Package imports:
+import 'package:mikata/models/account_manager.dart';
 import 'package:uuid/uuid.dart';
 
 class DirectMessage {
 // private member
+    String _botUUID;
     String _accountName;
-    String _accountID;
     final String _accountUUID;
     final DateTime _dateTime;
     final String _content;
@@ -12,44 +13,43 @@ class DirectMessage {
 
 // public method
     DirectMessage({
-        required String accountName,
-        required String accountID,
-        required String accountUUID,
+        required String botUUID,     // DM相手のBotAccount
+        required String accountName, // DMの送り元
+        required String accountUUID, // DMの送り元
         DateTime? dateTime,
         required String content,
         String? dmUUID
-    }) : _accountName = accountName,
-        _accountID    = accountID,
-        _accountUUID  = accountUUID,
-        _dateTime     = dateTime ?? DateTime.now(),
-        _content      = content,
-        _dmUUID       = dmUUID ?? Uuid().v4();
+    }) : _botUUID    = botUUID,
+        _accountName = accountName,
+        _accountUUID = accountUUID,
+        _dateTime    = dateTime ?? DateTime.now(),
+        _content     = content,
+        _dmUUID      = dmUUID ?? Uuid().v4();
 
-    DirectMessage.fromJson(Map<String, dynamic> json) :
-        _accountName = json["accountName"],
-        _accountID   = json["accountID"],
-        _accountUUID = json["accountUUID"],
-        _dateTime    = json["dateTime"],
-        _content     = json["content"],
-        _dmUUID      = json["dmUUID"];
+    Map<String, dynamic> toMap() {
+        return {
+            'dm_uuid': _dmUUID,
+            'bot_uuid': _botUUID,
+            'from_account_uuid': _accountUUID,
+            'content': _content,
+            'date_time': _dateTime.millisecondsSinceEpoch,
+        };
+    }
 
-    Map<String, dynamic> toJson() => {
-        "accountName" : accountName,
-        "accountID"   : accountID,
-        "accountUUID" : accountUUID,
-        "dateTime"    : dateTime,
-        "content"     : content,
-        "dmUUID"      : dmUUID,
-    };
+    factory DirectMessage.fromMap(Map<String, dynamic> map) {
+        return DirectMessage(
+            dmUUID: map['dm_uuid'],
+            botUUID: map['bot_uuid'],
+            accountName: AccountManager().getAccountByAccountUUID(map['from_account_uuid'])!.accountName,
+            accountUUID: map['from_account_uuid'],
+            dateTime: DateTime.fromMillisecondsSinceEpoch(map['date_time']),
+            content: map['content'],
+        );
+    }
 
     String get accountName => _accountName;
     set accountName(String name) {
         if (name.isNotEmpty) _accountName = name;
-    }
-
-    String get accountID => _accountID;
-    set accountID(String id) {
-        if (id.isNotEmpty) _accountID = id;   
     }
 
     String get accountUUID => _accountUUID;
@@ -59,4 +59,6 @@ class DirectMessage {
     String get content => _content;
 
     String get dmUUID => _dmUUID;
+
+    String get botUUID => _botUUID;
 }

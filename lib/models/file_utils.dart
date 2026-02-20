@@ -9,13 +9,13 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 class FileIO {
-	Future<String> get _loacalPath async {
+	Future<String> get localPath async {
 		final directory = await getApplicationDocumentsDirectory();
 		return directory.path;
 	}
 
 	Future<File>  _getFile(String fileName) async {
-		final path = await _loacalPath;
+		final path = await localPath;
 		return File('$path/$fileName');
 	}
 

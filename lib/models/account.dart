@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 // Project imports:
 import 'package:mikata/models/direct_message.dart';
 import 'package:mikata/models/timeline.dart';
+import 'package:mikata/models/database_helper.dart';
 
 String createAccountID({int length = 8}) {
     const String charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -20,6 +21,7 @@ class Account {
     String _accountName;
     String _accountID;
     final String _accountUUID;
+    final DatabaseHelper _dbHelper = DatabaseHelper();
 
 // public method
     Account({
@@ -32,10 +34,18 @@ class Account {
 
     String get accountName => _accountName;
 
-    void changeAccountName(String newName, Timeline timeline) {
+    void changeAccountName(String newName) {
+        final Timeline timeline = Timeline();
         if (newName.isEmpty) return;
         _accountName = newName;
         timeline.updateAuthorName(accountUUID, newName); 
+    }
+
+    void changeAccountID(String newID) {
+        if (newID.length == 8) {
+            _accountID = newID;
+        }
+        _dbHelper.updateAccountID(accountUUID, _accountID);
     }
 
     String get accountID => _accountID;
@@ -95,11 +105,22 @@ class BotAccount extends Account {
         super.accountUUID
     });
 
-    void addDM(DirectMessage dm) {
-        _dmLists.add(dm);
+    Future<void> loadDMs() async {
+        List<DirectMessage> dmList = await _dbHelper.getDirectMessagesByBotUUID(accountUUID);
+        dmList.addAll(dmList);
     }
 
-    void removeDM(DirectMessage dm) {
+    Future<void> addDM(DirectMessage dm) async{
+        _dmLists.add(dm);
+        await _dbHelper.insertDirectMessage(dm);
+    }
+
+    Future<void> removeDM(DirectMessage dm) async {
         _dmLists.remove(dm);
+        await _dbHelper.deleteDirectMessage(dm.dmUUID);
+    }
+
+    List<DirectMessage> getDMs() {
+        return _dmLists;
     }
 }
