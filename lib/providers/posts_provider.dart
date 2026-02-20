@@ -30,12 +30,12 @@ class PostNotifier extends AsyncNotifier<List<Post>> {
 
   List<Post> _dummyPosts() {
     final users = <BotAccount>[
-      BotAccount(accountName: 'Alice'),
-      BotAccount(accountName: 'Bob'),
-      BotAccount(accountName: 'Carol'),
-      BotAccount(accountName: 'Dave'),
-      BotAccount(accountName: 'Eve'),
-      BotAccount(accountName: 'Frank'),
+    //   BotAccount(accountName: 'Alice'),
+    //   BotAccount(accountName: 'Bob'),
+    //   BotAccount(accountName: 'Carol'),
+    //   BotAccount(accountName: 'Dave'),
+    //   BotAccount(accountName: 'Eve'),
+    //   BotAccount(accountName: 'Frank'),
     ];
 
     final now = DateTime.now();
