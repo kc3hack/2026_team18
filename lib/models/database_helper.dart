@@ -6,9 +6,9 @@ import 'package:sqflite/sqflite.dart';
 
 // Project imports:
 import 'package:mikata/models/account.dart';
-import 'package:mikata/models/post.dart';
-import 'package:mikata/models/file_utils.dart';
 import 'package:mikata/models/direct_message.dart';
+import 'package:mikata/models/file_utils.dart';
+import 'package:mikata/models/post.dart';
 
 class DatabaseHelper {
     static final DatabaseHelper _instance = DatabaseHelper._internal();

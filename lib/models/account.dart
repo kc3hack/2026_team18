@@ -5,9 +5,9 @@ import 'dart:math';
 import 'package:uuid/uuid.dart';
 
 // Project imports:
+import 'package:mikata/models/database_helper.dart';
 import 'package:mikata/models/direct_message.dart';
 import 'package:mikata/models/timeline.dart';
-import 'package:mikata/models/database_helper.dart';
 
 String createAccountID({int length = 8}) {
     const String charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
