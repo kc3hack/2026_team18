@@ -30,7 +30,7 @@ class PersonalityParameters {
     List<int> getPersonalityCount() {
         _fetchParameters();
         
-        final List<int> result = [];
+        final List<int> result = [0, 0, 0];
         final sum = praise + empathy + criticism;
 
         if (sum == 0) {

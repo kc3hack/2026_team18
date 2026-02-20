@@ -136,7 +136,7 @@ class BotAccount extends Account {
 
     Future<void> addDM(DirectMessage dm) async{
         _appendDM(dm);
-        final content = await Timeline().geminiApi.generateResponse(_prompt);
+        final content = "test";//await Timeline().geminiApi.generateResponse(_prompt);
         if (content == null) return;
         final directMessage = DirectMessage(botUUID: accountUUID, accountName: accountName, accountUUID: accountUUID, content: content);
         _appendDM(directMessage);
