@@ -25,7 +25,7 @@ class DatabaseHelper {
     }
 
     Future<Database> _initDatabase() async {
-        String path = join(await FileIO().localPath, 'database.db');
+        String path = join(await FileIO().localPath, 'mikata_database.db');
     
         return await openDatabase(
             path,
