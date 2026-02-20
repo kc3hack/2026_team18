@@ -135,9 +135,13 @@ class BotAccount extends Account {
     }
 
     Future<void> addDM(DirectMessage dm) async{
-        _dmLists.add(dm);
-        await _dbHelper.insertDirectMessage(dm);
+        _appendDM(dm);
+        final content = await Timeline().geminiApi.generateResponse(_prompt);
+        if (content == null) return;
+        final directMessage = DirectMessage(botUUID: accountUUID, accountName: accountName, accountUUID: accountUUID, content: content);
+        _appendDM(directMessage);
     }
+
 
     Future<void> removeDM(DirectMessage dm) async {
         _dmLists.remove(dm);
@@ -151,4 +155,11 @@ class BotAccount extends Account {
     String get personality => _personality.name;
 
     String get prompt => _prompt;
+
+//private method
+    Future<void> _appendDM(DirectMessage dm) async {
+        _dmLists.add(dm);
+        await _dbHelper.insertDirectMessage(dm);
+    }
+
 }
