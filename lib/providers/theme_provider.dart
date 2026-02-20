@@ -36,10 +36,6 @@ class ThemeNotifier extends Notifier<ThemeData> {
 final themeDataProvider = Provider((ref) {
   final aiSettings = ref.watch(aiSettingsProvider);
 
-  final textTheme = ThemeData(useMaterial3: true).textTheme;
-  // final hotFont = GoogleFonts.mPlus1pTextTheme(textTheme);
-  // final coldFont = GoogleFonts.zenKakuGothicNewTextTheme(textTheme);
-
   return aiSettings.when(
     data: (settings) {
       final praiseValue =
@@ -50,13 +46,12 @@ final themeDataProvider = Provider((ref) {
 
       final value = praiseValue + empathyValue - criticismValue / 2.0;
 
-      // final font = value > 0 ? hotFont : coldFont;
-
       final scheme = CustomColorSchema(
         value,
       ).toColorScheme(brightness: Brightness.light);
       return ThemeData(
         colorScheme: scheme,
+        fontFamily: 'TsunagiGothic',
         // textTheme: font,
       );
     },
@@ -64,11 +59,13 @@ final themeDataProvider = Provider((ref) {
       colorScheme: CustomColorSchema(
         0,
       ).toColorScheme(brightness: Brightness.light),
+      fontFamily: 'TsunagiGothic',
     ),
     error: (err, stack) => ThemeData(
       colorScheme: CustomColorSchema(
         0,
       ).toColorScheme(brightness: Brightness.light),
+      fontFamily: 'TsunagiGothic',
     ),
   );
 });
