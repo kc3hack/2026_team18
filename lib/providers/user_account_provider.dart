@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // Project imports:
 import 'package:mikata/models/account.dart';
+import 'package:mikata/models/database_helper.dart';
 
 class UserAccountProvider extends AsyncNotifier<UserAccount?> {
   static const _keyAccountName = 'user.accountName';
@@ -21,11 +22,19 @@ class UserAccountProvider extends AsyncNotifier<UserAccount?> {
       return null;
     }
 
-    return UserAccount(
+    final user = UserAccount(
       accountName: accountName,
       accountID: prefs.getString(_keyAccountId),
       accountUUID: prefs.getString(_keyAccountUuid),
     );
+
+    try {
+      await DatabaseHelper().insertAccount(user);
+    } catch (e) {
+      debugPrint('Failed to sync user account to database: $e');
+    }
+
+    return user;
   }
 
   Future<void> login({required String accountName}) async {
@@ -70,6 +79,9 @@ class UserAccountProvider extends AsyncNotifier<UserAccount?> {
       await prefs.setString(_keyAccountName, user.accountName);
       await prefs.setString(_keyAccountId, user.accountID);
       await prefs.setString(_keyAccountUuid, user.accountUUID);
+
+      // Keep SQLite accounts table in sync with the latest user info.
+      await DatabaseHelper().insertAccount(user);
     } catch (e) {
       debugPrint('Failed to persist user account: $e');
     }
