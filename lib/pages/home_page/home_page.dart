@@ -2,11 +2,16 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
+import 'package:mikata/models/post.dart';
 import 'package:mikata/pages/home_page/widgets/post_box.dart';
+import 'package:mikata/providers/router_provider.dart';
 import 'package:mikata/providers/timeline_provider.dart';
+import 'package:mikata/providers/user_account_provider.dart';
 import 'package:mikata/widgets/custom_appbar.dart';
 
 class HomePage extends HookConsumerWidget {
@@ -15,7 +20,18 @@ class HomePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final timelineAsync = ref.watch(timelineProvider);
-    // final timelineAsync = ref.watch(postsProvider);
+    final userAccountAsync = ref.watch(userAccountProvider);
+    final user = userAccountAsync.maybeWhen(
+      data: (account) => account,
+      orElse: () => null,
+    );
+
+    useEffect(() {
+      if (user == null) {
+        Future.microtask(() => useContext().go(RoutePath.signUp.path));
+      }
+      return null;
+    }, []);
 
     return Scaffold(
       appBar: CustomAppbar(title: const Text("Home")),
@@ -24,21 +40,37 @@ class HomePage extends HookConsumerWidget {
           await ref.read(timelineProvider.notifier).fetchTimeline();
         },
         child: timelineAsync.when(
-          data: (timeline) => ListView.separated(
-            itemCount: timeline.timeline.length,
-            itemBuilder: (context, index) {
-              final post = timeline.timeline[index];
-              return PostBox(post: post);
-            },
-            // itemCount: timeline.length,
-            // itemBuilder: (context, index) {
-            //   final post = timeline[index];
-            //   return PostBox(post: post);
-            // },
-            separatorBuilder: (context, index) {
-              return const Divider(height: 1);
-            },
-          ),
+          data: (timeline) {
+            final myPostsFuture = timeline.getPostByAccount(user!);
+
+            return FutureBuilder<List<Post>>(
+              future: myPostsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text("Error: ${snapshot.error}"));
+                }
+
+                final myPosts = snapshot.data ?? const <Post>[];
+                final noParentPosts = myPosts
+                    .where((post) => post.parentPostUUID.isEmpty)
+                    .toList();
+
+                return ListView.separated(
+                  itemCount: noParentPosts.length,
+                  itemBuilder: (context, index) {
+                    final post = noParentPosts[index];
+                    return PostBox(post: post);
+                  },
+                  separatorBuilder: (context, index) {
+                    return const Divider(height: 1);
+                  },
+                );
+              },
+            );
+          },
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) => Center(child: Text("Error: $error")),
         ),

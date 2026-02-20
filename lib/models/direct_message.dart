@@ -1,6 +1,8 @@
 // Package imports:
-import 'package:mikata/models/account_manager.dart';
 import 'package:uuid/uuid.dart';
+
+// Project imports:
+import 'package:mikata/models/account_manager.dart';
 
 class DirectMessage {
 // private member

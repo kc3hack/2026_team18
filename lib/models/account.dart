@@ -5,9 +5,9 @@ import 'dart:math';
 import 'package:uuid/uuid.dart';
 
 // Project imports:
+import 'package:mikata/models/database_helper.dart';
 import 'package:mikata/models/direct_message.dart';
 import 'package:mikata/models/timeline.dart';
-import 'package:mikata/models/database_helper.dart';
 
 enum Personality {
     praise("Praise"),

@@ -20,7 +20,6 @@ class TimelineNotifier extends AsyncNotifier<Timeline> {
   }
 
   Future<Timeline> refreshTimeline() async {
-    print(state);
     final timeline = state.value ?? Timeline();
     timeline.loadPost();
     state = AsyncValue.data(timeline);

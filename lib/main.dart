@@ -1,3 +1,6 @@
+// Dart imports:
+import 'dart:io';
+
 // Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -6,21 +9,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mikata/models/gemini_api.dart';
 
 // Project imports:
+import 'package:mikata/models/account_manager.dart';
+import 'package:mikata/models/database_helper.dart';
+import 'package:mikata/models/timeline.dart';
 import 'package:mikata/providers/router_provider.dart';
 import 'package:mikata/providers/theme_provider.dart';
-
-import 'package:mikata/models/database_helper.dart';
-import 'package:mikata/models/account_manager.dart';
-import 'package:mikata/models/timeline.dart';
-
-import 'dart:io';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 Future<void> init({required String apiKey, required String model}) async {
   databaseFactory = databaseFactoryFfi;
   if (Platform.isWindows || Platform.isLinux) {
-      sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
   }
   DatabaseHelper dbHelper = DatabaseHelper();
   await dbHelper.database;
