@@ -80,7 +80,7 @@ class DatabaseHelper {
                 content TEXT,
                 date_time INTEGER,
                 FOREIGN KEY (bot_uuid) REFERENCES accounts (account_uuid) ON DELETE CASCADE,
-                FOREIGN KEY (from_account_uuid) REFERENCES accounts (account_uuid) ON DELETE CASCADE,
+                FOREIGN KEY (from_account_uuid) REFERENCES accounts (account_uuid) ON DELETE CASCADE
             )
         ''');
 
