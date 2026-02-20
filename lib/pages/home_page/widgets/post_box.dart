@@ -38,27 +38,33 @@ class PostBox extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    spacing: 4,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        post.authorName,
-                        style: textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
+                      Flexible(
+                        flex: 3,
+                        child: Text(
+                          post.authorName,
+                          style: textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: true,
                       ),
-                      Text(
-                        "@userID・${post.relativeTime}",
-                        style: textTheme.titleMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+                      const SizedBox(width: 4),
+                      Flexible(
+                        flex: 2,
+                        child: Text(
+                          "@userID・${post.relativeTime}",
+                          style: textTheme.titleMedium?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: true,
                       ),
                     ],
                   ),

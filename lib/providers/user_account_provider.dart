@@ -7,7 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // Project imports:
 import 'package:mikata/models/account.dart';
+import 'package:mikata/models/account_manager.dart';
 import 'package:mikata/models/database_helper.dart';
+import 'package:mikata/providers/account_manager_provider.dart';
+import 'package:mikata/providers/database_provider.dart';
 
 class UserAccountProvider extends AsyncNotifier<UserAccount?> {
   static const _keyAccountName = 'user.accountName';
@@ -16,6 +19,11 @@ class UserAccountProvider extends AsyncNotifier<UserAccount?> {
 
   @override
   Future<UserAccount?> build() async {
+    await ref.watch(databaseReadyProvider.future);
+    // Ensure accounts are loaded so `Post.fromMap` etc can resolve names.
+    // (User account may still be synced below.)
+    ref.watch(accountManagerProvider);
+
     final prefs = await SharedPreferences.getInstance();
     final accountName = prefs.getString(_keyAccountName);
     if (accountName == null || accountName.trim().isEmpty) {
@@ -23,16 +31,13 @@ class UserAccountProvider extends AsyncNotifier<UserAccount?> {
     }
 
     final user = UserAccount(
-      accountName: accountName,
+      accountName: accountName.trim(),
       accountID: prefs.getString(_keyAccountId),
       accountUUID: prefs.getString(_keyAccountUuid),
     );
 
-    try {
-      await DatabaseHelper().insertAccount(user);
-    } catch (e) {
-      debugPrint('Failed to sync user account to database: $e');
-    }
+    await _save(user);
+    await _syncToAccountManager(user);
 
     return user;
   }
@@ -44,6 +49,7 @@ class UserAccountProvider extends AsyncNotifier<UserAccount?> {
     final user = UserAccount(accountName: trimmed);
     state = AsyncValue.data(user);
     await _save(user);
+    await _syncToAccountManager(user);
   }
 
   Future<void> logout() async {
@@ -64,17 +70,15 @@ class UserAccountProvider extends AsyncNotifier<UserAccount?> {
       return;
     }
 
-    final updated = UserAccount(
-      accountName: trimmed,
-      accountID: currentUser.accountID,
-      accountUUID: currentUser.accountUUID,
-    );
-    state = AsyncValue.data(updated);
-    await _save(updated);
+    currentUser.changeAccountName(trimmed);
+    state = AsyncValue.data(currentUser);
+    await _save(currentUser);
+    await _syncToAccountManager(currentUser);
   }
 
   Future<void> _save(UserAccount user) async {
     try {
+      await ref.read(databaseReadyProvider.future);
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_keyAccountName, user.accountName);
       await prefs.setString(_keyAccountId, user.accountID);
@@ -84,6 +88,24 @@ class UserAccountProvider extends AsyncNotifier<UserAccount?> {
       await DatabaseHelper().insertAccount(user);
     } catch (e) {
       debugPrint('Failed to persist user account: $e');
+    }
+  }
+
+  Future<void> _syncToAccountManager(UserAccount user) async {
+    try {
+      final manager = await ref.read(accountManagerProvider.future);
+      final existing = manager.getAccountByAccountUUID(user.accountUUID);
+      if (existing == null) {
+        // `addAccount` also syncs to DB; safe with ConflictAlgorithm.replace.
+        manager.addAccount(user);
+        return;
+      }
+
+      if (existing is Account && existing.accountName != user.accountName) {
+        existing.changeAccountName(user.accountName);
+      }
+    } catch (e) {
+      debugPrint('Failed to sync user into AccountManager: $e');
     }
   }
 }

@@ -1,51 +1,17 @@
-// Dart imports:
-import 'dart:io';
-
 // Flutter imports:
 import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 // Project imports:
-import 'package:mikata/models/account_manager.dart';
-import 'package:mikata/models/database_helper.dart';
-import 'package:mikata/models/gemini_api.dart';
-import 'package:mikata/models/timeline.dart';
 import 'package:mikata/providers/router_provider.dart';
 import 'package:mikata/providers/theme_provider.dart';
-
-Future<void> init({required String apiKey, required String model}) async {
-  databaseFactory = databaseFactoryFfi;
-  if (Platform.isWindows || Platform.isLinux) {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  }
-  DatabaseHelper dbHelper = DatabaseHelper();
-  await dbHelper.database;
-
-  Timeline timeline = Timeline();
-  await timeline.loadPost();
-
-  GeminiApi geminiApi = GeminiApi(apiKey: apiKey, model: model);
-  timeline.setGeminiAPI(geminiApi);
-
-  AccountManager accountManager = AccountManager();
-  await accountManager.loadAccounts();
-
-  final list =  accountManager.getBotAccounts();
-  if (list.isEmpty) {
-    
-  }
-}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await init(apiKey: "apiKey", model: "model");
-
-  runApp(ProviderScope(child: MitakaApp()));
+  runApp(const ProviderScope(child: MitakaApp()));
 }
 
 class MitakaApp extends HookConsumerWidget {
