@@ -43,7 +43,7 @@ class AccountManager {
         }
     }
 
-    List<BotAccount> getBotAccount() {
+    List<BotAccount> getBotAccounts() {
         return _accountList.whereType<BotAccount>().toList();
     }
 
