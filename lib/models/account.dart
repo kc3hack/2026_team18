@@ -9,6 +9,15 @@ import 'package:mikata/models/direct_message.dart';
 import 'package:mikata/models/timeline.dart';
 import 'package:mikata/models/database_helper.dart';
 
+enum Personality {
+    praise("Praise"),
+    empathy("Empathy"),
+    criticism("Criticism");
+
+    const Personality(this.name);
+    final String name;
+}
+
 String createAccountID({int length = 8}) {
     const String charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     final Random random = Random.secure();
@@ -56,26 +65,36 @@ class Account {
     String get accountUUID => _accountUUID;
 
     Map<String, dynamic> toMap() {
-        return {
+        final Map<String, dynamic> map = {
             'account_uuid': accountUUID,
             'account_name': accountName,
-            'account_id': accountID,
+            'account_id'  : accountID,
             'account_type': this is UserAccount ? 0 : 1,
         };
+
+        if (this is BotAccount) {
+            final bot = this as BotAccount;
+            map['personality'] = bot.personality;
+            map['prompt']      = bot.prompt;
+        }
+
+        return map;
     }
 
     factory Account.fromMap(Map<String, dynamic> map) {
         if (map['account_type'] == 0) {
             return UserAccount(
                 accountName: map['account_name'],
-                accountID: map['account_id'],
+                accountID:   map['account_id'],
                 accountUUID: map['account_uuid'],
             );
         } else {
             return BotAccount(
                 accountName: map['account_name'],
-                accountID: map['account_id'],
+                accountID:   map['account_id'],
                 accountUUID: map['account_uuid'],
+                personality: Personality.values.byName(map['personality']),
+                prompt:      map['prompt'],
             );
         }
     }
@@ -97,13 +116,18 @@ class UserAccount extends Account {
 class BotAccount extends Account {
 // private member
     final List<DirectMessage> _dmLists = [];
+    final Personality _personality;
+    final String _prompt;
 
 // public method
     BotAccount({
         required super.accountName,
         super.accountID,
-        super.accountUUID
-    });
+        super.accountUUID,
+        required Personality personality,
+        required String prompt
+    }) : _personality = personality,
+        _prompt       = prompt;
 
     Future<void> loadDMs() async {
         List<DirectMessage> dmList = await _dbHelper.getDirectMessagesByBotUUID(accountUUID);
@@ -123,4 +147,8 @@ class BotAccount extends Account {
     List<DirectMessage> getDMs() {
         return _dmLists;
     }
+
+    String get personality => _personality.name;
+
+    String get prompt => _prompt;
 }

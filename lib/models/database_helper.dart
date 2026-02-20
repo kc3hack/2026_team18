@@ -38,7 +38,9 @@ class DatabaseHelper {
                 account_uuid TEXT PRIMARY KEY,
                 account_name TEXT,
                 account_id TEXT,
-                account_type INTEGER -- 0: User, 1: Bot
+                account_type INTEGER, -- 0: User, 1: Bot
+                personality TEXT,     -- Bot用（Userの場合はNULL）
+                prompt TEXT           -- Bot用（Userの場合はNULL）
             )
         ''');
 
@@ -168,6 +170,15 @@ class DatabaseHelper {
             'accounts',
             account.toMap(),
             conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+    }
+
+    Future<void> deleteAccount(String uuid) async {
+        final db = await database;
+        await db.delete(
+            'accounts',
+            where: 'account_uuid = ?',
+            whereArgs: [uuid],
         );
     }
 
