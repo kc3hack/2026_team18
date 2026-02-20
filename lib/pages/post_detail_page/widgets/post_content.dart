@@ -6,7 +6,7 @@ class PostContent extends HookConsumerWidget {
   final Post post;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final formattedDate = DateFormat('yyyy年M月d日 hh:mm').format(post.postDate);
+    final formattedDate = DateFormat('yyyy年M月d日 HH:mm').format(post.postDate);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

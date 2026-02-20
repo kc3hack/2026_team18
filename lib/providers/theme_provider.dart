@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
@@ -35,6 +36,10 @@ class ThemeNotifier extends Notifier<ThemeData> {
 final themeDataProvider = Provider((ref) {
   final aiSettings = ref.watch(aiSettingsProvider);
 
+  final textTheme = ThemeData(useMaterial3: true).textTheme;
+  final hotFont = GoogleFonts.mPlus1pTextTheme(textTheme);
+  final coldFont = GoogleFonts.zenKakuGothicNewTextTheme(textTheme);
+
   return aiSettings.when(
     data: (settings) {
       final praiseValue =
@@ -44,10 +49,17 @@ final themeDataProvider = Provider((ref) {
           (settings.criticism - 10.0) / 90.0; // 批判の値を-1.0〜1.0に変換
 
       final value = praiseValue + empathyValue - criticismValue / 2.0;
+
+      final font = value > 0 ? hotFont : coldFont;
+
       final scheme = CustomColorSchema(
         value,
       ).toColorScheme(brightness: Brightness.light);
-      return ThemeData(useMaterial3: true, colorScheme: scheme);
+      return ThemeData(
+        useMaterial3: true,
+        colorScheme: scheme,
+        textTheme: font,
+      );
     },
     loading: () => ThemeData(
       useMaterial3: true,
