@@ -1,13 +1,16 @@
 // Project imports:
 import 'package:mikata/models/account.dart';
+import 'package:mikata/models/account_manager.dart';
 import 'package:mikata/models/database_helper.dart';
+import 'package:mikata/models/gemini_api.dart';
 import 'package:mikata/models/post.dart';
 
 class Timeline {
   // private member
   final List<Post> _timeline = [];
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  List<Post> Function()? apiCallback;
+//   List<Post> Function()? apiCallback;
+  late final GeminiApi geminiApi;
 
   static final Timeline _instance = Timeline._internal();
   Timeline._internal();
@@ -42,10 +45,17 @@ class Timeline {
   }
 
   Future<void> addPost(Post post) async {
-    _insertPost(post);
-    List<Post> replies = apiCallback?.call() ?? [];
-    for (Post i in replies) {
-        await replyPost(i, i.authorUUID);
+    _insertPost(post: post);
+    List<BotAccount> replyBots = AccountManager().getReplyBotAccounts();
+    for (BotAccount i in replyBots) {
+        final replyContent = await geminiApi.generateResponse(i.prompt);
+        final replyPost = Post(
+            authorName: i.accountName,
+            authorUUID: i.accountUUID,
+            content: replyContent!,
+        );
+
+        this.replyPost(replyPost, post.authorUUID);
     }
   }
 
@@ -56,7 +66,7 @@ class Timeline {
 
   Future<void> replyPost(Post reply, String parentUUID) async {
     reply.parentPostUUID = parentUUID;
-    await _insertPost(reply);
+    await _insertPost(post: reply, insertPos: 1);
   }
 
   Future<void> updateAuthorName(String uuid, String newName) async {
@@ -78,9 +88,13 @@ class Timeline {
     _timeline.addAll(dbPosts);
   }
 
+  void setGeminiAPI(GeminiApi geminiApi) {
+    geminiApi = geminiApi;
+  }
+
 //private method
-  Future<void> _insertPost(Post post) async {
-    _timeline.insert(0, post);
+  Future<void> _insertPost({required Post post, int insertPos = 0}) async {
+    _timeline.insert(insertPos, post);
     await _dbHelper.insertPost(post);
   }
 }

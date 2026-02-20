@@ -27,6 +27,8 @@ class PersonalityParameters {
     }
 
     List<int> getPersonalityCount() {
+        _fetchParameters();
+        
         final List<int> result = [];
         final sum = praise + empathy + criticism;
 
@@ -50,5 +52,9 @@ class PersonalityParameters {
 // private method
     PersonalityParameters._internal();
 
-
+    void _fetchParameters() {
+        // praise = ;
+        // empathy = ;
+        // criticism = ;
+    }
 }

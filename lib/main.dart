@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:mikata/models/gemini_api.dart';
 
 // Project imports:
 import 'package:mikata/models/account_manager.dart';
@@ -15,7 +15,7 @@ import 'package:mikata/models/timeline.dart';
 import 'package:mikata/providers/router_provider.dart';
 import 'package:mikata/providers/theme_provider.dart';
 
-Future<void> init() async {
+Future<void> init({required String apiKey, required String model}) async {
   databaseFactory = databaseFactoryFfi;
   if (Platform.isWindows || Platform.isLinux) {
     sqfliteFfiInit();
@@ -27,13 +27,16 @@ Future<void> init() async {
   Timeline timeline = Timeline();
   await timeline.loadPost();
 
+  GeminiApi geminiApi = GeminiApi(apiKey: apiKey, model: model);
+  timeline.setGeminiAPI(geminiApi);
+
   AccountManager accountManager = AccountManager();
   await accountManager.loadAccounts();
 }
 
 void main() async {
   final scope = ProviderScope(child: MitakaApp());
-  await init();
+  await init(apiKey: "apiKey", model: "model");
 
   runApp(scope);
 }

@@ -1,5 +1,6 @@
 // Flutter imports:
 import 'package:flutter/foundation.dart';
+import 'package:mikata/models/account_manager.dart';
 
 // Package imports:
 import 'package:uuid/uuid.dart';
@@ -27,9 +28,9 @@ class Post {
   Post({
     DateTime? postDate,
     String? postUUID,
-    String authorName = "",
+    required String authorName,
     String? authorUUID,
-    String content = "",
+    required String content,
     String parentPostUUID = "",
     int replyCount = 0,
     int likeCount = 0,
@@ -69,6 +70,7 @@ class Post {
     return Post(
       postUUID: map["post_uuid"],
       postDate: DateTime.fromMillisecondsSinceEpoch(map["post_date"]),
+      authorName: AccountManager().getAccountByAccountUUID(map["author_uuid"])!.accountName,
       authorUUID: map["author_uuid"],
       content: map["content"],
       parentPostUUID: map["parent_post_uuid"],
