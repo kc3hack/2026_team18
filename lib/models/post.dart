@@ -1,9 +1,11 @@
 // Flutter imports:
 import 'package:flutter/foundation.dart';
-import 'package:mikata/models/account_manager.dart';
 
 // Package imports:
 import 'package:uuid/uuid.dart';
+
+// Project imports:
+import 'package:mikata/models/account_manager.dart';
 
 class Post {
   // punlic member
