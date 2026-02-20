@@ -100,17 +100,15 @@ class Timeline {
 
         _timeline.addAll(newPosts);
     }
+  }
 
-    const int maxPostCount = 160;
-
-    if (timeline.length > maxPostCount) {
-        timeline.removeRange(0, timeline.length - maxPostCount);
+    void unloadPost({int limit = 40, int offset = 0}) {
+        timeline.removeRange(offset, offset + limit);
     }
-}
 
-void setGeminiAPI(GeminiApi geminiApi) {
-    geminiApi = geminiApi;
-}
+    void setGeminiAPI(GeminiApi geminiApi) {
+        geminiApi = geminiApi;
+    }
 
 //private method
   Future<void> _insertPost({required Post post, int insertPos = 0}) async {
