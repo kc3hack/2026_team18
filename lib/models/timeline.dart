@@ -51,10 +51,11 @@ class Timeline {
     List<BotAccount> replyBots = AccountManager().getReplyBotAccounts();
     for (BotAccount i in replyBots) {
         final replyContent = await geminiApi.generateResponse(i.prompt);
+        if (replyContent == null) continue;
         final replyPost = Post(
             authorName: i.accountName,
             authorUUID: i.accountUUID,
-            content: replyContent!,
+            content: replyContent,
         );
 
         this.replyPost(replyPost, post.authorUUID);
