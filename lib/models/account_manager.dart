@@ -78,7 +78,7 @@ class AccountManager {
         }
     }
 
-    List<BotAccount> getReplyBotAccount() {
+    List<BotAccount> getReplyBotAccounts() {
         final List<BotAccount> result = [];
 
         final personalities = [Personality.praise, Personality.empathy, Personality.criticism];
