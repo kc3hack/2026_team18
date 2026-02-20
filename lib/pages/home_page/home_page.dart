@@ -34,7 +34,7 @@ class HomePage extends HookConsumerWidget {
     }, []);
 
     return Scaffold(
-      appBar: CustomAppbar(title: const Text("Home")),
+      appBar: CustomAppbar(),
       body: RefreshIndicator(
         onRefresh: () async {
           await ref.read(timelineProvider.notifier).fetchTimeline();

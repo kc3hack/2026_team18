@@ -2,7 +2,11 @@
 import 'package:flutter/material.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppbar({super.key, required this.title, this.actions = const []});
+  const CustomAppbar({
+    super.key,
+    this.title = const Text("MIKATA"),
+    this.actions = const [],
+  });
 
   final Widget title;
   final List<Widget> actions;
@@ -22,7 +26,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ),
-      child: AppBar(title: title, actions: actions),
+      child: AppBar(centerTitle: true, title: title, actions: actions),
     );
   }
 }
