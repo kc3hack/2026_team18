@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:cuberto_bottom_bar/internal/internal.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -25,20 +26,33 @@ class RootPage extends HookConsumerWidget {
               child: const Icon(Icons.add),
             )
           : null,
-      bottomNavigationBar: NavigationBar(
-        destinations: [
-          NavigationDestination(icon: const Icon(Icons.home), label: "Home"),
-          NavigationDestination(
-            icon: const Icon(Icons.message),
-            label: "Message",
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(16),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.account_circle),
-            label: "Account",
+          child: NavigationBar(
+            backgroundColor: Colors.transparent,
+            destinations: [
+              NavigationDestination(
+                icon: const Icon(Icons.home),
+                label: "Home",
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.message),
+                label: "Message",
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.account_circle),
+                label: "Account",
+              ),
+            ],
+            selectedIndex: navigationShell.currentIndex,
+            onDestinationSelected: (index) => navigationShell.goBranch(index),
           ),
-        ],
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (index) => navigationShell.goBranch(index),
+        ),
       ),
     );
   }

@@ -6,46 +6,8 @@ final class CustomColorSchema {
 
   final double value;
 
-  double get _v => value.clamp(-1.0, 1.0);
-
-  Color get seedColor {
-    final v = _v;
-
-    // v < 0: 寒色 -> ニュートラル
-    if (v < 0) {
-      final t = v + 1.0;
-      return _lerpStops(const [Colors.cyan, Colors.purple, Colors.grey], t);
-    }
-
-    // v >= 0: ニュートラル -> 暖色
-    final t = v;
-    return _lerpStops(const [
-      Colors.grey,
-      Colors.yellow,
-      Colors.deepOrange,
-      Colors.pink,
-    ], t);
-  }
-
   ColorScheme toColorScheme({Brightness brightness = Brightness.light}) {
-    if (seedColor == Color(0xFF9E9E9E)) {
-      return grayColorScheme(brightness: brightness);
-    }
-    return ColorScheme.fromSeed(seedColor: seedColor, brightness: brightness);
-  }
-
-  static Color _lerpStops(List<Color> colors, double t) {
-    assert(colors.length >= 2);
-    final clampedT = t.clamp(0.0, 1.0);
-    final scaled = clampedT * (colors.length - 1);
-    final index = scaled.floor();
-
-    if (index >= colors.length - 1) {
-      return colors.last;
-    }
-
-    final localT = scaled - index;
-    return Color.lerp(colors[index], colors[index + 1], localT)!;
+    return (value > 0.0) ? pinkLightColorScheme : blueLightColorScheme;
   }
 
   static ColorScheme schemeFor(
@@ -89,4 +51,66 @@ final ColorScheme grayLightColorScheme = ColorScheme(
   inverseSurface: Colors.grey.shade900,
   onInverseSurface: Colors.grey.shade50,
   inversePrimary: Colors.grey.shade200,
+);
+
+final ColorScheme blueLightColorScheme = ColorScheme(
+  brightness: Brightness.light,
+  primary: Color(0xFF1C2E4A),
+  onPrimary: Color.fromARGB(255, 221, 224, 228),
+  primaryContainer: Color(0xFF1C2E4A),
+  onPrimaryContainer: Color.fromARGB(255, 221, 224, 228),
+  secondary: Colors.blueGrey.shade700,
+  onSecondary: Colors.white,
+  secondaryContainer: Colors.blueGrey.shade50,
+  onSecondaryContainer: Colors.blueGrey.shade900,
+  tertiary: Colors.grey.shade700,
+  onTertiary: Colors.white,
+  tertiaryContainer: Colors.blueGrey.shade50,
+  onTertiaryContainer: Colors.blueGrey.shade900,
+  error: Colors.red.shade700,
+  onError: Colors.white,
+  errorContainer: Colors.red.shade100,
+  onErrorContainer: Colors.red.shade900,
+  surface: Color(0xFF849DBB),
+  onSurface: Color(0xFF533a33),
+  surfaceContainerHighest: Colors.blueGrey.shade100,
+  onSurfaceVariant: Colors.blueGrey.shade700,
+  outline: Colors.blueGrey.shade200,
+  outlineVariant: Colors.blueGrey.shade100,
+  shadow: Colors.black,
+  scrim: Colors.black,
+  inverseSurface: Colors.blueGrey.shade900,
+  onInverseSurface: Colors.lightBlue.shade50,
+  inversePrimary: Colors.blueGrey.shade100,
+);
+
+final ColorScheme pinkLightColorScheme = ColorScheme(
+  brightness: Brightness.light,
+  primary: Colors.brown.shade800,
+  onPrimary: Colors.white,
+  primaryContainer: Colors.pink.shade100,
+  onPrimaryContainer: Colors.brown.shade900,
+  secondary: Colors.brown.shade700,
+  onSecondary: Colors.white,
+  secondaryContainer: Colors.pink.shade50,
+  onSecondaryContainer: Colors.brown.shade900,
+  tertiary: Colors.grey.shade700,
+  onTertiary: Colors.white,
+  tertiaryContainer: Colors.pink.shade50,
+  onTertiaryContainer: Colors.brown.shade900,
+  error: Colors.red.shade700,
+  onError: Colors.white,
+  errorContainer: Colors.red.shade100,
+  onErrorContainer: Colors.red.shade900,
+  surface: Colors.pink.shade50,
+  onSurface: Colors.brown.shade900,
+  surfaceContainerHighest: Colors.pink.shade100,
+  onSurfaceVariant: Colors.brown.shade700,
+  outline: Colors.brown.shade200,
+  outlineVariant: Colors.pink.shade100,
+  shadow: Colors.black,
+  scrim: Colors.black,
+  inverseSurface: Colors.brown.shade900,
+  onInverseSurface: Colors.pink.shade50,
+  inversePrimary: Colors.pink.shade100,
 );
