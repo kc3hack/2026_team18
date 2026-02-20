@@ -22,7 +22,7 @@ class UserAccountProvider extends AsyncNotifier<UserAccount?> {
     await ref.watch(databaseReadyProvider.future);
     // Ensure accounts are loaded so `Post.fromMap` etc can resolve names.
     // (User account may still be synced below.)
-    ref.watch(accountManagerProvider);
+    await ref.watch(accountManagerProvider.future);
 
     final prefs = await SharedPreferences.getInstance();
     final accountName = prefs.getString(_keyAccountName);
