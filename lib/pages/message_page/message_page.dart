@@ -16,9 +16,9 @@ class MessagePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // 修正: IDを8桁英数(記号なし)に変更
     final List<BotAccount> dmThreads = [
-      BotAccount(accountName: "Bot Alice", accountID: "BotAlice"), // 8文字
-      BotAccount(accountName: "Counselor", accountID: "CnslrBob"), // 8文字
-      BotAccount(accountName: "Tech Mentor", accountID: "TechMntr"), // 8文字
+    //   BotAccount(accountName: "Bot Alice", accountID: "BotAlice"), // 8文字
+    //   BotAccount(accountName: "Counselor", accountID: "CnslrBob"), // 8文字
+    //   BotAccount(accountName: "Tech Mentor", accountID: "TechMntr"), // 8文字
     ];
 
     return Scaffold(

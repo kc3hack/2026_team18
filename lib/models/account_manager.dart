@@ -1,7 +1,11 @@
 // Project imports:
 import 'package:mikata/models/account.dart';
 import 'package:mikata/models/database_helper.dart';
+import 'package:mikata/models/personality_parameters.dart';
 import 'package:mikata/models/post.dart';
+import 'dart:math';
+
+const int maxReplies = 15;
 
 class AccountManager {
 // public member
@@ -17,10 +21,12 @@ class AccountManager {
 
     void addAccount(Account account) {
         _accountList.add(account);
+        _dbHelper.insertAccount(account);
     }
 
     void removeAccount(Account account) {
         _accountList.remove(account);
+        _dbHelper.deleteAccount(account.accountUUID);
     }
 
     List<Account> getAllAccount() {
@@ -59,9 +65,12 @@ class AccountManager {
         final results = _accountList.where((i) => i.accountUUID == post.authorUUID);
         return results.isNotEmpty ? results.first : null;
     }
-    
-// private method
-    AccountManager._internal();
+
+    List<BotAccount> getBotAccountByPersonality(Personality personality) {
+        return _accountList.whereType<BotAccount>()
+            .where((bot) => bot.personality == personality.name)
+            .toList();
+    }
 
     Future<void> loadAccounts() async {
         List<Account> accounts = await _dbHelper.getAllAccount();
@@ -69,4 +78,30 @@ class AccountManager {
             _accountList.add(i);
         }
     }
+
+    List<BotAccount> getReplyBotAccount() {
+        final List<BotAccount> result = [];
+
+        final personalities = [Personality.praise, Personality.empathy, Personality.criticism];
+        final countList = PersonalityParameters().getPersonalityCount();
+
+        final accountLists = personalities.map((p) => getBotAccountByPersonality(p)).toList();
+
+
+        for (int i = 0; i < personalities.length; i++) {
+            final botsOfThisPersonality = accountLists[i];
+            final targetCount = countList[i];
+
+            final selected = (List<BotAccount>.from(botsOfThisPersonality)..shuffle())
+                .take(min(targetCount, botsOfThisPersonality.length))
+                .toList();
+
+            result.addAll(selected);
+        }
+
+        return result;
+    }
+    
+// private method
+    AccountManager._internal();
 }
