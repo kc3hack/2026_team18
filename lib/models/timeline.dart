@@ -50,7 +50,12 @@ class Timeline {
     _insertPost(post: post);
     List<BotAccount> replyBots = AccountManager().getReplyBotAccounts();
     for (BotAccount i in replyBots) {
-        final replyContent = "test";//await geminiApi.generateResponse(i.prompt);
+        final prompt = '''
+            ロール: 投稿に対してTwitterのようなリプライを返す
+            ${i.prompt}
+            投稿 : ${post.content}
+            ''';
+        final replyContent = "test";//await geminiApi.generateResponse(prompt);
         if (replyContent == null) continue;
         final replyPost = Post(
             authorName: i.accountName,
