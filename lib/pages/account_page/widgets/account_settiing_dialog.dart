@@ -18,7 +18,7 @@ class AccountSettiingDialog extends HookConsumerWidget {
     }, [user?.accountUUID]);
 
     return AlertDialog(
-      title: const Text("アカウント編集"),
+      title: const Text("アカウント情報編集"),
       content: userAsync.when(
         error: (error, stackTrace) => Text("Error: $error"),
         loading: () => const Center(child: CircularProgressIndicator()),
