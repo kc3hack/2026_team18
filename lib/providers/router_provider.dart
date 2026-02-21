@@ -63,11 +63,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: RoutePath.chat.path, // /message/chat
-        // pageBuilder: (context, state) {
-        //   // 一覧から渡された相手のアカウント情報を受け取る
-        //   final account = state.extra as BotAccount?;
-        //   return NoTransitionPage(child: ChatPage(targetAccount: account));
-        // },
         pageBuilder: (context, state) {
           // 一覧から渡された相手のアカウント情報を受け取る
           final account = state.extra as BotAccount?;
