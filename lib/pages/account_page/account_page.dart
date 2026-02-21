@@ -31,7 +31,7 @@ class AccountPage extends HookConsumerWidget {
           ),
           IconButton(
             icon: const Icon(Icons.settings_rounded),
-            onPressed: () => context.push(RoutePath.settings.path),
+            onPressed: () => context.pop(),
           ),
         ],
       ),
