@@ -50,11 +50,11 @@ class SignUpPage extends HookConsumerWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '@${user.accountID}',
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  )
+                        '@${user.accountID}',
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      )
                       .animate()
                       .fadeIn(duration: 200.ms, delay: 60.ms)
                       .slideY(duration: 240.ms, begin: 0.06, end: 0),

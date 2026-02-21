@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
@@ -14,6 +15,7 @@ import 'package:mikata/providers/router_provider.dart';
 import 'package:mikata/providers/timeline_provider.dart';
 import 'package:mikata/providers/user_account_provider.dart';
 import 'package:mikata/widgets/custom_appbar.dart';
+import 'package:mikata/widgets/mikata_logo.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -35,7 +37,9 @@ class HomePage extends HookConsumerWidget {
     }, []);
 
     return Scaffold(
-      appBar: CustomAppbar(title: const Text("Home")),
+      appBar: CustomAppbar(
+        title: const MikataLogo(type: LogoType.lockUpHorizontal),
+      ),
       body: RefreshIndicator(
         onRefresh: () async {
           await ref.read(timelineProvider.notifier).fetchTimeline();
