@@ -1,8 +1,8 @@
 // Dart imports:
-import 'dart:async'; // ← 追加
+import 'dart:async'; // 追加
 
 // Package imports:
-import 'package:shared_preferences/shared_preferences.dart'; // ← 追加
+import 'package:shared_preferences/shared_preferences.dart'; // 追加
 
 // Project imports:
 import 'package:mikata/models/account_manager.dart';
@@ -74,7 +74,7 @@ class PersonalityParameters {
         return result;
     }
 
-    // ▼ 追加: SharedPreferences から設定値を読み込む処理 ▼
+    // 追加: SharedPreferences から設定値を読み込む処理
     Future<void> _fetchParameters() async {
         final prefs = await SharedPreferences.getInstance();
         
