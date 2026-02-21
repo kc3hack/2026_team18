@@ -35,12 +35,16 @@ class AccountSettiingDialog extends HookConsumerWidget {
                 ),
               ),
               const SizedBox(height: 16),
+              // 修正: IDを変更不可(readOnly)に
               TextField(
                 controller: userIdController,
-                decoration: const InputDecoration(
-                  labelText: "ユーザーID",
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.alternate_email_rounded),
+                readOnly: true, 
+                decoration: InputDecoration(
+                  labelText: "ユーザーID (変更不可)",
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.badge_rounded),
+                  filled: true,
+                  fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 ),
               ),
             ],
@@ -49,14 +53,15 @@ class AccountSettiingDialog extends HookConsumerWidget {
       ),
       actions: [
         FilledButton(
-          onPressed: userAsync.isLoading
+          onPressed: (user == null)
               ? null
               : () async {
                   final nextName = userNameController.text.trim();
                   final nextId = userIdController.text.trim();
 
-                  if (nextName == user?.accountName &&
-                      nextId == user?.accountID) {
+                  // 修正: 変更がない場合でも pop() を呼んでダイアログを閉じる
+                  if (nextName == user.accountName && nextId == user.accountID) {
+                    Navigator.of(context).pop();
                     return;
                   }
 
@@ -67,6 +72,7 @@ class AccountSettiingDialog extends HookConsumerWidget {
                     return;
                   }
 
+                  // ※IDは変更不可にしたため、基本的にはここのチェックは通り抜ける
                   if (!RegExp(r'^[0-9A-Za-z]{8}$').hasMatch(nextId)) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('ユーザーIDは8桁の英数字にしてください')),

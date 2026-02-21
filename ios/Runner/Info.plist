@@ -66,5 +66,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>プロフィール画像を設定するためにフォトライブラリへのアクセスが必要です。</string>
 </dict>
 </plist>
