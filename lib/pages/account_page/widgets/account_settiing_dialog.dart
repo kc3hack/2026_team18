@@ -57,6 +57,7 @@ class AccountSettiingDialog extends HookConsumerWidget {
 
                   if (nextName == user?.accountName &&
                       nextId == user?.accountID) {
+                    Navigator.of(context).pop();
                     return;
                   }
 
