@@ -10,11 +10,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
 // Project imports:
-import 'package:mikata/models/post.dart';
 import 'package:mikata/models/account.dart';
-import 'package:mikata/providers/router_provider.dart';
+import 'package:mikata/models/post.dart';
 import 'package:mikata/providers/account_manager_provider.dart';
 import 'package:mikata/providers/profile_image_provider.dart';
+import 'package:mikata/providers/router_provider.dart';
 import 'package:mikata/providers/user_account_provider.dart';
 import 'package:mikata/widgets/remove_post_dialog.dart';
 
@@ -32,8 +32,12 @@ class PostBox extends HookConsumerWidget {
 
     // ▼ アカウント情報と画像の取得 ▼
     final accountManager = ref.watch(accountManagerProvider).value;
-    final authorAccount = accountManager?.getAccountByAccountUUID(post.authorUUID);
-    final isMe = authorAccount?.accountUUID == ref.watch(userAccountProvider).value?.accountUUID;
+    final authorAccount = accountManager?.getAccountByAccountUUID(
+      post.authorUUID,
+    );
+    final isMe =
+        authorAccount?.accountUUID ==
+        ref.watch(userAccountProvider).value?.accountUUID;
     final profileImagePath = ref.watch(profileImageProvider).value;
 
     ImageProvider? avatarImage;
@@ -78,6 +82,14 @@ class PostBox extends HookConsumerWidget {
                             color: colorScheme.onSurfaceVariant,
                           ),
                         ),
+                      const Spacer(),
+                      InkWell(
+                        onTap: () => RemovePostDialog.show(context, post),
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: const Icon(Icons.more_vert_rounded),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 2),

@@ -16,9 +16,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mikata/pages/account_page/widgets/account_plate.dart';
 import 'package:mikata/pages/account_page/widgets/bookmark_tab.dart';
 import 'package:mikata/pages/account_page/widgets/favorite_tab.dart';
+import 'package:mikata/providers/profile_image_provider.dart';
 import 'package:mikata/providers/router_provider.dart';
 import 'package:mikata/providers/user_account_provider.dart';
-import 'package:mikata/providers/profile_image_provider.dart';
 import 'package:mikata/widgets/custom_appbar.dart';
 
 part 'widgets/account_settiing_dialog.dart';
@@ -29,7 +29,7 @@ class AccountPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userAsync = ref.watch(userAccountProvider);
-    final profileImagePath = ref.watch(profileImageProvider).value; 
+    final profileImagePath = ref.watch(profileImageProvider).value;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -80,10 +80,14 @@ class AccountPage extends HookConsumerWidget {
                             children: [
                               CircleAvatar(
                                 radius: 60,
-                                backgroundColor: colorScheme.surfaceContainerHighest,
+                                backgroundColor:
+                                    colorScheme.surfaceContainerHighest,
                                 backgroundImage: profileImagePath != null
-                                    ? FileImage(File(profileImagePath)) as ImageProvider
-                                    : const NetworkImage("https://placehold.jp/150x150.png"),
+                                    ? FileImage(File(profileImagePath))
+                                          as ImageProvider
+                                    : const NetworkImage(
+                                        "https://placehold.jp/150x150.png",
+                                      ),
                               ),
                               Container(
                                 padding: const EdgeInsets.all(6),
@@ -104,55 +108,49 @@ class AccountPage extends HookConsumerWidget {
                             ],
                           ),
                         ),
-                      ),
 
-                      const SizedBox(height: 32),
-                      AccountPlate(
-                        userName: user?.accountName ?? "unknown",
-                        userId: user?.accountID ?? "unknown",
-                      ),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: SegmentedTabControl(
-                          tabTextColor: colorScheme.onSurfaceVariant,
-                          selectedTabTextColor: colorScheme.onPrimaryContainer,
-                          indicatorPadding: const EdgeInsets.all(4),
-                          squeezeIntensity: 2,
-                          tabPadding: const EdgeInsets.symmetric(horizontal: 8),
-                          textStyle: Theme.of(context).textTheme.labelLarge,
-                          selectedTextStyle: Theme.of(context)
-                              .textTheme
-                              .labelLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                          tabs: [
-                            SegmentTab(
-                              label: 'いいね',
-                              color: colorScheme.primaryContainer,
-                              backgroundColor: colorScheme.surface,
-                              textColor: colorScheme.onSurfaceVariant,
-                              selectedTextColor: colorScheme.onPrimaryContainer,
+                        const SizedBox(height: 32),
+                        AccountPlate(
+                          userName: user?.accountName ?? "unknown",
+                          userId: user?.accountID ?? "unknown",
+                        ),
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: SegmentedTabControl(
+                            tabTextColor: colorScheme.onSurfaceVariant,
+                            selectedTabTextColor:
+                                colorScheme.onPrimaryContainer,
+                            indicatorPadding: const EdgeInsets.all(4),
+                            squeezeIntensity: 2,
+                            tabPadding: const EdgeInsets.symmetric(
+                              horizontal: 8,
                             ),
-                            child: TabBar(
-                              dividerColor: Colors.transparent, // デフォルトの下線を消す
-                              indicatorSize: TabBarIndicatorSize.tab,
-                              indicator: BoxDecoration(
+                            textStyle: Theme.of(context).textTheme.labelLarge,
+                            selectedTextStyle: Theme.of(context)
+                                .textTheme
+                                .labelLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                            tabs: [
+                              SegmentTab(
+                                label: 'いいね',
                                 color: colorScheme.primaryContainer,
-                                borderRadius: BorderRadius.circular(22),
+                                backgroundColor: colorScheme.surface,
+                                textColor: colorScheme.onSurfaceVariant,
+                                selectedTextColor:
+                                    colorScheme.onPrimaryContainer,
                               ),
-                              labelColor: colorScheme.onPrimaryContainer,
-                              unselectedLabelColor: colorScheme.onSurfaceVariant,
-                              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-                              splashBorderRadius: BorderRadius.circular(22),
-                              tabs: const [
-                                Tab(text: 'いいね'),
-                                Tab(text: 'ブックマーク'),
-                              ],
-                            ),
+                              SegmentTab(
+                                label: 'ブックマーク',
+                                color: colorScheme.primaryContainer,
+                                backgroundColor: colorScheme.surface,
+                                textColor: colorScheme.onSurfaceVariant,
+                                selectedTextColor:
+                                    colorScheme.onPrimaryContainer,
+                              ),
+                            ],
                           ),
                         ),
-                        // ▲ 標準TabBarここまで ▲
-                        
                         const SizedBox(height: 12),
                       ],
                     ),

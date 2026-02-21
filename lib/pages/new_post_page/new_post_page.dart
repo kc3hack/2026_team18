@@ -12,9 +12,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
 import 'package:mikata/models/post.dart';
+import 'package:mikata/providers/profile_image_provider.dart';
 import 'package:mikata/providers/timeline_provider.dart';
 import 'package:mikata/providers/user_account_provider.dart';
-import 'package:mikata/providers/profile_image_provider.dart';
 
 class NewPostPage extends HookConsumerWidget {
   const NewPostPage({super.key});

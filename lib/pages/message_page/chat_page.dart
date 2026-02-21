@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_hooks/flutter_hooks.dart'; // 追加
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
 // Project imports:
 import 'package:mikata/models/account.dart';
 import 'package:mikata/models/direct_message.dart';
-import 'package:mikata/providers/user_account_provider.dart'; // 自分自身の情報取得用
 import 'package:mikata/widgets/custom_appbar.dart';
+
+import 'package:flutter_hooks/flutter_hooks.dart'; // 追加
+import 'package:mikata/providers/user_account_provider.dart'; // 自分自身の情報取得用
 
 class ChatPage extends HookConsumerWidget {
   const ChatPage({super.key, required this.targetAccount});

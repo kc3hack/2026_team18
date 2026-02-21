@@ -1,11 +1,11 @@
 // Dart imports:
 import 'dart:async'; // 追加
 
-// Package imports:
-import 'package:shared_preferences/shared_preferences.dart'; // 追加
-
 // Project imports:
 import 'package:mikata/models/account_manager.dart';
+
+// Package imports:
+import 'package:shared_preferences/shared_preferences.dart'; // 追加
 
 class PersonalityParameters {
 //private member
