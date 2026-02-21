@@ -7,14 +7,11 @@ final class CustomColorSchema {
   final double value;
 
   ColorScheme toColorScheme({Brightness brightness = Brightness.light}) {
-    // return (value > 0.0) ? pinkLightColorScheme : blueLightColorScheme;
-    if (value < -0.3) {
-      return blueLightColorScheme;
-    } else if (value < 0.3) {
-      return greenLightColorScheme;
-    } else {
-      return pinkLightColorScheme;
-    }
+    return switch (value) {
+      < -0.3 => blueLightColorScheme,
+      < 0.3 => greenLightColorScheme,
+      _ => pinkLightColorScheme,
+    };
   }
 
   static ColorScheme schemeFor(
