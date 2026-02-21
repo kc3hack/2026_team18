@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
 import 'package:mikata/providers/ai_settings_provider.dart';
-import 'package:mikata/providers/theme_provider.dart';
 import 'package:mikata/widgets/custom_appbar.dart';
 
 class SettingsPage extends HookConsumerWidget {
