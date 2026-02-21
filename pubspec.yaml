@@ -56,6 +56,7 @@ dependencies:
   cuberto_bottom_bar: ^3.1.0
   tab_container: ^3.5.3
   animated_segmented_tab_control: ^2.0.0
+  image_picker: ^1.2.1
 
 dev_dependencies:
   flutter_test:
