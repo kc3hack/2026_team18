@@ -58,9 +58,9 @@ class AccountSettiingDialog extends HookConsumerWidget {
               : () async {
                   final nextName = userNameController.text.trim();
                   final nextId = userIdController.text.trim();
-
+                
                   // 修正: 変更がない場合でも pop() を呼んでダイアログを閉じる
-                  if (nextName == user.accountName && nextId == user.accountID) {
+                  if (nextName == user?.accountName && nextId == user?.accountID) {
                     Navigator.of(context).pop();
                     return;
                   }
