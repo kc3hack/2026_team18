@@ -91,14 +91,15 @@ class AccountManager {
       }
     }
 
-    List<BotAccount> getReplyBotAccounts() {
+    Future<List<BotAccount>> getReplyBotAccounts() async {
         final List<BotAccount> result = [];
 
         final personalities = [Personality.praise, Personality.empathy, Personality.criticism];
-        final countList = PersonalityParameters().getPersonalityCount();
+        
+        // 修正: await をつけてパラメーターの取得を待つ
+        final countList = await PersonalityParameters().getPersonalityCount();
 
         final accountLists = personalities.map((p) => getBotAccountByPersonality(p)).toList();
-
 
         for (int i = 0; i < personalities.length; i++) {
             final botsOfThisPersonality = accountLists[i];
