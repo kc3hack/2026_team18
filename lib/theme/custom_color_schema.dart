@@ -20,42 +20,7 @@ final class CustomColorSchema {
   }) {
     return CustomColorSchema(value).toColorScheme(brightness: brightness);
   }
-
-  ColorScheme grayColorScheme({Brightness brightness = Brightness.light}) {
-    return grayLightColorScheme;
-  }
 }
-
-final ColorScheme grayLightColorScheme = ColorScheme(
-  brightness: Brightness.light,
-  primary: Colors.grey.shade900,
-  onPrimary: Colors.white,
-  primaryContainer: Colors.grey.shade200,
-  onPrimaryContainer: Colors.grey.shade900,
-  secondary: Colors.grey.shade800,
-  onSecondary: Colors.white,
-  secondaryContainer: Colors.grey.shade100,
-  onSecondaryContainer: Colors.grey.shade900,
-  tertiary: Colors.grey.shade700,
-  onTertiary: Colors.white,
-  tertiaryContainer: Colors.grey.shade100,
-  onTertiaryContainer: Colors.grey.shade900,
-  error: Colors.red.shade700,
-  onError: Colors.white,
-  errorContainer: Colors.red.shade100,
-  onErrorContainer: Colors.red.shade900,
-  surface: Colors.grey.shade50,
-  onSurface: Colors.grey.shade900,
-  surfaceContainerHighest: Colors.grey.shade100,
-  onSurfaceVariant: Colors.grey.shade700,
-  outline: Colors.grey.shade400,
-  outlineVariant: Colors.grey.shade200,
-  shadow: Colors.black,
-  scrim: Colors.black,
-  inverseSurface: Colors.grey.shade900,
-  onInverseSurface: Colors.grey.shade50,
-  inversePrimary: Colors.grey.shade200,
-);
 
 final ColorScheme blueLightColorScheme = ColorScheme(
   brightness: Brightness.light,
@@ -142,8 +107,7 @@ final ColorScheme greenLightColorScheme = ColorScheme(
   surfaceContainerHighest: Color(0xFFE2E0C8),
   onSurfaceVariant: Color(0xFF4E635E),
   outline: Color(0xFF94A59C),
-  outlineVariant: Color(0xFFA6B49E),
-  shadow: Colors.black,
+  outlineVariant: Color.fromARGB(255, 96, 121, 80),
   scrim: Colors.black,
   inverseSurface: Color(0xFF4E635E),
   onInverseSurface: Color(0xFFE2E0C8),
