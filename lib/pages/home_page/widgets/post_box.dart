@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 // Project imports:
 import 'package:mikata/models/post.dart';
 import 'package:mikata/providers/router_provider.dart';
+import 'package:mikata/widgets/remove_post_dialog.dart';
 
 part 'post_box_bottom_buttons.dart';
 
@@ -59,6 +60,17 @@ class PostBox extends HookConsumerWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         softWrap: false,
+                      ),
+                      Spacer(),
+                      InkWell(
+                        borderRadius: BorderRadius.circular(100),
+                        onTap: () {
+                          RemovePostDialog.show(context, post);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Icon(Icons.more_vert_rounded),
+                        ),
                       ),
                     ],
                   ),

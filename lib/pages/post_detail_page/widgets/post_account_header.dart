@@ -37,11 +37,17 @@ class PostAccountHeader extends HookConsumerWidget {
           ],
         ),
         Spacer(),
-        FilledButton.icon(
-          onPressed: () {},
-          icon: Icon(Icons.email_rounded),
-          label: Text("DM"),
-        ),
+        (post.authorUUID != ref.watch(userAccountProvider).value?.accountUUID)
+            ? FilledButton.icon(
+                onPressed: () {},
+                icon: Icon(Icons.email_rounded),
+                label: Text("DM"),
+              )
+            : IconButton(
+                onPressed: () =>
+                    RemovePostDialog.show(context, post, RoutePath.postDetail),
+                icon: Icon(Icons.more_vert_rounded),
+              ),
       ],
     );
   }

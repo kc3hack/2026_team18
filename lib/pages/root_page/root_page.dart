@@ -21,8 +21,10 @@ class RootPage extends HookConsumerWidget {
       body: navigationShell,
       floatingActionButton: (navigationShell.currentIndex == 0)
           ? FloatingActionButton(
+              shape: StadiumBorder(),
+              elevation: 0,
               onPressed: () => context.push(RoutePath.newPost.path),
-              child: const Icon(Icons.add),
+              child: const Icon(Icons.add_rounded),
             )
           : null,
       bottomNavigationBar: Padding(
@@ -34,6 +36,7 @@ class RootPage extends HookConsumerWidget {
           ),
           child: NavigationBar(
             backgroundColor: Colors.transparent,
+
             destinations: [
               NavigationDestination(
                 icon: const Icon(Icons.home_rounded),

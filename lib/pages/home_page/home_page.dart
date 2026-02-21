@@ -58,6 +58,18 @@ class HomePage extends HookConsumerWidget {
                     .where((post) => post.parentPostUUID.isEmpty)
                     .toList();
 
+                if (noParentPosts.isEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text(
+                        "なにか投稿してみましょう！",
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                    ),
+                  );
+                }
+
                 return ListView.separated(
                   itemCount: noParentPosts.length,
                   itemBuilder: (context, index) {

@@ -7,6 +7,8 @@ class PostContent extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formattedDate = DateFormat('yyyy年M月d日 HH:mm').format(post.postDate);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -15,9 +17,9 @@ class PostContent extends HookConsumerWidget {
         const SizedBox(height: 8),
         Text(
           formattedDate,
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(color: Colors.grey),
+          style: textTheme.titleMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );
