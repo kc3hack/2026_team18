@@ -12,6 +12,9 @@ class Timeline {
   //   List<Post> Function()? apiCallback;
   late GeminiApi _geminiApi;
 
+  // UIに新しい返信が来たと通知するためのコールバック関数
+  void Function()? onTimelineUpdated; 
+
   static final Timeline _instance = Timeline._internal();
   Timeline._internal();
 
@@ -46,30 +49,52 @@ class Timeline {
     return await getReplyPostByParentPostUUID(post.postUUID);
   }
 
-  Future<List<Post>> addPost(Post post) async {
-    _insertPost(post: post);
+  Future<List<Post>> getReplyPostsForPost(Post post) async {
+    List<Post> replyPosts = [];
+
     List<BotAccount> replyBots = AccountManager().getReplyBotAccounts();
-    final List<Post> replyPosts = [];
     for (BotAccount i in replyBots) {
-      final prompt =
-          '''
-            ロール: SNS投稿に対してリプライを100字以内に返す
-            ${i.prompt}
-            投稿 : ${post.content}
-            ''';
-      final replyContent = "test"; //await geminiApi.generateResponse(prompt);
-      if (replyContent == null) continue;
+      final replyContent = await geminiApi.generateResponse(i.prompt);
       final replyPost = Post(
         authorName: i.accountName,
         authorUUID: i.accountUUID,
-        content: replyContent,
+        content: replyContent!,
       );
 
-      await this.replyPost(replyPost, post.authorUUID);
+      this.replyPost(replyPost, post.authorUUID);
       replyPosts.add(replyPost);
     }
 
     return replyPosts;
+  }
+
+  Future<void> addPost(Post post) async {
+    await _insertPost(post: post, insertPos: 0);
+    if (post.parentPostUUID != "") return;
+
+    // 非同期で裏側でボットに返信させる（awaitで待たない）
+    _generateBotRepliesAsync(post);
+  }
+
+  // 裏側で順次APIを叩き、返信をタイムラインに追加するメソッド
+  Future<void> _generateBotRepliesAsync(Post post) async {
+    List<BotAccount> replyBots = AccountManager().getReplyBotAccounts();
+    for (BotAccount i in replyBots) {
+      final replyContent = await _geminiApi.generateResponse(i.prompt);
+      if (replyContent != null) {
+        
+        // ▼ 変数名を replyPost から botReply に変更 ▼
+        final botReply = Post(
+          authorName: i.accountName,
+          authorUUID: i.accountUUID,
+          content: replyContent,
+        );
+        
+        // ▼ メソッドの呼び出しに botReply を渡す ▼
+        await replyPost(botReply, post.postUUID);
+        
+      }
+    }
   }
 
   Future<void> removePost(Post post) async {
@@ -80,6 +105,9 @@ class Timeline {
   Future<void> replyPost(Post reply, String parentUUID) async {
     reply.parentPostUUID = parentUUID;
     await _insertPost(post: reply, insertPos: 1);
+    
+    // 返信が追加されたらUIを更新するための通知を発火
+    onTimelineUpdated?.call(); 
   }
 
   Future<void> updateAuthorName(String uuid, String newName) async {
@@ -95,15 +123,13 @@ class Timeline {
       offset: offset,
     );
 
-    // 追加: データベースが空の場合、Botに初期投稿を生成させる
     if (dbPosts.isEmpty && offset == 0) {
+      // データベースが空の場合、Botに初期投稿を生成させる
       await _insertInitialPosts();
       final newPosts = await _dbHelper.getTimeline(limit: limit, offset: offset);
       _timeline.clear();
       _timeline.addAll(newPosts);
-    }
-
-    else if (offset == 0) {
+    } else if (offset == 0) {
       _timeline.clear();
       _timeline.addAll(dbPosts);
     } else {
