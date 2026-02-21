@@ -5,6 +5,7 @@ import 'package:mikata/models/database_helper.dart';
 import 'package:mikata/models/gemini_api.dart';
 import 'package:mikata/models/post.dart';
 
+
 class Timeline {
   // private member
   final List<Post> _timeline = [];
@@ -80,7 +81,13 @@ class Timeline {
   Future<void> _generateBotRepliesAsync(Post post) async {
     List<BotAccount> replyBots = AccountManager().getReplyBotAccounts();
     for (BotAccount i in replyBots) {
-      final replyContent = await _geminiApi.generateResponse(i.prompt);
+      final prompt_ =
+          '''
+            ロール: SNS投稿に対してリプライを100字以内に返す
+            ${i.prompt}
+            投稿 : ${post.content}
+            ''';
+      final replyContent = await _geminiApi.generateResponse(prompt_);
       if (replyContent != null) {
         
         // ▼ 変数名を replyPost から botReply に変更 ▼
