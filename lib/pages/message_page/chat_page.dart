@@ -2,12 +2,14 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:flutter_hooks/flutter_hooks.dart'; // 追加
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
 // Project imports:
 import 'package:mikata/models/account.dart';
 import 'package:mikata/models/direct_message.dart';
+import 'package:mikata/providers/user_account_provider.dart'; // 自分自身の情報取得用
 import 'package:mikata/widgets/custom_appbar.dart';
 
 class ChatPage extends HookConsumerWidget {
@@ -17,47 +19,40 @@ class ChatPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 相手の名前を表示（nullならUnknown）
     final title = targetAccount?.accountName ?? "Unknown";
 
-    // ダミーメッセージデータ
-    final List<DirectMessage> dummyMessages = [
-      DirectMessage(
-        botUUID: targetAccount?.accountUUID ?? "test",
-        accountName: title,
-        accountUUID: "uuid_bot",
-        content: "こんにちは、$title です。今日はどんな気分ですか？",
-        dateTime: DateTime.now().subtract(const Duration(minutes: 30)),
-      ),
-      DirectMessage(
-        botUUID: targetAccount?.accountUUID ?? "test",
-        accountName: "Me",
-        accountUUID: "my_uuid",
-        content: "少し話を聞いてほしいです。",
-        dateTime: DateTime.now().subtract(const Duration(minutes: 5)),
-      ),
-    ];
-
-    final reversedMessages = dummyMessages.reversed.toList();
-
+    // 修正: FutureBuilderなどを使って実際のDM履歴をDBから読み込む
     return Scaffold(
       appBar: CustomAppbar(title: Text(title)),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              reverse: true,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: reversedMessages.length,
-              itemBuilder: (context, index) {
-                final message = reversedMessages[index];
-                final isMe = message.accountUUID == "my_uuid";
-                return _MessageBubble(message: message, isMe: isMe);
-              },
-            ),
-          ),
-          const _MessageInputArea(),
-        ],
+      body: FutureBuilder<void>(
+        future: targetAccount?.loadDMs(), // DBからメッセージをロード
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          
+          final messages = targetAccount?.getDMs() ?? [];
+          final reversedMessages = messages.reversed.toList(); // 最新を下にするため反転
+
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  reverse: true,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  itemCount: reversedMessages.length,
+                  itemBuilder: (context, index) {
+                    final message = reversedMessages[index];
+                    // botUUIDとaccountUUIDが違えば自分（ユーザー）の送信メッセージ
+                    final isMe = message.accountUUID != message.botUUID; 
+                    return _MessageBubble(message: message, isMe: isMe);
+                  },
+                ),
+              ),
+              _MessageInputArea(targetBot: targetAccount), // 入力エリアにBot情報を渡す
+            ],
+          );
+        },
       ),
     );
   }
@@ -125,11 +120,17 @@ class _MessageBubble extends StatelessWidget {
   }
 }
 
-class _MessageInputArea extends StatelessWidget {
-  const _MessageInputArea();
+class _MessageInputArea extends HookConsumerWidget {
+  const _MessageInputArea({required this.targetBot});
+  
+  final BotAccount? targetBot;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final inputController = useTextEditingController();
+    final user = ref.watch(userAccountProvider).value;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
       decoration: BoxDecoration(
@@ -146,8 +147,9 @@ class _MessageInputArea extends StatelessWidget {
                 color: colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(24),
               ),
-              child: const TextField(
-                decoration: InputDecoration(
+              child: TextField(
+                controller: inputController,
+                decoration: const InputDecoration(
                   hintText: "メッセージを入力...",
                   border: InputBorder.none,
                 ),
@@ -155,7 +157,29 @@ class _MessageInputArea extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          IconButton.filled(onPressed: () {}, icon: const Icon(Icons.send)),
+          IconButton.filled(
+            onPressed: () async {
+              if (inputController.text.isEmpty || user == null || targetBot == null) return;
+              
+              // ▼ 実際の送信処理（DB保存とGemini APIへのリクエスト）▼
+              final dm = DirectMessage(
+                botUUID: targetBot!.accountUUID,
+                accountName: user.accountName,
+                accountUUID: user.accountUUID,
+                content: inputController.text,
+              );
+              
+              // 送信後に入力欄をクリア
+              inputController.clear();
+              
+              // Gemini APIを叩いて返信を生成（DBにも保存される）
+              await targetBot!.addDM(dm);
+              
+              // ※注意: 本来はここで画面の再描画(setStateやRiverpod更新)が必要
+              // 簡易的に画面全体をリビルドするか、StateProviderで監視する
+            }, 
+            icon: const Icon(Icons.send)
+          ),
         ],
       ),
     );
