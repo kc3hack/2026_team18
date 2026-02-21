@@ -5,13 +5,16 @@ import 'package:mikata/models/database_helper.dart';
 import 'package:mikata/models/gemini_api.dart';
 import 'package:mikata/models/post.dart';
 
-
 class Timeline {
   // private member
   final List<Post> _timeline = [];
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  //   List<Post> Function()? apiCallback;
-  late GeminiApi _geminiApi;
+  
+  // ここで直接インスタンスを生成してセットする
+  GeminiApi _geminiApi = GeminiApi(
+    apiKey: 'APIキー',
+    model: 'gemini-1.5-flash',
+  );
 
   // UIに新しい返信が来たと通知するためのコールバック関数
   void Function()? onTimelineUpdated; 
@@ -53,7 +56,6 @@ class Timeline {
   Future<List<Post>> getReplyPostsForPost(Post post) async {
     List<Post> replyPosts = [];
 
-    // ▼ 修正: await を追加 ▼
     List<BotAccount> replyBots = await AccountManager().getReplyBotAccounts();
     
     for (BotAccount i in replyBots) {
@@ -81,7 +83,6 @@ class Timeline {
 
   // 裏側で順次APIを叩き、返信をタイムラインに追加するメソッド
   Future<void> _generateBotRepliesAsync(Post post) async {
-    // ▼ 修正: await を追加 ▼
     List<BotAccount> replyBots = await AccountManager().getReplyBotAccounts();
     
     for (BotAccount i in replyBots) {
