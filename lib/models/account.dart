@@ -137,7 +137,8 @@ class BotAccount extends Account {
 
     Future<void> loadDMs() async {
         List<DirectMessage> dmList = await _dbHelper.getDirectMessagesByBotUUID(accountUUID);
-        dmList.addAll(dmList);
+        _dmLists.clear();         // 一度クリアして重複を防ぐ
+        _dmLists.addAll(dmList);  // クラスの変数 (_dmLists) に正しく追加する
     }
 
     Future<void> addDM(DirectMessage dm) async{
