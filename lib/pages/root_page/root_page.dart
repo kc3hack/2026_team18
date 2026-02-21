@@ -43,7 +43,7 @@ class RootPage extends HookConsumerWidget {
                 label: "Home",
               ),
               NavigationDestination(
-                icon: const Icon(Icons.message_rounded),
+                icon: const Icon(Icons.email_rounded),
                 label: "Message",
               ),
               NavigationDestination(
