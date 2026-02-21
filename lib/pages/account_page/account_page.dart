@@ -9,6 +9,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
 import 'package:mikata/pages/account_page/widgets/account_plate.dart';
+import 'package:mikata/pages/account_page/widgets/bookmark_tab.dart';
+import 'package:mikata/pages/account_page/widgets/favorite_tab.dart';
+import 'package:mikata/pages/home_page/widgets/post_box.dart';
 import 'package:mikata/providers/user_account_provider.dart';
 import 'package:mikata/widgets/custom_appbar.dart';
 
@@ -120,12 +123,12 @@ class AccountPage extends HookConsumerWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SliverToBoxAdapter(child: SizedBox(height: 8)),
                 SliverFillRemaining(
                   child: TabBarView(
                     children: [
-                      Center(child: Text("いいねした投稿のリスト")),
-                      Center(child: Text("ブックマークした投稿のリスト")),
+                      FavoriteTab(user: user!),
+                      BookmarkTab(user: user!),
                     ],
                   ),
                 ),
