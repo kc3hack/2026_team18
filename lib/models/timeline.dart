@@ -53,13 +53,15 @@ class Timeline {
   Future<List<Post>> getReplyPostsForPost(Post post) async {
     List<Post> replyPosts = [];
 
-    List<BotAccount> replyBots = AccountManager().getReplyBotAccounts();
+    // ▼ 修正: await を追加 ▼
+    List<BotAccount> replyBots = await AccountManager().getReplyBotAccounts();
+    
     for (BotAccount i in replyBots) {
       final replyContent = await geminiApi.generateResponse(i.prompt);
       final replyPost = Post(
         authorName: i.accountName,
         authorUUID: i.accountUUID,
-        content: replyContent!,
+        content: replyContent ?? "", // null対策
       );
 
       this.replyPost(replyPost, post.authorUUID);
@@ -79,7 +81,9 @@ class Timeline {
 
   // 裏側で順次APIを叩き、返信をタイムラインに追加するメソッド
   Future<void> _generateBotRepliesAsync(Post post) async {
-    List<BotAccount> replyBots = AccountManager().getReplyBotAccounts();
+    // ▼ 修正: await を追加 ▼
+    List<BotAccount> replyBots = await AccountManager().getReplyBotAccounts();
+    
     for (BotAccount i in replyBots) {
       final prompt_ =
           '''
@@ -89,17 +93,12 @@ class Timeline {
             ''';
       final replyContent = await _geminiApi.generateResponse(prompt_);
       if (replyContent != null) {
-        
-        // ▼ 変数名を replyPost から botReply に変更 ▼
         final botReply = Post(
           authorName: i.accountName,
           authorUUID: i.accountUUID,
           content: replyContent,
         );
-        
-        // ▼ メソッドの呼び出しに botReply を渡す ▼
         await replyPost(botReply, post.postUUID);
-        
       }
     }
   }
