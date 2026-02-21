@@ -69,7 +69,10 @@ class PostBox extends HookConsumerWidget {
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(2.0),
-                          child: Icon(Icons.more_vert_rounded),
+                          child: Icon(
+                            Icons.more_vert_rounded,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ),
                     ],

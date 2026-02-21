@@ -16,6 +16,8 @@ class UserAccountProvider extends AsyncNotifier<UserAccount?> {
   static const _keyAccountId = 'user.accountId';
   static const _keyAccountUuid = 'user.accountUuid';
 
+  static final RegExp _accountIdPattern = RegExp(r'^[0-9A-Za-z]{8}$');
+
   @override
   Future<UserAccount?> build() async {
     await ref.watch(databaseReadyProvider.future);
@@ -75,6 +77,43 @@ class UserAccountProvider extends AsyncNotifier<UserAccount?> {
     await _syncToAccountManager(currentUser);
   }
 
+  Future<void> updateProfile({String? accountName, String? accountId}) async {
+    state = const AsyncValue.loading();
+    final trimmedName = accountName?.trim();
+    final trimmedId = accountId?.trim();
+
+    final currentUser = state.value;
+    if (currentUser == null) {
+      if (trimmedName != null && trimmedName.isNotEmpty) {
+        await login(accountName: trimmedName);
+      }
+      return;
+    }
+
+    var didChange = false;
+
+    if (trimmedName != null &&
+        trimmedName.isNotEmpty &&
+        trimmedName != currentUser.accountName) {
+      currentUser.changeAccountName(trimmedName);
+      didChange = true;
+    }
+
+    if (trimmedId != null &&
+        trimmedId.isNotEmpty &&
+        _accountIdPattern.hasMatch(trimmedId) &&
+        trimmedId != currentUser.accountID) {
+      currentUser.changeAccountID(trimmedId);
+      didChange = true;
+    }
+
+    if (!didChange) return;
+
+    state = AsyncValue.data(currentUser);
+    await _save(currentUser);
+    await _syncToAccountManager(currentUser);
+  }
+
   Future<void> _save(UserAccount user) async {
     try {
       await ref.read(databaseReadyProvider.future);
@@ -100,8 +139,13 @@ class UserAccountProvider extends AsyncNotifier<UserAccount?> {
         return;
       }
 
-      if (existing is Account && existing.accountName != user.accountName) {
-        existing.changeAccountName(user.accountName);
+      if (existing is Account) {
+        if (existing.accountName != user.accountName) {
+          existing.changeAccountName(user.accountName);
+        }
+        if (existing.accountID != user.accountID) {
+          existing.accountID = user.accountID;
+        }
       }
     } catch (e) {
       debugPrint('Failed to sync user into AccountManager: $e');

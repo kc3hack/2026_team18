@@ -39,7 +39,7 @@ class NewPostPage extends HookConsumerWidget {
       appBar: AppBar(
         actions: [
           FilledButton(
-            onPressed: (user == null)
+            onPressed: (user == null || inputController.text.isEmpty)
                 ? null
                 : () async {
                     final newPost = Post(
