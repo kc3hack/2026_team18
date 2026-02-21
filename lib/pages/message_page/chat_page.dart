@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 // Project imports:
 import 'package:mikata/models/account.dart';
 import 'package:mikata/models/direct_message.dart';
+import 'package:mikata/widgets/custom_appbar.dart';
 
 class ChatPage extends HookConsumerWidget {
   const ChatPage({super.key, required this.targetAccount});
@@ -40,7 +41,7 @@ class ChatPage extends HookConsumerWidget {
     final reversedMessages = dummyMessages.reversed.toList();
 
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: CustomAppbar(title: Text(title)),
       body: Column(
         children: [
           Expanded(
@@ -75,7 +76,9 @@ class _MessageBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isMe) ...[
@@ -86,7 +89,9 @@ class _MessageBubble extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: isMe ? colorScheme.primaryContainer : colorScheme.surfaceContainerHighest,
+                color: isMe
+                    ? colorScheme.primaryContainer
+                    : colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
@@ -100,7 +105,9 @@ class _MessageBubble extends StatelessWidget {
                   Text(
                     message.content,
                     style: TextStyle(
-                      color: isMe ? colorScheme.onPrimaryContainer : colorScheme.onSurfaceVariant,
+                      color: isMe
+                          ? colorScheme.onPrimaryContainer
+                          : colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -108,7 +115,10 @@ class _MessageBubble extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 4),
-          Text(timeFormat.format(message.dateTime), style: Theme.of(context).textTheme.labelSmall),
+          Text(
+            timeFormat.format(message.dateTime),
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
         ],
       ),
     );
@@ -137,7 +147,10 @@ class _MessageInputArea extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24),
               ),
               child: const TextField(
-                decoration: InputDecoration(hintText: "メッセージを入力...", border: InputBorder.none),
+                decoration: InputDecoration(
+                  hintText: "メッセージを入力...",
+                  border: InputBorder.none,
+                ),
               ),
             ),
           ),

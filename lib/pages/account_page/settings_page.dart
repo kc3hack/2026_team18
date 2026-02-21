@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 // Project imports:
 import 'package:mikata/providers/ai_settings_provider.dart';
 import 'package:mikata/providers/theme_provider.dart';
+import 'package:mikata/widgets/custom_appbar.dart';
 
 class SettingsPage extends HookConsumerWidget {
   const SettingsPage({super.key});
@@ -16,7 +17,7 @@ class SettingsPage extends HookConsumerWidget {
     final aiSettingsAsync = ref.watch(aiSettingsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Settings")),
+      appBar: CustomAppbar(title: const Text("Settings")),
       body: aiSettingsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error: $err')),
