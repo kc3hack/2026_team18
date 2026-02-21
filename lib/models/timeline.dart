@@ -9,7 +9,7 @@ class Timeline {
   // private member
   final List<Post> _timeline = [];
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  
+
   // ここで直接インスタンスを生成してセットする
   GeminiApi _geminiApi = GeminiApi(
     apiKey: 'AIzaSyDysqquI-fxmBRp39iZgBKwmQ1L_71SX9c',
@@ -17,7 +17,7 @@ class Timeline {
   );
 
   // UIに新しい返信が来たと通知するためのコールバック関数
-  void Function()? onTimelineUpdated; 
+  void Function()? onTimelineUpdated;
 
   static final Timeline _instance = Timeline._internal();
   Timeline._internal();
@@ -57,7 +57,7 @@ class Timeline {
     List<Post> replyPosts = [];
 
     List<BotAccount> replyBots = await AccountManager().getReplyBotAccounts();
-    
+
     for (BotAccount i in replyBots) {
       final replyContent = await geminiApi.generateResponse(i.prompt);
       final replyPost = Post(
@@ -84,7 +84,7 @@ class Timeline {
   // 裏側で順次APIを叩き、返信をタイムラインに追加するメソッド
   Future<void> _generateBotRepliesAsync(Post post) async {
     List<BotAccount> replyBots = await AccountManager().getReplyBotAccounts();
-    
+
     for (BotAccount i in replyBots) {
       final prompt_ =
           '''
@@ -112,9 +112,9 @@ class Timeline {
   Future<void> replyPost(Post reply, String parentUUID) async {
     reply.parentPostUUID = parentUUID;
     await _insertPost(post: reply, insertPos: 1);
-    
+
     // 返信が追加されたらUIを更新するための通知を発火
-    onTimelineUpdated?.call(); 
+    onTimelineUpdated?.call();
   }
 
   Future<void> updateAuthorName(String uuid, String newName) async {
@@ -133,7 +133,10 @@ class Timeline {
     if (dbPosts.isEmpty && offset == 0) {
       // データベースが空の場合、Botに初期投稿を生成させる
       await _insertInitialPosts();
-      final newPosts = await _dbHelper.getTimeline(limit: limit, offset: offset);
+      final newPosts = await _dbHelper.getTimeline(
+        limit: limit,
+        offset: offset,
+      );
       _timeline.clear();
       _timeline.addAll(newPosts);
     } else if (offset == 0) {
@@ -166,14 +169,20 @@ class Timeline {
   Future<void> _insertInitialPosts() async {
     final bots = AccountManager().getBotAccounts();
     if (bots.isEmpty) return;
-    
+
     // 全Botの中からランダムに5体を抽出
     final shuffledBots = List<BotAccount>.from(bots)..shuffle();
-    final initialBots = shuffledBots.take(5).toList(); 
+    final initialBots = shuffledBots.take(5).toList();
 
     // リアリティのある適当な投稿内容
-    final bodies = ['今日からこのアプリはじめました！', 'いい天気だね〜', 'お昼ごはん何食べようかな', 'みんなよろしく！', 'ホットリロード最高'];
-    
+    final bodies = [
+      '今日からこのアプリはじめました！',
+      'いい天気だね〜',
+      'お昼ごはん何食べようかな',
+      'みんなよろしく！',
+      'ホットリロード最高',
+    ];
+
     for (int i = 0; i < initialBots.length; i++) {
       final bot = initialBots[i];
       final post = Post(
