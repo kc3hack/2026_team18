@@ -12,7 +12,7 @@ class Timeline {
 
   // ここで直接インスタンスを生成してセットする
   GeminiApi _geminiApi = GeminiApi(
-    apiKey: 'AIzaSyDysqquI-fxmBRp39iZgBKwmQ1L_71SX9c',
+    apiKey: 'AIzaSyCySwmUcSdp1mvwUoWq-oZDuO2hAbqBIYs', // 時間的反省点：APIキーの安全な挿入方法を考えるべき(少なくともGitHubに公開しないように)
     model: 'gemini-2.0-flash-lite',
   );
 
