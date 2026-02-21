@@ -14,45 +14,55 @@ import 'package:mikata/widgets/custom_appbar.dart';
 
 class ChatPage extends HookConsumerWidget {
   const ChatPage({super.key, required this.targetAccount});
-
   final BotAccount? targetAccount;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final title = targetAccount?.accountName ?? "Unknown";
+    final refreshTrigger = useState(0);
 
-    // 修正: FutureBuilderなどを使って実際のDM履歴をDBから読み込む
+    // データベースからメッセージ履歴を読み込む (refreshTriggerが更新されると再取得)
+    final dmsFuture = useMemoized(
+      () => targetAccount != null
+          ? targetAccount!.loadDMs().then((_) => targetAccount!.getDMs())
+          : Future.value(<DirectMessage>[]), // nullの場合は空のリストを返す
+      [targetAccount, refreshTrigger.value],
+    );
+    final dmsSnapshot = useFuture(dmsFuture);
+
     return Scaffold(
       appBar: CustomAppbar(title: Text(title)),
-      body: FutureBuilder<void>(
-        future: targetAccount?.loadDMs(), // DBからメッセージをロード
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          
-          final messages = targetAccount?.getDMs() ?? [];
-          final reversedMessages = messages.reversed.toList(); // 最新を下にするため反転
+      body: Column(
+        children: [
+          Expanded(
+            child: Builder(
+              builder: (context) {
+                if (dmsSnapshot.connectionState == ConnectionState.waiting && refreshTrigger.value == 0) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                
+                final messages = targetAccount?.getDMs() ?? [];
+                final reversedMessages = messages.reversed.toList();
 
-          return Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
+                return ListView.builder(
                   reverse: true,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   itemCount: reversedMessages.length,
                   itemBuilder: (context, index) {
                     final message = reversedMessages[index];
-                    // botUUIDとaccountUUIDが違えば自分（ユーザー）の送信メッセージ
-                    final isMe = message.accountUUID != message.botUUID; 
+                    final isMe = message.accountUUID != message.botUUID;
+                    // ※既存の_MessageBubbleをそのまま使用します
                     return _MessageBubble(message: message, isMe: isMe);
                   },
-                ),
-              ),
-              _MessageInputArea(targetBot: targetAccount), // 入力エリアにBot情報を渡す
-            ],
-          );
-        },
+                );
+              }
+            ),
+          ),
+          _MessageInputArea(
+            targetBot: targetAccount,
+            onSent: () => refreshTrigger.value++,
+          ),
+        ],
       ),
     );
   }
@@ -121,9 +131,10 @@ class _MessageBubble extends StatelessWidget {
 }
 
 class _MessageInputArea extends HookConsumerWidget {
-  const _MessageInputArea({required this.targetBot});
+  const _MessageInputArea({required this.targetBot, required this.onSent});
   
   final BotAccount? targetBot;
+  final VoidCallback onSent;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -158,25 +169,27 @@ class _MessageInputArea extends HookConsumerWidget {
           ),
           const SizedBox(width: 8),
           IconButton.filled(
-            onPressed: () async {
-              if (inputController.text.isEmpty || user == null || targetBot == null) return;
+            onPressed: () {
+              final text = inputController.text.trim();
+              if (text.isEmpty || user == null || targetBot == null) return;
               
-              // ▼ 実際の送信処理（DB保存とGemini APIへのリクエスト）▼
               final dm = DirectMessage(
                 botUUID: targetBot!.accountUUID,
                 accountName: user.accountName,
                 accountUUID: user.accountUUID,
-                content: inputController.text,
+                content: text,
               );
               
-              // 送信後に入力欄をクリア
-              inputController.clear();
+              inputController.clear(); // すぐに入力欄を空にする
               
-              // Gemini APIを叩いて返信を生成（DBにも保存される）
-              await targetBot!.addDM(dm);
+              // 【修正ポイント】awaitを外し、Geminiの処理を裏側で走らせる
+              targetBot!.addDM(dm).then((_) {
+                // Geminiから返信が来たらもう一度画面を更新
+                if (context.mounted) onSent();
+              });
               
-              // ※注意: 本来はここで画面の再描画(setStateやRiverpod更新)が必要
-              // 簡易的に画面全体をリビルドするか、StateProviderで監視する
+              // 自分のメッセージを即座に画面に表示する
+              onSent();
             }, 
             icon: const Icon(Icons.send)
           ),
