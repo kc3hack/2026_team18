@@ -89,15 +89,6 @@ class SettingsPage extends HookConsumerWidget {
       ),
     );
   }
-
-  void _updateThemeMood(
-    double praise,
-    double criticism,
-    ThemeNotifier notifier,
-  ) {
-    final double moodScore = ((praise - criticism) / 100).clamp(-1.0, 1.0);
-    notifier.updateColorSchemaValue(moodScore);
-  }
 }
 
 class _ParameterSlider extends StatelessWidget {
@@ -119,6 +110,8 @@ class _ParameterSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -127,15 +120,15 @@ class _ParameterSlider extends StatelessWidget {
           children: [
             Icon(icon, color: color, size: 20),
             const SizedBox(width: 8),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(label, style: textTheme.titleMedium),
             const Spacer(),
             Text(
               "${value.toInt()}%",
-              style: TextStyle(fontWeight: FontWeight.bold, color: color),
+              style: textTheme.titleLarge?.copyWith(color: color),
             ),
           ],
         ),
-        Text(description, style: Theme.of(context).textTheme.bodySmall),
+        Text(description, style: Theme.of(context).textTheme.bodyMedium),
         Slider(
           value: value,
           min: 0,
