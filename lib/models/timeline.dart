@@ -92,6 +92,7 @@ class Timeline {
             ${i.prompt}
             投稿 : ${post.content}
             ''';
+      await Future.delayed(const Duration(seconds: 5));
       final replyContent = await _geminiApi.generateResponse(prompt_);
       if (replyContent != null) {
         final botReply = Post(
