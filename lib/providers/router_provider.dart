@@ -38,11 +38,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RoutePath.home.path,
-                // builder: (context, state) => HomePage(),
-                pageBuilder: (context, state) => CustomFadeTransitionPage<void>(
-                  key: state.pageKey,
-                  child: HomePage(),
-                ),
+                builder: (context, state) => HomePage(),
               ),
             ],
           ),
@@ -50,11 +46,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RoutePath.message.path,
-                // builder: (context, state) => const MessagePage(),
-                pageBuilder: (context, state) => CustomFadeTransitionPage<void>(
-                  key: state.pageKey,
-                  child: const MessagePage(),
-                ),
+                builder: (context, state) => const MessagePage(),
               ),
             ],
           ),
@@ -62,28 +54,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RoutePath.account.path,
-                // builder: (context, state) => AccountPage(),
-                // pageBuilder: (context, state) => CustomFadeTransitionPage<void>(
-                //   key: state.pageKey,
-                //   child: AccountPage(),
-                // ),
-                pageBuilder: (context, state) => CustomTransitionPage(
-                  key: state.pageKey,
-                  child: AccountPage(),
-                  transitionDuration: const Duration(milliseconds: 250),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                        final curvedAnimation = CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.easeInOut,
-                        );
-
-                        return FadeTransition(
-                          opacity: curvedAnimation,
-                          child: child,
-                        );
-                      },
-                ),
+                builder: (context, state) => AccountPage(),
               ),
             ],
           ),
