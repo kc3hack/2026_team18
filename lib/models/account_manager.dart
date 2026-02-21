@@ -7,7 +7,7 @@ import 'package:mikata/models/database_helper.dart';
 import 'package:mikata/models/personality_parameters.dart';
 import 'package:mikata/models/post.dart';
 
-const int maxReplies = 15;
+const int maxReplies = 10;
 
 class AccountManager {
 // public member
