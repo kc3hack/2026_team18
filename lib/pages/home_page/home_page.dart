@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -47,7 +48,9 @@ class HomePage extends HookConsumerWidget {
               future: myPostsFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  ).animate().fadeIn(duration: 160.ms);
                 }
                 if (snapshot.hasError) {
                   return Center(child: Text("Error: ${snapshot.error}"));
@@ -61,12 +64,23 @@ class HomePage extends HookConsumerWidget {
                 if (noParentPosts.isEmpty) {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: Text(
-                        "なにか投稿してみましょう！",
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                    ),
+                    child:
+                        Center(
+                              child: Text(
+                                "なにか投稿してみましょう！",
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineSmall,
+                              ),
+                            )
+                            .animate()
+                            .fadeIn(duration: 220.ms)
+                            .slideY(
+                              duration: 260.ms,
+                              begin: 0.12,
+                              end: 0,
+                              curve: Curves.easeOutCubic,
+                            ),
                   );
                 }
 
@@ -74,7 +88,19 @@ class HomePage extends HookConsumerWidget {
                   itemCount: noParentPosts.length,
                   itemBuilder: (context, index) {
                     final post = noParentPosts[index];
-                    return PostBox(post: post);
+                    return PostBox(post: post)
+                        .animate(key: ValueKey(post.postUUID))
+                        .fadeIn(
+                          duration: 220.ms,
+                          delay: (60 * index).ms,
+                          curve: Curves.easeOut,
+                        )
+                        .slideY(
+                          duration: 260.ms,
+                          begin: 0.06,
+                          end: 0,
+                          curve: Curves.easeOutCubic,
+                        );
                   },
                   separatorBuilder: (context, index) {
                     return const Divider(height: 1);
@@ -83,7 +109,9 @@ class HomePage extends HookConsumerWidget {
               },
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ).animate().fadeIn(duration: 160.ms),
           error: (error, stack) => Center(child: Text("Error: $error")),
         ),
       ),

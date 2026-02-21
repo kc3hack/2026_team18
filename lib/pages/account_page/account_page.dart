@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -82,6 +83,7 @@ class AccountPage extends HookConsumerWidget {
                           ],
                         ),
                       ),
+
                       const SizedBox(height: 32),
                       AccountPlate(
                         userName: user?.accountName ?? "unknown",

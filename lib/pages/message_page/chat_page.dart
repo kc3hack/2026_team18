@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -52,11 +53,31 @@ class ChatPage extends HookConsumerWidget {
               itemBuilder: (context, index) {
                 final message = reversedMessages[index];
                 final isMe = message.accountUUID == "my_uuid";
-                return _MessageBubble(message: message, isMe: isMe);
+                return _MessageBubble(message: message, isMe: isMe)
+                    .animate(
+                      key: ValueKey(
+                        '${message.accountUUID}_${message.dateTime.millisecondsSinceEpoch}',
+                      ),
+                    )
+                    .fadeIn(duration: 180.ms, delay: (50 * index).ms)
+                    .slideX(
+                      duration: 220.ms,
+                      begin: isMe ? 0.08 : -0.08,
+                      end: 0,
+                      curve: Curves.easeOutCubic,
+                    );
               },
             ),
           ),
-          const _MessageInputArea(),
+          const _MessageInputArea()
+              .animate()
+              .fadeIn(duration: 200.ms)
+              .slideY(
+                duration: 240.ms,
+                begin: 0.2,
+                end: 0,
+                curve: Curves.easeOutCubic,
+              ),
         ],
       ),
     );

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -55,22 +56,67 @@ class PostDetailPage extends HookConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 8),
-                          PostAccountHeader(post: post),
+                          PostAccountHeader(post: post)
+                              .animate()
+                              .fadeIn(duration: 200.ms)
+                              .slideY(
+                                duration: 240.ms,
+                                begin: 0.06,
+                                end: 0,
+                                curve: Curves.easeOutCubic,
+                              ),
                           SizedBox(height: 12),
-                          PostContent(post: post),
+                          PostContent(post: post)
+                              .animate()
+                              .fadeIn(duration: 200.ms, delay: 60.ms)
+                              .slideY(
+                                duration: 240.ms,
+                                begin: 0.05,
+                                end: 0,
+                                curve: Curves.easeOutCubic,
+                              ),
                           Divider(height: 24),
-                          PostInteractionButtons(post: post),
+                          PostInteractionButtons(post: post)
+                              .animate()
+                              .fadeIn(duration: 200.ms, delay: 120.ms)
+                              .slideY(
+                                duration: 240.ms,
+                                begin: 0.05,
+                                end: 0,
+                                curve: Curves.easeOutCubic,
+                              ),
                         ],
                       ),
                     );
                   }
 
                   final replyIndex = index - 1;
-                  return PostBox(post: replyList[replyIndex]);
+                  final replyPost = replyList[replyIndex];
+                  return PostBox(post: replyPost)
+                      .animate(key: ValueKey(replyPost.postUUID))
+                      .fadeIn(
+                        duration: 220.ms,
+                        delay: (50 * replyIndex).ms,
+                        curve: Curves.easeOut,
+                      )
+                      .slideY(
+                        duration: 260.ms,
+                        begin: 0.06,
+                        end: 0,
+                        curve: Curves.easeOutCubic,
+                      );
                 },
               ),
             ),
-            ReplySheet(parentPostUUID: post.postUUID),
+            ReplySheet(parentPostUUID: post.postUUID)
+                .animate()
+                .fadeIn(duration: 220.ms, delay: 80.ms)
+                .slideY(
+                  duration: 260.ms,
+                  begin: 0.2,
+                  end: 0,
+                  curve: Curves.easeOutCubic,
+                ),
           ],
         ),
       ),
