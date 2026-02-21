@@ -34,7 +34,7 @@ class AccountPage extends HookConsumerWidget {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             GestureDetector(
               onTap: () {
                 ScaffoldMessenger.of(

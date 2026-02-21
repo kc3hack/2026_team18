@@ -28,11 +28,11 @@ class RootPage extends HookConsumerWidget {
             )
           : null,
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
           ),
           child: NavigationBar(
             backgroundColor: Colors.transparent,
