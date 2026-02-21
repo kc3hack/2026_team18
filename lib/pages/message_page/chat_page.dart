@@ -3,58 +3,57 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_hooks/flutter_hooks.dart'; // 追加
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
 // Project imports:
 import 'package:mikata/models/account.dart';
 import 'package:mikata/models/direct_message.dart';
+import 'package:mikata/providers/user_account_provider.dart'; // 自分自身の情報取得用
 import 'package:mikata/widgets/custom_appbar.dart';
 
 class ChatPage extends HookConsumerWidget {
   const ChatPage({super.key, required this.targetAccount});
-
   final BotAccount? targetAccount;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 相手の名前を表示（nullならUnknown）
     final title = targetAccount?.accountName ?? "Unknown";
+    final refreshTrigger = useState(0);
 
-    // ダミーメッセージデータ
-    final List<DirectMessage> dummyMessages = [
-      DirectMessage(
-        botUUID: targetAccount?.accountUUID ?? "test",
-        accountName: title,
-        accountUUID: "uuid_bot",
-        content: "こんにちは、$title です。今日はどんな気分ですか？",
-        dateTime: DateTime.now().subtract(const Duration(minutes: 30)),
-      ),
-      DirectMessage(
-        botUUID: targetAccount?.accountUUID ?? "test",
-        accountName: "Me",
-        accountUUID: "my_uuid",
-        content: "少し話を聞いてほしいです。",
-        dateTime: DateTime.now().subtract(const Duration(minutes: 5)),
-      ),
-    ];
-
-    final reversedMessages = dummyMessages.reversed.toList();
+    // データベースからメッセージ履歴を読み込む (refreshTriggerが更新されると再取得)
+    final dmsFuture = useMemoized(
+      () => targetAccount != null
+          ? targetAccount!.loadDMs().then((_) => targetAccount!.getDMs())
+          : Future.value(<DirectMessage>[]), // nullの場合は空のリストを返す
+      [targetAccount, refreshTrigger.value],
+    );
+    final dmsSnapshot = useFuture(dmsFuture);
 
     return Scaffold(
       appBar: CustomAppbar(title: Text(title)),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              reverse: true,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: reversedMessages.length,
-              itemBuilder: (context, index) {
-                final message = reversedMessages[index];
-                final isMe = message.accountUUID == "my_uuid";
-                return _MessageBubble(message: message, isMe: isMe)
-                    .animate(
+            child: Builder(
+              builder: (context) {
+                if (dmsSnapshot.connectionState == ConnectionState.waiting && refreshTrigger.value == 0) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                
+                final messages = targetAccount?.getDMs() ?? [];
+                final reversedMessages = messages.reversed.toList();
+
+                return ListView.builder(
+                  reverse: true,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  itemCount: reversedMessages.length,
+                  itemBuilder: (context, index) {
+                    final message = reversedMessages[index];
+                    final isMe = message.accountUUID != message.botUUID;
+                    // ※既存の_MessageBubbleをそのまま使用します
+                    return _MessageBubble(message: message, isMe: isMe)                    .animate(
                       key: ValueKey(
                         '${message.accountUUID}_${message.dateTime.millisecondsSinceEpoch}',
                       ),
@@ -66,11 +65,15 @@ class ChatPage extends HookConsumerWidget {
                       end: 0,
                       curve: Curves.easeOutCubic,
                     );
-              },
+                  },
+                );
+              }
             ),
           ),
-          const _MessageInputArea()
-              .animate()
+          _MessageInputArea(
+            targetBot: targetAccount,
+            onSent: () => refreshTrigger.value++,
+          ).animate()
               .fadeIn(duration: 200.ms)
               .slideY(
                 duration: 240.ms,
@@ -146,11 +149,18 @@ class _MessageBubble extends StatelessWidget {
   }
 }
 
-class _MessageInputArea extends StatelessWidget {
-  const _MessageInputArea();
+class _MessageInputArea extends HookConsumerWidget {
+  const _MessageInputArea({required this.targetBot, required this.onSent});
+  
+  final BotAccount? targetBot;
+  final VoidCallback onSent;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final inputController = useTextEditingController();
+    final user = ref.watch(userAccountProvider).value;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
       decoration: BoxDecoration(
@@ -167,8 +177,9 @@ class _MessageInputArea extends StatelessWidget {
                 color: colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(24),
               ),
-              child: const TextField(
-                decoration: InputDecoration(
+              child: TextField(
+                controller: inputController,
+                decoration: const InputDecoration(
                   hintText: "メッセージを入力...",
                   border: InputBorder.none,
                 ),
@@ -176,7 +187,31 @@ class _MessageInputArea extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          IconButton.filled(onPressed: () {}, icon: const Icon(Icons.send)),
+          IconButton.filled(
+            onPressed: () {
+              final text = inputController.text.trim();
+              if (text.isEmpty || user == null || targetBot == null) return;
+              
+              final dm = DirectMessage(
+                botUUID: targetBot!.accountUUID,
+                accountName: user.accountName,
+                accountUUID: user.accountUUID,
+                content: text,
+              );
+              
+              inputController.clear(); // すぐに入力欄を空にする
+              
+              // 【修正ポイント】awaitを外し、Geminiの処理を裏側で走らせる
+              targetBot!.addDM(dm).then((_) {
+                // Geminiから返信が来たらもう一度画面を更新
+                if (context.mounted) onSent();
+              });
+              
+              // 自分のメッセージを即座に画面に表示する
+              onSent();
+            }, 
+            icon: const Icon(Icons.send)
+          ),
         ],
       ),
     );

@@ -8,56 +8,53 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
 import 'package:mikata/models/account.dart';
+import 'package:mikata/providers/account_manager_provider.dart'; // 追加
 import 'package:mikata/providers/router_provider.dart';
 import 'package:mikata/widgets/custom_appbar.dart';
+import 'package:mikata/models/database_helper.dart';
+
+final activeDmBotsProvider = FutureProvider.autoDispose<List<BotAccount>>((ref) async {
+  final manager = await ref.watch(accountManagerProvider.future);
+  final db = await DatabaseHelper().database;
+  
+  // DM履歴があるBotのUUIDだけを取得
+  final maps = await db.rawQuery('SELECT DISTINCT bot_uuid FROM direct_messages');
+  final activeBotUuids = maps.map((m) => m['bot_uuid'] as String).toSet();
+  
+  return manager.getBotAccounts().where((bot) => activeBotUuids.contains(bot.accountUUID)).toList();
+});
 
 class MessagePage extends HookConsumerWidget {
   const MessagePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<BotAccount> dmThreads = [
-      BotAccount(
-        accountName: "Bot Alice",
-        accountID: "ALICE001",
-        personality: Personality.empathy,
-        prompt: 'やさしく共感しつつ、短く返事してね。',
-      ),
-      BotAccount(
-        accountName: "Bot Bob",
-        accountID: "BOB00002",
-        personality: Personality.praise,
-        prompt: '相手の良い点を見つけて褒める感じで返事してね。',
-      ),
-      BotAccount(
-        accountName: "Bot Carol",
-        accountID: "CAROL003",
-        personality: Personality.criticism,
-        prompt: '改善点を具体的に指摘しつつ、最後は前向きに締めてね。',
-      ),
-      BotAccount(
-        accountName: "Bot Dave",
-        accountID: "DAVE0004",
-        personality: Personality.empathy,
-        prompt: '相手の気持ちを言い換えて安心させる返事をしてね。',
-      ),
-      BotAccount(
-        accountName: "Bot Eve",
-        accountID: "EVE00005",
-        personality: Personality.praise,
-        prompt: 'テンション高めでポジティブに背中を押してね。',
-      ),
-    ];
+    final activeBotsAsync = ref.watch(activeDmBotsProvider);
 
     return Scaffold(
       appBar: CustomAppbar(title: const Text("Messages")),
-      body: ListView.separated(
-        itemCount: dmThreads.length,
-        separatorBuilder: (context, index) => const Divider(height: 1),
-        itemBuilder: (context, index) {
-          final bot = dmThreads[index];
-          return MessageBox(bot: bot)
-              .animate(key: ValueKey(bot.accountID))
+      body: activeBotsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => Center(child: Text("Error: $err")),
+        data: (dmThreads) {
+          if (dmThreads.isEmpty) {
+            return const Center(
+              child: Text("まだメッセージのやり取りはありません\n投稿画面からDMを送ってみましょう！", textAlign: TextAlign.center)
+            );
+          }
+          return ListView.separated(
+            itemCount: dmThreads.length,
+            separatorBuilder: (context, index) => const Divider(height: 1),
+            itemBuilder: (context, index) {
+              final bot = dmThreads[index];
+              return ListTile(
+                leading: CircleAvatar(child: Text(bot.accountName[0])),
+                title: Text(bot.accountName),
+                subtitle: Text("@${bot.accountID}"),
+                onTap: () {
+                  context.push(RoutePath.chat.path, extra: bot);
+                },
+              ).animate(key: ValueKey(bot.accountID))
               .fadeIn(duration: 200.ms, delay: (60 * index).ms)
               .slideX(
                 duration: 240.ms,
@@ -65,28 +62,30 @@ class MessagePage extends HookConsumerWidget {
                 end: 0,
                 curve: Curves.easeOutCubic,
               );
-        },
+            },
+          );
+        }
       ),
     );
   }
 }
 
-class MessageBox extends StatelessWidget {
-  const MessageBox({super.key, required this.bot});
+// class MessageBox extends StatelessWidget {
+//   const MessageBox({super.key, required this.bot});
 
-  final BotAccount bot;
+//   final BotAccount bot;
 
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      key: ValueKey(bot.accountID),
-      leading: CircleAvatar(child: Text(bot.accountName[0])),
-      title: Text(bot.accountName),
-      // ID表示も修正
-      subtitle: Text("@${bot.accountID}・最新のメッセージ..."),
-      onTap: () {
-        context.push(RoutePath.chat.path, extra: bot);
-      },
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return ListTile(
+//       key: ValueKey(bot.accountID),
+//       leading: CircleAvatar(child: Text(bot.accountName[0])),
+//       title: Text(bot.accountName),
+//       // ID表示も修正
+//       subtitle: Text("@${bot.accountID}・最新のメッセージ..."),
+//       onTap: () {
+//         context.push(RoutePath.chat.path, extra: bot);
+//       },
+//     );
+//   }
+// }

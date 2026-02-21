@@ -9,11 +9,25 @@ class PostAccountHeader extends HookConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    // アカウント情報と画像の取得
+    final accountManager = ref.watch(accountManagerProvider).value;
+    final authorAccount = accountManager?.getAccountByAccountUUID(post.authorUUID);
+    final isMe = authorAccount?.accountUUID == ref.watch(userAccountProvider).value?.accountUUID;
+    final profileImagePath = ref.watch(profileImageProvider).value;
+
+    ImageProvider? avatarImage;
+    if (isMe && profileImagePath != null) {
+      avatarImage = FileImage(File(profileImagePath));
+    }
+
     return Row(
       children: [
+        // アイコンの反映
         CircleAvatar(
           radius: 20,
-          backgroundImage: NetworkImage("https://placehold.jp/150x150.png"),
+          backgroundColor: colorScheme.surfaceContainerHighest,
+          backgroundImage: avatarImage,
+          child: avatarImage == null ? Text(post.authorName[0]) : null,
         ),
         const SizedBox(width: 8),
         Column(
@@ -27,8 +41,9 @@ class PostAccountHeader extends HookConsumerWidget {
               ),
               softWrap: true,
             ),
+            // UserIDの反映
             Text(
-              "@userID",
+              "@${authorAccount?.accountID ?? 'unknown'}",
               style: textTheme.titleMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
@@ -37,7 +52,7 @@ class PostAccountHeader extends HookConsumerWidget {
           ],
         ),
         Spacer(),
-        (post.authorUUID != ref.watch(userAccountProvider).value?.accountUUID)
+        (!isMe)
             ? FilledButton.icon(
                 onPressed: () {},
                 icon: Icon(Icons.email_rounded),

@@ -57,6 +57,7 @@ dependencies:
   tab_container: ^3.5.3
   animated_segmented_tab_control: ^2.0.0
   rename_app: ^1.6.5
+  image_picker: ^1.2.1
 
 dev_dependencies:
   flutter_test:

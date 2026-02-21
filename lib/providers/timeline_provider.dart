@@ -38,6 +38,14 @@ class TimelineNotifier extends AsyncNotifier<Timeline> {
 
     final timeline = Timeline();
 
+    // Timelineの裏側でボットが返信を追加した時に、画面を再描画する設定
+    timeline.onTimelineUpdated = () {
+      state = AsyncValue.data(timeline);
+      if (!_timelineUpdates.isClosed) {
+        _timelineUpdates.add(timeline);
+      }
+    };
+
     final geminiApi = ref.watch(geminiApiProvider);
     if (geminiApi != null) {
       timeline.setGeminiAPI(geminiApi);
@@ -99,8 +107,8 @@ final timelineProvider = AsyncNotifierProvider<TimelineNotifier, Timeline>(
   TimelineNotifier.new,
 );
 
-/// Stream版: Timelineの最新状態が流れてくる（追加/削除/リフレッシュでemit）
-final timelineStreamProvider = StreamProvider<Timeline>((ref) {
+/// Stream版: Timelineの最新状態が流れてくる（追加/削除/更新ごと）
+final timelineStreamProvider = StreamProvider.autoDispose<Timeline>((ref) {
   final notifier = ref.watch(timelineProvider.notifier);
   return notifier.timelineUpdates;
 });

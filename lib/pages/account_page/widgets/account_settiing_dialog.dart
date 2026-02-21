@@ -38,15 +38,18 @@ class AccountSettiingDialog extends HookConsumerWidget {
                   .fadeIn(duration: 180.ms)
                   .slideY(duration: 220.ms, begin: 0.05, end: 0),
               const SizedBox(height: 16),
+              // 修正: IDを変更不可(readOnly)に
               TextField(
-                    controller: userIdController,
-                    decoration: const InputDecoration(
-                      labelText: "ユーザーID",
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.alternate_email_rounded),
-                    ),
-                  )
-                  .animate()
+                controller: userIdController,
+                readOnly: true, 
+                decoration: InputDecoration(
+                  labelText: "ユーザーID (変更不可)",
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.badge_rounded),
+                  filled: true,
+                  fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                ),
+              ).animate()
                   .fadeIn(duration: 180.ms, delay: 60.ms)
                   .slideY(duration: 220.ms, begin: 0.05, end: 0),
             ],
@@ -55,17 +58,17 @@ class AccountSettiingDialog extends HookConsumerWidget {
       ),
       actions: [
         FilledButton(
-              onPressed: userAsync.isLoading
-                  ? null
-                  : () async {
-                      final nextName = userNameController.text.trim();
-                      final nextId = userIdController.text.trim();
-
-                      if (nextName == user?.accountName &&
-                          nextId == user?.accountID) {
-                        Navigator.of(context).pop();
-                        return;
-                      }
+          onPressed: (user == null)
+              ? null
+              : () async {
+                  final nextName = userNameController.text.trim();
+                  final nextId = userIdController.text.trim();
+                
+                  // 修正: 変更がない場合でも pop() を呼んでダイアログを閉じる
+                  if (nextName == user?.accountName && nextId == user?.accountID) {
+                    Navigator.of(context).pop();
+                    return;
+                  }
 
                       if (nextName.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -74,12 +77,13 @@ class AccountSettiingDialog extends HookConsumerWidget {
                         return;
                       }
 
-                      if (!RegExp(r'^[0-9A-Za-z]{8}$').hasMatch(nextId)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('ユーザーIDは8桁の英数字にしてください')),
-                        );
-                        return;
-                      }
+                  // ※IDは変更不可にしたため、基本的にはここのチェックは通り抜ける
+                  if (!RegExp(r'^[0-9A-Za-z]{8}$').hasMatch(nextId)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('ユーザーIDは8桁の英数字にしてください')),
+                    );
+                    return;
+                  }
 
                       await ref
                           .read(userAccountProvider.notifier)

@@ -1,3 +1,6 @@
+// Dart imports:
+import 'dart:io';
+
 // Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -8,7 +11,11 @@ import 'package:intl/intl.dart';
 
 // Project imports:
 import 'package:mikata/models/post.dart';
+import 'package:mikata/models/account.dart';
 import 'package:mikata/providers/router_provider.dart';
+import 'package:mikata/providers/account_manager_provider.dart';
+import 'package:mikata/providers/profile_image_provider.dart';
+import 'package:mikata/providers/user_account_provider.dart';
 import 'package:mikata/widgets/remove_post_dialog.dart';
 
 part 'post_box_bottom_buttons.dart';
@@ -23,6 +30,17 @@ class PostBox extends HookConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    // ▼ アカウント情報と画像の取得 ▼
+    final accountManager = ref.watch(accountManagerProvider).value;
+    final authorAccount = accountManager?.getAccountByAccountUUID(post.authorUUID);
+    final isMe = authorAccount?.accountUUID == ref.watch(userAccountProvider).value?.accountUUID;
+    final profileImagePath = ref.watch(profileImageProvider).value;
+
+    ImageProvider? avatarImage;
+    if (isMe && profileImagePath != null) {
+      avatarImage = FileImage(File(profileImagePath));
+    }
+
     return InkWell(
       onTap: () {
         context.push(RoutePath.postDetail.path, extra: post);
@@ -32,7 +50,12 @@ class PostBox extends HookConsumerWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(),
+            // ▼ アイコンの反映 ▼
+            CircleAvatar(
+              backgroundColor: colorScheme.surfaceContainerHighest,
+              backgroundImage: avatarImage,
+              child: avatarImage == null ? Text(post.authorName[0]) : null,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -45,36 +68,16 @@ class PostBox extends HookConsumerWidget {
                         post.authorName,
                         style: textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: false,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        "@userID・${post.relativeTime}",
-                        style: textTheme.titleMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: false,
-                      ),
-                      Spacer(),
-                      InkWell(
-                        borderRadius: BorderRadius.circular(100),
-                        onTap: () {
-                          RemovePostDialog.show(context, post);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Icon(
-                            Icons.more_vert_rounded,
+                      if (authorAccount != null)
+                        Text(
+                          "@${authorAccount.accountID}",
+                          style: textTheme.bodyMedium?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),
                         ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 2),
