@@ -93,7 +93,13 @@ class Account {
                 accountName: map['account_name'],
                 accountID:   map['account_id'],
                 accountUUID: map['account_uuid'],
-                personality: Personality.values.byName(map['personality']),
+                
+                // 修正
+                personality: Personality.values.firstWhere(
+                  (e) => e.name == map['personality'],
+                  orElse: () => Personality.praise, // 万が一見つからない時の安全策
+                ),
+                
                 prompt:      map['prompt'],
             );
         }
@@ -141,9 +147,17 @@ class BotAccount extends Account {
             $_prompt
             投稿 : ${dm.content}
             ''';
-        final content = "test";//await Timeline().geminiApi.generateResponse(prompt_);
+            
+        // 修正: "test" をやめ、実際にGeminiApiを呼び出す
+        final content = await Timeline().geminiApi.generateResponse(prompt_);
         if (content == null) return;
-        final directMessage = DirectMessage(botUUID: accountUUID, accountName: accountName, accountUUID: accountUUID, content: content);
+        
+        final directMessage = DirectMessage(
+            botUUID: accountUUID, 
+            accountName: accountName, 
+            accountUUID: accountUUID, 
+            content: content
+        );
         _appendDM(directMessage);
     }
 
