@@ -10,13 +10,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mikata/providers/router_provider.dart';
 import 'package:mikata/providers/theme_provider.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
+void registerAppLicenses() {
   LicenseRegistry.addLicense(() async* {
     final license = await rootBundle.loadString('assets/font/OFL.txt');
     yield LicenseEntryWithLineBreaks(['TsunagiGothic'], license);
   });
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  registerAppLicenses();
 
   runApp(const ProviderScope(child: MitakaApp()));
 }
