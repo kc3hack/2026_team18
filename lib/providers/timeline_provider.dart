@@ -66,6 +66,7 @@ class TimelineNotifier extends AsyncNotifier<Timeline> {
   }
 
   Future<void> addPost(Post post) async {
+    state = const AsyncValue.loading();
     final timeline = state.value ?? Timeline();
     try {
       await timeline.addPost(post);
