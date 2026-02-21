@@ -7,7 +7,14 @@ final class CustomColorSchema {
   final double value;
 
   ColorScheme toColorScheme({Brightness brightness = Brightness.light}) {
-    return (value > 0.0) ? pinkLightColorScheme : blueLightColorScheme;
+    // return (value > 0.0) ? pinkLightColorScheme : blueLightColorScheme;
+    if (value < -0.3) {
+      return blueLightColorScheme;
+    } else if (value < 0.3) {
+      return greenLightColorScheme;
+    } else {
+      return pinkLightColorScheme;
+    }
   }
 
   static ColorScheme schemeFor(
@@ -74,7 +81,7 @@ final ColorScheme blueLightColorScheme = ColorScheme(
   surface: Color.fromARGB(255, 173, 187, 204),
   onSurface: Color.fromARGB(255, 31, 36, 43),
   surfaceContainerHighest: Color(0xFF849DBB),
-  onSurfaceVariant: Color(0xFF533A33),
+  onSurfaceVariant: Color(0xFF1A3A63),
   outline: Colors.blueGrey.shade200,
   outlineVariant: Color.fromARGB(255, 98, 117, 139),
   shadow: Colors.black,
@@ -113,4 +120,35 @@ final ColorScheme pinkLightColorScheme = ColorScheme(
   inverseSurface: Colors.brown.shade900,
   onInverseSurface: Colors.pink.shade50,
   inversePrimary: Colors.pink.shade100,
+);
+
+final ColorScheme greenLightColorScheme = ColorScheme(
+  brightness: Brightness.light,
+  primary: Color(0xFF4E635E),
+  onPrimary: Color(0xFFE2E0C8),
+  primaryContainer: Color(0xFF94A59C),
+  onPrimaryContainer: Color(0xFF000000),
+  secondary: Color(0xFF818C78),
+  onSecondary: Color(0xFFE2E0C8),
+  secondaryContainer: Color(0xFFA6B49E),
+  onSecondaryContainer: Color(0xFF000000),
+  tertiary: Color(0xFFA6B49E),
+  onTertiary: Color(0xFF000000),
+  tertiaryContainer: Color(0xFFE2E0C8),
+  onTertiaryContainer: Color(0xFF4E635E),
+  error: Colors.red.shade700,
+  onError: Colors.white,
+  errorContainer: Colors.red.shade100,
+  onErrorContainer: Colors.red.shade900,
+  surface: Color(0xFFA6B49E),
+  onSurface: Color(0xFF000000),
+  surfaceContainerHighest: Color(0xFFE2E0C8),
+  onSurfaceVariant: Color(0xFF4E635E),
+  outline: Color(0xFF94A59C),
+  outlineVariant: Color(0xFFA6B49E),
+  shadow: Colors.black,
+  scrim: Colors.black,
+  inverseSurface: Color(0xFF4E635E),
+  onInverseSurface: Color(0xFFE2E0C8),
+  inversePrimary: Color(0xFF94A59C),
 );

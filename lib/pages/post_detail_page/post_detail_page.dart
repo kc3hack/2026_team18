@@ -38,34 +38,42 @@ class PostDetailPage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: CustomAppbar(title: const Text("投稿の詳細")),
-      body: ListView.separated(
-        itemCount: 1 + replyList.length,
-        separatorBuilder: (context, index) {
-          return const Divider(height: 24);
-        },
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 8),
-                  PostAccountHeader(post: post),
-                  SizedBox(height: 12),
-                  PostContent(post: post),
-                  Divider(height: 24),
-                  PostInteractionButtons(post: post),
-                ],
-              ),
-            );
-          }
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.separated(
+                itemCount: 1 + replyList.length,
+                separatorBuilder: (context, index) {
+                  return const Divider(height: 24);
+                },
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 8),
+                          PostAccountHeader(post: post),
+                          SizedBox(height: 12),
+                          PostContent(post: post),
+                          Divider(height: 24),
+                          PostInteractionButtons(post: post),
+                        ],
+                      ),
+                    );
+                  }
 
-          final replyIndex = index - 1;
-          return PostBox(post: replyList[replyIndex]);
-        },
+                  final replyIndex = index - 1;
+                  return PostBox(post: replyList[replyIndex]);
+                },
+              ),
+            ),
+            ReplySheet(parentPostUUID: post.postUUID),
+          ],
+        ),
       ),
-      bottomSheet: ReplySheet(parentPostUUID: post.postUUID),
     );
   }
 }
