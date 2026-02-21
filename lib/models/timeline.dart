@@ -13,7 +13,7 @@ class Timeline {
   // ここで直接インスタンスを生成してセットする
   GeminiApi _geminiApi = GeminiApi(
     apiKey: 'AIzaSyDysqquI-fxmBRp39iZgBKwmQ1L_71SX9c',
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash-lite',
   );
 
   // UIに新しい返信が来たと通知するためのコールバック関数
