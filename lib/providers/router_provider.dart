@@ -16,7 +16,6 @@ import 'package:mikata/pages/post_detail_page/post_detail_page.dart';
 import 'package:mikata/pages/root_page/root_page.dart';
 import 'package:mikata/pages/sign_up_page/sign_up_page.dart';
 
-// Project imports:
 import 'package:mikata/models/account.dart'; // Account型を渡すためにimport
 import 'package:mikata/pages/account_page/settings_page.dart'; // 新規作成
 import 'package:mikata/providers/user_account_provider.dart'; // 新規作成
