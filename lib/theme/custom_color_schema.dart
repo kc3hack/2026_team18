@@ -103,7 +103,7 @@ final ColorScheme greenLightColorScheme = ColorScheme(
   errorContainer: Colors.red.shade100,
   onErrorContainer: Colors.red.shade900,
   surface: Color(0xFFA6B49E),
-  onSurface: Color(0xFF000000),
+  onSurface: Color.fromARGB(255, 45, 56, 53),
   surfaceContainerHighest: Color(0xFFE2E0C8),
   onSurfaceVariant: Color(0xFF4E635E),
   outline: Color(0xFF94A59C),

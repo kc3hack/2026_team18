@@ -158,3 +158,18 @@ enum RoutePath {
   final String path;
   const RoutePath(this.path);
 }
+
+class CustomFadeTransitionPage<T> extends CustomTransitionPage<T> {
+  CustomFadeTransitionPage({required LocalKey super.key, required super.child})
+    : super(
+        transitionDuration: const Duration(milliseconds: 250),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curvedAnimation = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeInOut,
+          );
+
+          return FadeTransition(opacity: curvedAnimation, child: child);
+        },
+      );
+}

@@ -18,7 +18,7 @@ class AccountSettiingDialog extends HookConsumerWidget {
     }, [user?.accountUUID]);
 
     return AlertDialog(
-      title: const Text("アカウント編集"),
+      title: const Text("アカウント情報編集"),
       content: userAsync.when(
         error: (error, stackTrace) => Text("Error: $error"),
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -27,13 +27,16 @@ class AccountSettiingDialog extends HookConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                controller: userNameController,
-                decoration: const InputDecoration(
-                  labelText: "ユーザー名",
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person_rounded),
-                ),
-              ),
+                    controller: userNameController,
+                    decoration: const InputDecoration(
+                      labelText: "ユーザー名",
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.person_rounded),
+                    ),
+                  )
+                  .animate()
+                  .fadeIn(duration: 180.ms)
+                  .slideY(duration: 220.ms, begin: 0.05, end: 0),
               const SizedBox(height: 16),
               // 修正: IDを変更不可(readOnly)に
               TextField(
@@ -46,7 +49,9 @@ class AccountSettiingDialog extends HookConsumerWidget {
                   filled: true,
                   fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 ),
-              ),
+              ).animate()
+                  .fadeIn(duration: 180.ms, delay: 60.ms)
+                  .slideY(duration: 220.ms, begin: 0.05, end: 0),
             ],
           );
         },
@@ -65,12 +70,12 @@ class AccountSettiingDialog extends HookConsumerWidget {
                     return;
                   }
 
-                  if (nextName.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('ユーザー名を入力してください')),
-                    );
-                    return;
-                  }
+                      if (nextName.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('ユーザー名を入力してください')),
+                        );
+                        return;
+                      }
 
                   // ※IDは変更不可にしたため、基本的にはここのチェックは通り抜ける
                   if (!RegExp(r'^[0-9A-Za-z]{8}$').hasMatch(nextId)) {
@@ -80,19 +85,33 @@ class AccountSettiingDialog extends HookConsumerWidget {
                     return;
                   }
 
-                  await ref
-                      .read(userAccountProvider.notifier)
-                      .updateProfile(accountName: nextName, accountId: nextId);
+                      await ref
+                          .read(userAccountProvider.notifier)
+                          .updateProfile(
+                            accountName: nextName,
+                            accountId: nextId,
+                          );
 
-                  if (!context.mounted) return;
-                  Navigator.of(context).pop();
-                },
-          child: const Text("保存"),
-        ),
+                      if (!context.mounted) return;
+                      Navigator.of(context).pop();
+                    },
+              child: const Text("保存"),
+            )
+            .animate()
+            .fadeIn(duration: 180.ms, delay: 120.ms)
+            .scale(
+              duration: 220.ms,
+              curve: Curves.easeOutBack,
+              begin: const Offset(0.98, 0.98),
+              end: const Offset(1, 1),
+            ),
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text("閉じる"),
-        ),
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("閉じる"),
+            )
+            .animate()
+            .fadeIn(duration: 180.ms, delay: 160.ms)
+            .slideX(duration: 220.ms, begin: 0.04, end: 0),
       ],
     );
   }

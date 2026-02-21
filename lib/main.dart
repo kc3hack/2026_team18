@@ -33,6 +33,7 @@ class MitakaApp extends HookConsumerWidget {
     final theme = ref.watch(themeDataProvider);
 
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       title: 'MIKATA',
       themeMode: ThemeMode.light,
       theme: theme,

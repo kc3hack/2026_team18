@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -102,21 +104,34 @@ class AccountPage extends HookConsumerWidget {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        AccountPlate(
-                          userName: user.accountName,
-                          userId: '@${user.accountID}',
-                        ),
-                        const SizedBox(height: 24),
-                        
-                        // ▼ 外部パッケージをやめて、Flutter標準のTabBarで実装 ▼
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Container(
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: colorScheme.surfaceContainerHighest,
-                              borderRadius: BorderRadius.circular(22),
+                      ),
+
+                      const SizedBox(height: 32),
+                      AccountPlate(
+                        userName: user?.accountName ?? "unknown",
+                        userId: user?.accountID ?? "unknown",
+                      ),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: SegmentedTabControl(
+                          tabTextColor: colorScheme.onSurfaceVariant,
+                          selectedTabTextColor: colorScheme.onPrimaryContainer,
+                          indicatorPadding: const EdgeInsets.all(4),
+                          squeezeIntensity: 2,
+                          tabPadding: const EdgeInsets.symmetric(horizontal: 8),
+                          textStyle: Theme.of(context).textTheme.labelLarge,
+                          selectedTextStyle: Theme.of(context)
+                              .textTheme
+                              .labelLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                          tabs: [
+                            SegmentTab(
+                              label: 'いいね',
+                              color: colorScheme.primaryContainer,
+                              backgroundColor: colorScheme.surface,
+                              textColor: colorScheme.onSurfaceVariant,
+                              selectedTextColor: colorScheme.onPrimaryContainer,
                             ),
                             child: TabBar(
                               dividerColor: Colors.transparent, // デフォルトの下線を消す

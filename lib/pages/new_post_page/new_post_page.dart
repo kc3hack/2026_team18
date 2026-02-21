@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -70,9 +71,17 @@ class NewPostPage extends HookConsumerWidget {
                       );
                     }
                   },
-            child: const Text('投稿する'),
-          ),
-          const SizedBox(width: 16),
+            child: Text("投稿する"),
+          )
+              .animate()
+              .fadeIn(duration: 180.ms)
+              .scale(
+                duration: 220.ms,
+                curve: Curves.easeOutBack,
+                begin: const Offset(0.98, 0.98),
+                end: const Offset(1, 1),
+              ),
+          SizedBox(width: 8),
         ],
       ),
       body: Padding(
@@ -101,7 +110,15 @@ class NewPostPage extends HookConsumerWidget {
             ),
           ],
         ),
-      ),
+      )
+          .animate()
+          .fadeIn(duration: 220.ms)
+          .slideY(
+            duration: 260.ms,
+            begin: 0.06,
+            end: 0,
+            curve: Curves.easeOutCubic,
+          ),
       bottomSheet: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -128,7 +145,15 @@ class NewPostPage extends HookConsumerWidget {
             ),
           ],
         ),
-      ),
+      )
+          .animate()
+          .fadeIn(duration: 220.ms, delay: 80.ms)
+          .slideY(
+            duration: 260.ms,
+            begin: 0.15,
+            end: 0,
+            curve: Curves.easeOutCubic,
+          ),
     );
   }
 }

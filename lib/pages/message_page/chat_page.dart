@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart'; // 追加
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -52,7 +53,18 @@ class ChatPage extends HookConsumerWidget {
                     final message = reversedMessages[index];
                     final isMe = message.accountUUID != message.botUUID;
                     // ※既存の_MessageBubbleをそのまま使用します
-                    return _MessageBubble(message: message, isMe: isMe);
+                    return _MessageBubble(message: message, isMe: isMe)                    .animate(
+                      key: ValueKey(
+                        '${message.accountUUID}_${message.dateTime.millisecondsSinceEpoch}',
+                      ),
+                    )
+                    .fadeIn(duration: 180.ms, delay: (50 * index).ms)
+                    .slideX(
+                      duration: 220.ms,
+                      begin: isMe ? 0.08 : -0.08,
+                      end: 0,
+                      curve: Curves.easeOutCubic,
+                    );
                   },
                 );
               }
@@ -61,7 +73,14 @@ class ChatPage extends HookConsumerWidget {
           _MessageInputArea(
             targetBot: targetAccount,
             onSent: () => refreshTrigger.value++,
-          ),
+          ).animate()
+              .fadeIn(duration: 200.ms)
+              .slideY(
+                duration: 240.ms,
+                begin: 0.2,
+                end: 0,
+                curve: Curves.easeOutCubic,
+              ),
         ],
       ),
     );

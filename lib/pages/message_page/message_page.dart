@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -53,6 +54,13 @@ class MessagePage extends HookConsumerWidget {
                 onTap: () {
                   context.push(RoutePath.chat.path, extra: bot);
                 },
+              ).animate(key: ValueKey(bot.accountID))
+              .fadeIn(duration: 200.ms, delay: (60 * index).ms)
+              .slideX(
+                duration: 240.ms,
+                begin: 0.06,
+                end: 0,
+                curve: Curves.easeOutCubic,
               );
             },
           );
