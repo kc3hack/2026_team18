@@ -43,134 +43,93 @@ class AccountPage extends HookConsumerWidget {
         data: (user) {
           return DefaultTabController(
             length: 2,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 32),
-                  GestureDetector(
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("画像変更機能は未実装です")),
-                      );
-                    },
-                    child: Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        const CircleAvatar(
-                          radius: 60,
-                          backgroundImage: NetworkImage(
-                            "https://placehold.jp/150x150.png",
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: colorScheme.surface,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.camera_alt,
-                            size: 20,
-                            color: colorScheme.onSurface,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  AccountPlate(
-                    userName: user?.accountName ?? "unknown",
-                    userId: user?.accountID ?? "unknown",
-                  ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: SegmentedTabControl(
-                      tabTextColor: colorScheme.onSurfaceVariant,
-                      selectedTabTextColor: colorScheme.onPrimaryContainer,
-                      indicatorPadding: const EdgeInsets.all(4),
-                      squeezeIntensity: 2,
-                      tabPadding: const EdgeInsets.symmetric(horizontal: 8),
-                      textStyle: Theme.of(context).textTheme.labelLarge,
-                      selectedTextStyle: Theme.of(context).textTheme.labelLarge
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                      tabs: [
-                        SegmentTab(
-                          label: 'いいね',
-                          color: colorScheme.primaryContainer,
-                          backgroundColor: colorScheme.surface,
-                          textColor: colorScheme.onSurfaceVariant,
-                          selectedTextColor: colorScheme.onPrimaryContainer,
-                        ),
-                        SegmentTab(
-                          label: 'ブックマーク',
-                          color: colorScheme.primaryContainer,
-                          backgroundColor: colorScheme.surface,
-                          textColor: colorScheme.onSurfaceVariant,
-                          selectedTextColor: colorScheme.onPrimaryContainer,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TabBarView(
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
                     children: [
-                      Column(
-                        children: [
-                          const SizedBox(height: 8),
-                          Card(
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  leading: const Icon(Icons.person_rounded),
-                                  title: const Text('ユーザー名'),
-                                  subtitle: Text(
-                                    user?.accountName ?? 'unknown',
-                                  ),
-                                ),
-                                const Divider(height: 1),
-                                ListTile(
-                                  leading: const Icon(
-                                    Icons.alternate_email_rounded,
-                                  ),
-                                  title: const Text('ユーザーID'),
-                                  subtitle: Text(user?.accountID ?? 'unknown'),
-                                ),
-                              ],
+                      const SizedBox(height: 32),
+                      GestureDetector(
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("画像変更機能は未実装です")),
+                          );
+                        },
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            const CircleAvatar(
+                              radius: 60,
+                              backgroundImage: NetworkImage(
+                                "https://placehold.jp/150x150.png",
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          const SizedBox(height: 8),
-                          Card(
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  leading: const Icon(Icons.person_rounded),
-                                  title: const Text('ユーザー名'),
-                                  subtitle: Text(
-                                    user?.accountName ?? 'unknown',
-                                  ),
-                                ),
-                                const Divider(height: 1),
-                                ListTile(
-                                  leading: const Icon(
-                                    Icons.alternate_email_rounded,
-                                  ),
-                                  title: const Text('ユーザーID'),
-                                  subtitle: Text(user?.accountID ?? 'unknown'),
-                                ),
-                              ],
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: colorScheme.surface,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.camera_alt,
+                                size: 20,
+                                color: colorScheme.onSurface,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
+                      const SizedBox(height: 32),
+                      AccountPlate(
+                        userName: user?.accountName ?? "unknown",
+                        userId: user?.accountID ?? "unknown",
+                      ),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: SegmentedTabControl(
+                          tabTextColor: colorScheme.onSurfaceVariant,
+                          selectedTabTextColor: colorScheme.onPrimaryContainer,
+                          indicatorPadding: const EdgeInsets.all(4),
+                          squeezeIntensity: 2,
+                          tabPadding: const EdgeInsets.symmetric(horizontal: 8),
+                          textStyle: Theme.of(context).textTheme.labelLarge,
+                          selectedTextStyle: Theme.of(context)
+                              .textTheme
+                              .labelLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                          tabs: [
+                            SegmentTab(
+                              label: 'いいね',
+                              color: colorScheme.primaryContainer,
+                              backgroundColor: colorScheme.surface,
+                              textColor: colorScheme.onSurfaceVariant,
+                              selectedTextColor: colorScheme.onPrimaryContainer,
+                            ),
+                            SegmentTab(
+                              label: 'ブックマーク',
+                              color: colorScheme.primaryContainer,
+                              backgroundColor: colorScheme.surface,
+                              textColor: colorScheme.onSurfaceVariant,
+                              selectedTextColor: colorScheme.onPrimaryContainer,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
                     ],
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 8),
+                SliverFillRemaining(
+                  child: TabBarView(
+                    children: [
+                      Center(child: Text("いいねした投稿のリスト")),
+                      Center(child: Text("ブックマークした投稿のリスト")),
+                    ],
+                  ),
+                ),
+              ],
             ),
           );
         },
