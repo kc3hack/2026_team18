@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
 import 'package:mikata/providers/router_provider.dart';
+import 'package:mikata/widgets/custom_appbar.dart';
 
 class AccountPage extends HookConsumerWidget {
   const AccountPage({super.key});
@@ -17,10 +18,10 @@ class AccountPage extends HookConsumerWidget {
     // 【Hooks修正】useTextEditingControllerを使用
     // これにより、画面破棄時に自動でdispose（メモリ解放）されます
     final userNameController = useTextEditingController(text: "MyUser");
-    final userId = "UserX9yz"; 
+    final userId = "UserX9yz";
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: CustomAppbar(
         title: const Text("Account"),
         actions: [
           IconButton(
@@ -36,16 +37,18 @@ class AccountPage extends HookConsumerWidget {
             const SizedBox(height: 20),
             GestureDetector(
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("画像変更機能は未実装です")),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text("画像変更機能は未実装です")));
               },
               child: Stack(
                 alignment: Alignment.bottomRight,
                 children: [
                   const CircleAvatar(
                     radius: 60,
-                    backgroundImage: NetworkImage("https://placehold.jp/150x150.png"),
+                    backgroundImage: NetworkImage(
+                      "https://placehold.jp/150x150.png",
+                    ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(4),
@@ -53,13 +56,17 @@ class AccountPage extends HookConsumerWidget {
                       color: Colors.white,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.camera_alt, size: 20, color: Colors.black87),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      size: 20,
+                      color: Colors.black87,
+                    ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 32),
-            
+
             TextField(
               controller: userNameController,
               decoration: const InputDecoration(
@@ -69,7 +76,7 @@ class AccountPage extends HookConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             TextField(
               // IDは固定なのでHooks不要だが、TextEditingControllerを使うならuse〜が推奨
               controller: useTextEditingController(text: userId),
@@ -88,11 +95,13 @@ class AccountPage extends HookConsumerWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "※IDは自動生成された8桁の英数字です",
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.grey),
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 32),
             FilledButton.icon(
               onPressed: () {

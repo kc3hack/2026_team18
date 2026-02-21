@@ -22,7 +22,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ),
-      child: AppBar(title: title, actions: actions),
+      child: AppBar(centerTitle: true, title: title, actions: actions),
     );
   }
 }

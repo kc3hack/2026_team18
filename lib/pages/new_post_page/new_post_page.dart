@@ -48,7 +48,9 @@ class NewPostPage extends HookConsumerWidget {
                       content: inputController.text,
                       postDate: DateTime.now(),
                     );
-                    await ref.read(timelineProvider.notifier).addPost(newPost);
+                    ref.read(timelineProvider.notifier)
+                      ..addPost(newPost)
+                      ..fetchTimeline();
                     if (context.mounted) {
                       context.pop();
                     }
@@ -72,9 +74,10 @@ class NewPostPage extends HookConsumerWidget {
               child: TextField(
                 controller: inputController,
                 decoration: InputDecoration(
-                  hintText: "いまどうしてる？",
+                  hintText: "今日頑張ったことを教えて！",
                   border: InputBorder.none,
                 ),
+                style: Theme.of(context).textTheme.titleLarge,
                 maxLines: null,
               ),
             ),

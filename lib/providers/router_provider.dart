@@ -48,19 +48,6 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RoutePath.message.path,
                 builder: (context, state) => const MessagePage(),
-                routes: [
-                  // メッセージ一覧からの詳細チャット画面
-                  GoRoute(
-                    path: 'chat', // /message/chat
-                    pageBuilder: (context, state) {
-                      // 一覧から渡された相手のアカウント情報を受け取る
-                      final account = state.extra as BotAccount?;
-                      return MaterialPage(
-                        child: ChatPage(targetAccount: account),
-                      );
-                    },
-                  ),
-                ],
               ),
             ],
           ),
@@ -73,6 +60,33 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: RoutePath.chat.path, // /message/chat
+        pageBuilder: (context, state) {
+          // 一覧から渡された相手のアカウント情報を受け取る
+          final account = state.extra as BotAccount?;
+          return CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: ChatPage(targetAccount: account),
+            transitionDuration: const Duration(milliseconds: 250),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  final curvedAnimation = CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  );
+
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(1, 0),
+                      end: Offset.zero,
+                    ).animate(curvedAnimation),
+                    child: child,
+                  );
+                },
+          );
+        },
       ),
       GoRoute(
         path: RoutePath.settings.path,
@@ -135,7 +149,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 enum RoutePath {
   home("/"),
   message("/message"),
-  chat("chat"),
+  chat("/message/chat"),
   account("/account"),
   settings("/settings"),
   newPost("/new-post"),
