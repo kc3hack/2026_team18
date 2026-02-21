@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
 import 'package:mikata/providers/ai_settings_provider.dart';
-import 'package:mikata/providers/theme_provider.dart';
 import 'package:mikata/widgets/custom_appbar.dart';
 
 class SettingsPage extends HookConsumerWidget {
@@ -15,6 +14,9 @@ class SettingsPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final aiSettingsAsync = ref.watch(aiSettingsProvider);
+
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: CustomAppbar(title: const Text("Settings")),
@@ -25,16 +27,15 @@ class SettingsPage extends HookConsumerWidget {
           return ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
-              Text(
-                "AI Environment Tuning",
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              Text("AI 性格設定", style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 "AIの性格パラメータを設定します。\n設定を変更するとアプリの雰囲気（テーマカラー）も変化します。",
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
               ),
-              const Divider(height: 30),
+              const Divider(height: 32),
 
               // 褒め (Praise)
               _ParameterSlider(
@@ -87,15 +88,6 @@ class SettingsPage extends HookConsumerWidget {
       ),
     );
   }
-
-  void _updateThemeMood(
-    double praise,
-    double criticism,
-    ThemeNotifier notifier,
-  ) {
-    final double moodScore = ((praise - criticism) / 100).clamp(-1.0, 1.0);
-    notifier.updateColorSchemaValue(moodScore);
-  }
 }
 
 class _ParameterSlider extends StatelessWidget {
@@ -117,6 +109,8 @@ class _ParameterSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -125,15 +119,15 @@ class _ParameterSlider extends StatelessWidget {
           children: [
             Icon(icon, color: color, size: 20),
             const SizedBox(width: 8),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(label, style: textTheme.titleMedium),
             const Spacer(),
             Text(
               "${value.toInt()}%",
-              style: TextStyle(fontWeight: FontWeight.bold, color: color),
+              style: textTheme.titleLarge?.copyWith(color: color),
             ),
           ],
         ),
-        Text(description, style: Theme.of(context).textTheme.bodySmall),
+        Text(description, style: Theme.of(context).textTheme.bodyMedium),
         Slider(
           value: value,
           min: 0,
