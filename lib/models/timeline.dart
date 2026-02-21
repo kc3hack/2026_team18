@@ -52,13 +52,15 @@ class Timeline {
   Future<List<Post>> getReplyPostsForPost(Post post) async {
     List<Post> replyPosts = [];
 
-    List<BotAccount> replyBots = AccountManager().getReplyBotAccounts();
+    // ▼ 修正: await を追加 ▼
+    List<BotAccount> replyBots = await AccountManager().getReplyBotAccounts();
+    
     for (BotAccount i in replyBots) {
       final replyContent = await geminiApi.generateResponse(i.prompt);
       final replyPost = Post(
         authorName: i.accountName,
         authorUUID: i.accountUUID,
-        content: replyContent!,
+        content: replyContent ?? "", // null対策
       );
 
       this.replyPost(replyPost, post.authorUUID);
