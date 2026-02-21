@@ -36,7 +36,7 @@ class RootPage extends HookConsumerWidget {
           ),
           child: NavigationBar(
             backgroundColor: Colors.transparent,
-
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
             destinations: [
               NavigationDestination(
                 icon: const Icon(Icons.home_rounded),
