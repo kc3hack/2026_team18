@@ -2,13 +2,13 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
 import 'package:mikata/pages/account_page/widgets/account_plate.dart';
-import 'package:mikata/providers/router_provider.dart';
 import 'package:mikata/providers/user_account_provider.dart';
 import 'package:mikata/widgets/custom_appbar.dart';
 
@@ -20,6 +20,8 @@ class AccountPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userAsync = ref.watch(userAccountProvider);
+
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: CustomAppbar(
@@ -39,9 +41,9 @@ class AccountPage extends HookConsumerWidget {
         error: (error, stackTrace) => Center(child: Text("Error: $error")),
         loading: () => const Center(child: CircularProgressIndicator()),
         data: (user) {
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
+          return DefaultTabController(
+            length: 2,
+            child: SingleChildScrollView(
               child: Column(
                 children: [
                   const SizedBox(height: 32),
@@ -62,56 +64,111 @@ class AccountPage extends HookConsumerWidget {
                         ),
                         Container(
                           padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
+                          decoration: BoxDecoration(
+                            color: colorScheme.surface,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.camera_alt,
                             size: 20,
-                            color: Colors.black87,
+                            color: colorScheme.onSurface,
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 32),
-
-                  // TextField(
-                  //   controller: userNameController,
-                  //   decoration: const InputDecoration(
-                  //     labelText: "表示名",
-                  //     border: OutlineInputBorder(),
-                  //     prefixIcon: Icon(Icons.person),
-                  //   ),
-                  // ),
                   AccountPlate(
                     userName: user?.accountName ?? "unknown",
                     userId: user?.accountID ?? "unknown",
                   ),
                   const SizedBox(height: 16),
-
-                  // TextField(
-                  //   // IDは固定なのでHooks不要だが、TextEditingControllerを使うならuse〜が推奨
-                  //   controller: useTextEditingController(text: userId),
-                  //   readOnly: true,
-                  //   decoration: const InputDecoration(
-                  //     labelText: "ユーザーID",
-                  //     hintText: "8桁の英数字",
-                  //     border: OutlineInputBorder(),
-                  //     prefixIcon: Icon(Icons.badge),
-                  //     filled: true,
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 32),
-                  // FilledButton.icon(
-                  //   onPressed: () {
-                  //     // userNameController.text で入力値を取得可能
-                  //     print("New Name: ${userNameController.text}");
-                  //   },
-                  //   icon: const Icon(Icons.save),
-                  //   label: const Text("プロフィールを保存"),
-                  // ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: SegmentedTabControl(
+                      tabTextColor: colorScheme.onSurfaceVariant,
+                      selectedTabTextColor: colorScheme.onPrimaryContainer,
+                      indicatorPadding: const EdgeInsets.all(4),
+                      squeezeIntensity: 2,
+                      tabPadding: const EdgeInsets.symmetric(horizontal: 8),
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                      selectedTextStyle: Theme.of(context).textTheme.labelLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                      tabs: [
+                        SegmentTab(
+                          label: 'いいね',
+                          color: colorScheme.primaryContainer,
+                          backgroundColor: colorScheme.surface,
+                          textColor: colorScheme.onSurfaceVariant,
+                          selectedTextColor: colorScheme.onPrimaryContainer,
+                        ),
+                        SegmentTab(
+                          label: 'ブックマーク',
+                          color: colorScheme.primaryContainer,
+                          backgroundColor: colorScheme.surface,
+                          textColor: colorScheme.onSurfaceVariant,
+                          selectedTextColor: colorScheme.onPrimaryContainer,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TabBarView(
+                    children: [
+                      Column(
+                        children: [
+                          const SizedBox(height: 8),
+                          Card(
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  leading: const Icon(Icons.person_rounded),
+                                  title: const Text('ユーザー名'),
+                                  subtitle: Text(
+                                    user?.accountName ?? 'unknown',
+                                  ),
+                                ),
+                                const Divider(height: 1),
+                                ListTile(
+                                  leading: const Icon(
+                                    Icons.alternate_email_rounded,
+                                  ),
+                                  title: const Text('ユーザーID'),
+                                  subtitle: Text(user?.accountID ?? 'unknown'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const SizedBox(height: 8),
+                          Card(
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  leading: const Icon(Icons.person_rounded),
+                                  title: const Text('ユーザー名'),
+                                  subtitle: Text(
+                                    user?.accountName ?? 'unknown',
+                                  ),
+                                ),
+                                const Divider(height: 1),
+                                ListTile(
+                                  leading: const Icon(
+                                    Icons.alternate_email_rounded,
+                                  ),
+                                  title: const Text('ユーザーID'),
+                                  subtitle: Text(user?.accountID ?? 'unknown'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
