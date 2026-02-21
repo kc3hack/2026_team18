@@ -16,6 +16,9 @@ class SettingsPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final aiSettingsAsync = ref.watch(aiSettingsProvider);
 
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: CustomAppbar(title: const Text("Settings")),
       body: aiSettingsAsync.when(
@@ -25,16 +28,15 @@ class SettingsPage extends HookConsumerWidget {
           return ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
-              Text(
-                "AI Environment Tuning",
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              Text("AI 性格設定", style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 "AIの性格パラメータを設定します。\n設定を変更するとアプリの雰囲気（テーマカラー）も変化します。",
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
               ),
-              const Divider(height: 30),
+              const Divider(height: 32),
 
               // 褒め (Praise)
               _ParameterSlider(
