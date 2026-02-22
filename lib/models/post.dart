@@ -16,7 +16,7 @@ class Post {
   String _authorName;
   final String _authorUUID;
   final String _content;
-  final String _parentPostUUID;
+  String _parentPostUUID;
 
   int _replyCount;
   int _likeCount;
@@ -128,8 +128,8 @@ class Post {
 
   String get parentPostUUID => _parentPostUUID;
   set parentPostUUID(String uuid) {
-    if (parentPostUUID == "") {
-      parentPostUUID = uuid;
+    if (_parentPostUUID.isEmpty) {
+      _parentPostUUID = uuid;
     }
   }
 
