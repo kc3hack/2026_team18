@@ -66,7 +66,8 @@
 
 
 ## 操作説明・デモ動画
-[デモ動画はこちら](https://www.youtube.com/watch?v=fbzGp0XJGq8)
+
+[デモ動画はこちら](https://www.youtube.com/@horizon-cx1pk)
 <!-- 開発したプロダクトの操作説明について入力してください。また、操作説明デモ動画があれば、埋め込みやリンクを記載してください -->
 
 
