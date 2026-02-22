@@ -59,7 +59,7 @@ dependencies:
   animated_segmented_tab_control: ^2.0.0
   rename_app: ^1.6.5
   image_picker: ^1.2.1
-  dotenv: ^4.2.0
+  flutter_dotenv: ^6.0.0
   
 
 dev_dependencies:
