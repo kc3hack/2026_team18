@@ -3,8 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart'; // 追加
-
 // Package imports:
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -12,10 +10,20 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mikata/providers/router_provider.dart';
 import 'package:mikata/providers/theme_provider.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // 追加
+
 void registerAppLicenses() {
   LicenseRegistry.addLicense(() async* {
-    final license = await rootBundle.loadString('assets/font/OFL.txt');
-    yield LicenseEntryWithLineBreaks(['TsunagiGothic'], license);
+    final thunagiGothicLicense = await rootBundle.loadString(
+      'assets/font/autour_one/OFL.txt',
+    );
+    final autourOneRegularLicense = await rootBundle.loadString(
+      'assets/font/tsunagi_gothic/OFL.txt',
+    );
+    yield LicenseEntryWithLineBreaks(['TsunagiGothic'], thunagiGothicLicense);
+    yield LicenseEntryWithLineBreaks([
+      'AutourOneRegular',
+    ], autourOneRegularLicense);
   });
 }
 

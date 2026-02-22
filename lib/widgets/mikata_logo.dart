@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Project imports:
@@ -39,10 +38,11 @@ class MikataLogo extends HookConsumerWidget {
 
     final label = Text(
       "mikata",
-      style: GoogleFonts.autourOne(
+      style: TextStyle(
         color: scheme.primary,
         fontSize: size * 0.5,
         fontWeight: FontWeight.bold,
+        fontFamily: 'AutourOne-Regular',
       ),
     );
 
