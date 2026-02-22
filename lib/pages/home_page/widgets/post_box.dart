@@ -15,6 +15,7 @@ import 'package:mikata/models/post.dart';
 import 'package:mikata/providers/account_manager_provider.dart';
 import 'package:mikata/providers/profile_image_provider.dart';
 import 'package:mikata/providers/router_provider.dart';
+import 'package:mikata/providers/timeline_provider.dart';
 import 'package:mikata/providers/user_account_provider.dart';
 import 'package:mikata/widgets/remove_post_dialog.dart';
 
@@ -29,6 +30,9 @@ class PostBox extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+
+    // Watch timeline so this widget rebuilds when the post state changes.
+    ref.watch(timelineProvider);
 
     // ▼ アカウント情報と画像の取得 ▼
     final accountManager = ref.watch(accountManagerProvider).value;
@@ -106,14 +110,30 @@ class PostBox extends HookConsumerWidget {
                       IconWithLabel(
                         icon: Icons.chat_bubble_rounded,
                         label: post.replyCount.toString(),
+                        isActive: false,
+                        activeColor: colorScheme.primary,
+                        onTap: () => context.push(
+                          RoutePath.postDetail.path,
+                          extra: post,
+                        ),
                       ),
                       IconWithLabel(
                         icon: Icons.favorite_rounded,
                         label: post.likeCount.toString(),
+                        isActive: post.isLike,
+                        activeColor: Colors.pink,
+                        onTap: () async {
+                          await ref.read(timelineProvider.notifier)
+                            ..toggleLike(post)
+                            ..fetchTimeline();
+                        },
                       ),
                       IconWithLabel(
                         icon: Icons.bar_chart_rounded,
+                        isActive: false,
+                        activeColor: colorScheme.primary,
                         label: post.viewCount.toString(),
+                        onTap: () {},
                       ),
                       Icon(
                         (post.isBookmark)

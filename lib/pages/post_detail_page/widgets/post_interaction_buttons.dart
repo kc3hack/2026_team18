@@ -6,6 +6,9 @@ class PostInteractionButtons extends HookConsumerWidget {
   final Post post;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Rebuild when timeline updates (like/bookmark/etc)
+    ref.watch(timelineProvider);
+
     return Column(
       children: [
         Row(
@@ -27,8 +30,8 @@ class PostInteractionButtons extends HookConsumerWidget {
             ),
             MiniIconButton(
               icon: Icon(Icons.favorite_border),
-              onPressed: () {
-                post.toggleLike();
+              onPressed: () async {
+                await ref.read(timelineProvider.notifier).toggleLike(post);
               },
             ),
             MiniIconButton(

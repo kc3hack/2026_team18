@@ -145,6 +145,11 @@ class Timeline {
     await _dbHelper.updateAuthorName(uuid, newName);
   }
 
+  Future<void> upsertPost(Post post) async {
+    // `insertPost` is implemented as an upsert via ConflictAlgorithm.replace.
+    await _dbHelper.insertPost(post);
+  }
+
   Future<void> loadPost({int limit = 40, int offset = 0}) async {
     final List<Post> dbPosts = await _dbHelper.getTimeline(
       limit: limit,
