@@ -77,7 +77,7 @@ class PostBox extends HookConsumerWidget {
                       const SizedBox(width: 4),
                       if (authorAccount != null)
                         Text(
-                          "@${authorAccount.accountID}",
+                          "@${authorAccount.accountID}・${post.relativeTime}",
                           style: textTheme.bodyMedium?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),
