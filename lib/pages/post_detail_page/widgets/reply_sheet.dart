@@ -16,7 +16,7 @@ class ReplySheet extends HookConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.grey.shade300)),
+        border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
         color: colorScheme.surface,
       ),
       child: Row(
@@ -26,7 +26,7 @@ class ReplySheet extends HookConsumerWidget {
               controller: inputController,
               focusNode: focusNode,
               maxLength: null,
-            keyboardType: TextInputType.multiline,
+              keyboardType: TextInputType.multiline,
               decoration: InputDecoration(
                 hintText: "返信を入力",
                 border: InputBorder.none,
