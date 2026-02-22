@@ -44,6 +44,8 @@ class PostDetailPage extends HookConsumerWidget {
       orElse: () => [],
     );
 
+    final focusNode = useFocusNode();
+
     return Scaffold(
       appBar: CustomAppbar(title: const Text("投稿の詳細")),
       body: SafeArea(
@@ -83,7 +85,10 @@ class PostDetailPage extends HookConsumerWidget {
                                 curve: Curves.easeOutCubic,
                               ),
                           Divider(height: 24),
-                          PostInteractionButtons(post: post)
+                          PostInteractionButtons(
+                                post: post,
+                                focusNode: focusNode,
+                              )
                               .animate()
                               .fadeIn(duration: 200.ms, delay: 120.ms)
                               .slideY(
@@ -115,7 +120,7 @@ class PostDetailPage extends HookConsumerWidget {
                 },
               ),
             ),
-            ReplySheet(parentPostUUID: post.postUUID)
+            ReplySheet(parentPostUUID: post.postUUID, focusNode: focusNode)
                 .animate()
                 .fadeIn(duration: 220.ms, delay: 80.ms)
                 .slideY(

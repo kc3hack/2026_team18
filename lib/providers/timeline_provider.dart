@@ -29,17 +29,21 @@ class TimelineNotifier extends AsyncNotifier<Timeline> {
 
   @override
   FutureOr<Timeline> build() async {
+    final timeline = Timeline();
+
     ref.onDispose(() {
+      // Timelineはsingletonなので、破棄時にコールバックを外して
+      // dispose後に非同期返信が来てもNotifierへ触らないようにする。
+      timeline.onTimelineUpdated = null;
       _timelineUpdates.close();
     });
 
     await ref.watch(databaseReadyProvider.future);
     await ref.watch(accountManagerProvider.future);
 
-    final timeline = Timeline();
-
     // Timelineの裏側でボットが返信を追加した時に、画面を再描画する設定
     timeline.onTimelineUpdated = () {
+      state = AsyncValue.loading();
       state = AsyncValue.data(timeline);
       if (!_timelineUpdates.isClosed) {
         _timelineUpdates.add(timeline);
@@ -88,6 +92,22 @@ class TimelineNotifier extends AsyncNotifier<Timeline> {
     }
   }
 
+  Future<void> updatePost(Post post) async {
+    state = const AsyncValue.loading();
+    final timeline = state.value ?? Timeline();
+
+    try {
+      await timeline;
+      state = AsyncValue.data(timeline);
+      if (!_timelineUpdates.isClosed) {
+        _timelineUpdates.add(timeline);
+      }
+    } catch (e) {
+      debugPrint('Failed to update post: $e');
+      rethrow;
+    }
+  }
+
   Future<void> removePost(Post post) async {
     final timeline = state.value ?? Timeline();
     try {
@@ -100,6 +120,60 @@ class TimelineNotifier extends AsyncNotifier<Timeline> {
       debugPrint('Failed to remove post: $e');
       rethrow;
     }
+  }
+
+  Future<void> toggleLike(Post post) async {
+    final timeline = state.value ?? Timeline();
+
+    final previousIsLike = post.isLike;
+    final previousLikeCount = post.likeCount;
+
+    final nextIsLike = !previousIsLike;
+    final nextLikeCount = nextIsLike
+        ? previousLikeCount + 1
+        : (previousLikeCount > 0 ? previousLikeCount - 1 : 0);
+
+    // Optimistic update
+    _setIsLike(post, nextIsLike);
+    post.likeCount = nextLikeCount;
+
+    // Also update the instance in the timeline list (if a different instance exists)
+    for (final p in timeline.timeline) {
+      if (p.postUUID != post.postUUID) continue;
+      _setIsLike(p, nextIsLike);
+      p.likeCount = nextLikeCount;
+      break;
+    }
+
+    state = AsyncValue.data(timeline);
+    if (!_timelineUpdates.isClosed) {
+      _timelineUpdates.add(timeline);
+    }
+
+    try {
+      await timeline.upsertPost(post);
+    } catch (e) {
+      // Revert on failure
+      _setIsLike(post, previousIsLike);
+      post.likeCount = previousLikeCount;
+      for (final p in timeline.timeline) {
+        if (p.postUUID != post.postUUID) continue;
+        _setIsLike(p, previousIsLike);
+        p.likeCount = previousLikeCount;
+        break;
+      }
+      state = AsyncValue.data(timeline);
+      if (!_timelineUpdates.isClosed) {
+        _timelineUpdates.add(timeline);
+      }
+      debugPrint('Failed to toggle like: $e');
+      rethrow;
+    }
+  }
+
+  void _setIsLike(Post post, bool value) {
+    if (post.isLike == value) return;
+    post.toggleLike();
   }
 }
 

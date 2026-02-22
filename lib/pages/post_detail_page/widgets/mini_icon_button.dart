@@ -11,9 +11,13 @@ class MiniIconButton extends HookConsumerWidget {
     super.key,
     required this.icon,
     required this.onPressed,
+    this.isActive = false,
+    this.activeIcon = const Icon(Icons.add, color: Colors.pink),
   });
 
   final Icon icon;
+  final bool isActive;
+  final Icon activeIcon;
   final GestureTapCallback onPressed;
 
   @override
@@ -25,7 +29,7 @@ class MiniIconButton extends HookConsumerWidget {
             onPressed();
             animationController.forward(from: 0);
           },
-          child: icon,
+          child: (isActive) ? activeIcon : icon,
         )
         .animate(controller: animationController)
         .scale(

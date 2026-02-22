@@ -17,7 +17,7 @@ class BookmarkTab extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final timelineAsync = ref.read(timelineProvider);
+    final timelineAsync = ref.watch(timelineProvider);
 
     return timelineAsync.when(
       error: (error, stackTrace) => Center(child: Text("error $error")),
