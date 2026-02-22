@@ -1,9 +1,14 @@
 part of '../post_detail_page.dart';
 
 class ReplySheet extends HookConsumerWidget {
-  const ReplySheet({super.key, required this.parentPostUUID});
+  const ReplySheet({
+    super.key,
+    required this.parentPostUUID,
+    required this.focusNode,
+  });
 
   final String parentPostUUID;
+  final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -11,7 +16,6 @@ class ReplySheet extends HookConsumerWidget {
     final user = ref.watch(userAccountProvider);
 
     final inputController = useTextEditingController();
-    final focusNode = useFocusNode();
 
     return Container(
       padding: const EdgeInsets.all(8),
