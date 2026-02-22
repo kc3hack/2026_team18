@@ -9,6 +9,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart'; // ▼ 追加: 画面遷移(context.push)に必要
 
 // Project imports:
 import 'package:mikata/models/post.dart';
@@ -21,6 +22,7 @@ import 'package:mikata/providers/timeline_provider.dart';
 import 'package:mikata/providers/user_account_provider.dart';
 import 'package:mikata/widgets/custom_appbar.dart';
 import 'package:mikata/widgets/remove_post_dialog.dart';
+import 'package:mikata/models/account.dart'; // ▼ 追加: BotAccountかどうかの判定に必要
 
 part 'widgets/post_account_header.dart';
 part 'widgets/post_content.dart';

@@ -54,14 +54,24 @@ class PostAccountHeader extends HookConsumerWidget {
         Spacer(),
         (!isMe)
             ? FilledButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.email_rounded),
-                label: Text("DM"),
+                // ▼ ここを修正：BotならDM画面へ遷移する ▼
+                onPressed: () {
+                  if (authorAccount is BotAccount) {
+                    context.push(RoutePath.chat.path, extra: authorAccount);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("このユーザーにはDMを送れません")),
+                    );
+                  }
+                },
+                // ▲ 修正ここまで ▲
+                icon: const Icon(Icons.email_rounded),
+                label: const Text("DM"),
               )
             : IconButton(
                 onPressed: () =>
                     RemovePostDialog.show(context, post, RoutePath.postDetail),
-                icon: Icon(Icons.more_vert_rounded),
+                icon: const Icon(Icons.more_vert_rounded),
               ),
       ],
     );
