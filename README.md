@@ -1,8 +1,9 @@
 # mikata
 <!-- プロダクト名に変更してください -->
 
-![mikata](https://kc3.me/cms/wp-content/uploads/2026/02/444e7120d5cdd74aa75f7a94bf8821a5-scaled.png)
-<!-- プロダクト名・イメージ画像を差し変えてください -->
+<div align="center">
+ <img src="https://github.com/kc3hack/2026_team18/blob/develop/assets/icons/iphone_pink.png" alt="mikata" height=300>
+</div>
 
 
 ## チーム名
@@ -97,9 +98,7 @@
 ## 使用技術
 
 ### その他
-<div align="center">
- <img src="https://github.com/kc3hack/2026_team18/blob/develop/assets/icons/iphone_pink.png" alt="mikata" height=300>
-</div>
+
 
 <!--
 markdownの記法はこちらを参照してください！
