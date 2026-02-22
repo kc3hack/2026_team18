@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // 追加
+
 // Package imports:
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -19,6 +21,8 @@ void registerAppLicenses() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: ".env");
 
   registerAppLicenses();
 
