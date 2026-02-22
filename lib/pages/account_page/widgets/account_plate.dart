@@ -16,9 +16,13 @@ class AccountPlate extends HookConsumerWidget {
 
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text(userName, style: textTheme.displaySmall)],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Wrap(
+            children: [
+              Center(child: Text(userName, style: textTheme.displaySmall)),
+            ],
+          ),
         ),
         const SizedBox(height: 4),
         Text(userId, style: textTheme.bodyLarge),

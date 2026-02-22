@@ -72,20 +72,27 @@ class PostBox extends HookConsumerWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        post.authorName,
-                        style: textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Wrap(
+                          spacing: 4,
+                          runSpacing: 4,
+                          children: [
+                            Text(
+                              post.authorName,
+                              style: textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            if (authorAccount != null)
+                              Text(
+                                "@${authorAccount.accountID}・${post.relativeTime}",
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      if (authorAccount != null)
-                        Text(
-                          "@${authorAccount.accountID}・${post.relativeTime}",
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ),
                       const Spacer(),
                       InkWell(
                         onTap: () => RemovePostDialog.show(context, post),
