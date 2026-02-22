@@ -96,7 +96,19 @@
 
 <!-- 使用技術を入力してください -->
 ## 使用技術
+<div style="display: flex; flex-direction: column; gap: 10px;">
+  
+  <div style="display: flex; align-items: center; gap: 14px;">
+    <img src="https://github.com/kc3hack/2026_team18/blob/develop/docs/fultterIcon.png" alt="Flutter" height="30">
+    <span style="font-size: 30px">Flutter</span>
+  </div>
 
+  <div style="display: flex; align-items: center; gap: 14px;">
+    <img src="https://github.com/kc3hack/2026_team18/blob/develop/docs/geminiIcon.png" alt="Gemini" height="30">
+    <span>GeminiAPI</span>
+  </div>
+
+</div>
 ### その他
 
 
