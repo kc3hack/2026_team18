@@ -1,3 +1,6 @@
+
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // 追加
+
 // Project imports:
 import 'package:mikata/models/account.dart';
 import 'package:mikata/models/account_manager.dart';
@@ -12,7 +15,7 @@ class Timeline {
 
   // ここで直接インスタンスを生成してセットする
   GeminiApi _geminiApi = GeminiApi(
-    apiKey: 'AIzaSyCySwmUcSdp1mvwUoWq-oZDuO2hAbqBIYs', // 時間的反省点：APIキーの安全な挿入方法を考えるべき(少なくともGitHubに公開しないように)
+    apiKey: dotenv.env['GEMINI_API_KEY'] ?? '', // 時間的反省点：APIキーの安全な挿入方法を考えるべき(少なくともGitHubに公開しないように)
     model: 'gemini-2.5-flash',
   );
 
