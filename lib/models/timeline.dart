@@ -1,5 +1,5 @@
-
-import 'package:flutter_dotenv/flutter_dotenv.dart'; // 追加
+// Dart imports:
+import 'dart:math';
 
 // Project imports:
 import 'package:mikata/models/account.dart';
@@ -8,6 +8,8 @@ import 'package:mikata/models/database_helper.dart';
 import 'package:mikata/models/gemini_api.dart';
 import 'package:mikata/models/post.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // 追加
+
 class Timeline {
   // private member
   final List<Post> _timeline = [];
@@ -15,7 +17,9 @@ class Timeline {
 
   // ここで直接インスタンスを生成してセットする
   GeminiApi _geminiApi = GeminiApi(
-    apiKey: dotenv.env['GEMINI_API_KEY'] ?? '', // 時間的反省点：APIキーの安全な挿入方法を考えるべき(少なくともGitHubに公開しないように)
+    apiKey:
+        dotenv.env['GEMINI_API_KEY'] ??
+        '', // 時間的反省点：APIキーの安全な挿入方法を考えるべき(少なくともGitHubに公開しないように)
     model: 'gemini-2.5-flash',
   );
 
@@ -88,6 +92,16 @@ class Timeline {
   Future<void> _generateBotRepliesAsync(Post post) async {
     List<BotAccount> replyBots = await AccountManager().getReplyBotAccounts();
 
+    const int viewMaxCount = 9999;
+    const int viewMinCount = 100;
+
+    const int maxCount = 500;
+    const int minCount = 10;
+
+    final likeCount = Random().nextInt(maxCount - minCount) + minCount;
+    final replyCount = Random().nextInt(maxCount - minCount) + minCount;
+    final viewCount = Random().nextInt(viewMaxCount - viewMinCount) + minCount;
+
     for (BotAccount i in replyBots) {
       final prompt_ =
           '''
@@ -102,6 +116,9 @@ class Timeline {
           authorName: i.accountName,
           authorUUID: i.accountUUID,
           content: replyContent,
+          replyCount: replyCount,
+          likeCount: likeCount,
+          viewCount: viewCount,
         );
         await replyPost(botReply, post.postUUID);
       }
