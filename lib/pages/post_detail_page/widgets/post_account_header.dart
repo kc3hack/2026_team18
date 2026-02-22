@@ -11,8 +11,12 @@ class PostAccountHeader extends HookConsumerWidget {
 
     // アカウント情報と画像の取得
     final accountManager = ref.watch(accountManagerProvider).value;
-    final authorAccount = accountManager?.getAccountByAccountUUID(post.authorUUID);
-    final isMe = authorAccount?.accountUUID == ref.watch(userAccountProvider).value?.accountUUID;
+    final authorAccount = accountManager?.getAccountByAccountUUID(
+      post.authorUUID,
+    );
+    final isMe =
+        authorAccount?.accountUUID ==
+        ref.watch(userAccountProvider).value?.accountUUID;
     final profileImagePath = ref.watch(profileImageProvider).value;
 
     ImageProvider? avatarImage;

@@ -1,5 +1,6 @@
 // Dart imports:
 import 'dart:io';
+import 'dart:math';
 
 // Flutter imports:
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class NewPostPage extends HookConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final userAsync = ref.watch(userAccountProvider);
     final user = userAsync.value;
-    
+
     // 画像の取得
     final profileImagePath = ref.watch(profileImageProvider).value;
 
@@ -51,28 +52,47 @@ class NewPostPage extends HookConsumerWidget {
       appBar: AppBar(
         actions: [
           FilledButton(
-            onPressed: (user == null || inputController.text.isEmpty)
-                ? null
-                : () async {
-                    final newPost = Post(
-                      authorName: user.accountName,
-                      authorUUID: user.accountUUID,
-                      content: inputController.text,
-                    );
+                onPressed: (user == null || inputController.text.isEmpty)
+                    ? null
+                    : () async {
+                        const int viewMaxCount = 9999;
+                        const int viewMinCount = 100;
 
-                    try {
-                      await ref.read(timelineProvider.notifier).addPost(newPost);
-                      if (!context.mounted) return;
-                      context.pop();
-                    } catch (e) {
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("投稿に失敗しました: $e")),
-                      );
-                    }
-                  },
-            child: Text("投稿する"),
-          )
+                        const int maxCount = 500;
+                        const int minCount = 10;
+
+                        final likeCount =
+                            Random().nextInt(maxCount - minCount) + minCount;
+                        final replyCount =
+                            Random().nextInt(maxCount - minCount) + minCount;
+                        final viewCount =
+                            Random().nextInt(viewMaxCount - viewMinCount) +
+                            minCount;
+
+                        final newPost = Post(
+                          authorName: user.accountName,
+                          authorUUID: user.accountUUID,
+                          content: inputController.text,
+                          likeCount: likeCount,
+                          replyCount: replyCount,
+                          viewCount: viewCount,
+                        );
+
+                        try {
+                          await ref
+                              .read(timelineProvider.notifier)
+                              .addPost(newPost);
+                          if (!context.mounted) return;
+                          context.pop();
+                        } catch (e) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("投稿に失敗しました: $e")),
+                          );
+                        }
+                      },
+                child: Text("投稿する"),
+              )
               .animate()
               .fadeIn(duration: 180.ms)
               .scale(
@@ -84,76 +104,80 @@ class NewPostPage extends HookConsumerWidget {
           SizedBox(width: 8),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // アイコンの反映
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: colorScheme.surfaceContainerHighest,
-              backgroundImage: avatarImage,
-              child: avatarImage == null ? Text(user?.accountName[0] ?? '?') : null,
-            ),
-            SizedBox(width: 16),
-            Expanded(
-              child: TextField(
-                controller: inputController,
-                decoration: InputDecoration(
-                  hintText: "今日頑張ったことを教えて！",
-                  border: InputBorder.none,
+      body:
+          Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // アイコンの反映
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundColor: colorScheme.surfaceContainerHighest,
+                      backgroundImage: avatarImage,
+                      child: avatarImage == null
+                          ? Text(user?.accountName[0] ?? '?')
+                          : null,
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: TextField(
+                        controller: inputController,
+                        decoration: InputDecoration(
+                          hintText: "今日頑張ったことを教えて！",
+                          border: InputBorder.none,
+                        ),
+                        style: Theme.of(context).textTheme.titleLarge,
+                        maxLines: null,
+                      ),
+                    ),
+                  ],
                 ),
-                style: Theme.of(context).textTheme.titleLarge,
-                maxLines: null,
+              )
+              .animate()
+              .fadeIn(duration: 220.ms)
+              .slideY(
+                duration: 260.ms,
+                begin: 0.06,
+                end: 0,
+                curve: Curves.easeOutCubic,
               ),
-            ),
-          ],
-        ),
-      )
-          .animate()
-          .fadeIn(duration: 220.ms)
-          .slideY(
-            duration: 260.ms,
-            begin: 0.06,
-            end: 0,
-            curve: Curves.easeOutCubic,
-          ),
-      bottomSheet: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: Colors.grey.shade300)),
-          color: colorScheme.surface,
-        ),
-        child: Row(
-          children: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.image)),
-            Spacer(),
-            if (user == null) ...[
-              Text(
-                '投稿するにはログインしてください',
-                style: Theme.of(context).textTheme.bodySmall,
+      bottomSheet:
+          Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border(top: BorderSide(color: Colors.grey.shade300)),
+                  color: colorScheme.surface,
+                ),
+                child: Row(
+                  children: [
+                    IconButton(onPressed: () {}, icon: Icon(Icons.image)),
+                    Spacer(),
+                    if (user == null) ...[
+                      Text(
+                        '投稿するにはログインしてください',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    SizedBox.square(
+                      dimension: 28,
+                      child: CircularProgressIndicator(
+                        value: characterRate.value,
+                        strokeCap: StrokeCap.round,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+              .animate()
+              .fadeIn(duration: 220.ms, delay: 80.ms)
+              .slideY(
+                duration: 260.ms,
+                begin: 0.15,
+                end: 0,
+                curve: Curves.easeOutCubic,
               ),
-              const SizedBox(width: 8),
-            ],
-            SizedBox.square(
-              dimension: 28,
-              child: CircularProgressIndicator(
-                value: characterRate.value,
-                strokeCap: StrokeCap.round,
-              ),
-            ),
-          ],
-        ),
-      )
-          .animate()
-          .fadeIn(duration: 220.ms, delay: 80.ms)
-          .slideY(
-            duration: 260.ms,
-            begin: 0.15,
-            end: 0,
-            curve: Curves.easeOutCubic,
-          ),
     );
   }
 }
