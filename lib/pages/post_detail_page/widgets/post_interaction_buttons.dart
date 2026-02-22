@@ -30,8 +30,12 @@ class PostInteractionButtons extends HookConsumerWidget {
             ),
             MiniIconButton(
               icon: Icon(Icons.favorite_border),
+              isActive: post.isLike,
+              activeIcon: Icon(Icons.favorite_rounded, color: Colors.pink),
               onPressed: () async {
-                await ref.read(timelineProvider.notifier).toggleLike(post);
+                ref.read(timelineProvider.notifier)
+                  ..toggleLike(post)
+                  ..fetchTimeline();
               },
             ),
             MiniIconButton(
